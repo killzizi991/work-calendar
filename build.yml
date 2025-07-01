@@ -1,0 +1,30 @@
+name: Build APK
+
+on: [push]
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Build APK with Capacitor
+      run: |
+        npm install -g @capacitor/cli
+        npx cap init --web-dir ./ --package-id com.workcalendar.app --app-name "Work Calendar" --npm-client npm
+        npx cap add android
+        npx cap copy
+        cd android
+        ./gradlew assembleDebug
+        
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: work-calendar-apk
+        path: android/app/build/outputs/apk/debug/app-debug.apk
