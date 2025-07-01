@@ -112,12 +112,7 @@ function setupEventListeners() {
             currentYear--;
         }
         generateCalendar();
-    // Добавить в конец setupEventListeners()
-window.addEventListener('load', () => {
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        console.log('Запущено как PWA - браузерный интерфейс скрыт');
-    }
-});
+    });
     
     document.getElementById('next-month').addEventListener('click', () => {
         currentMonth++;
@@ -300,7 +295,7 @@ function saveDayData() {
     showNotification('Данные сохранены!');
 }
 
-// Расчет зарплаты (ИЗМЕНЕННЫЙ БЛОК)
+// Расчет зарплаты
 function calculateSummary() {
     let workDays = 0;
     let totalSales = 0;
@@ -314,12 +309,11 @@ function calculateSummary() {
         }
     }
     
-    // ИЗМЕНЕННЫЕ РАСЧЕТЫ НАЧИНАЮТСЯ ЗДЕСЬ
+    // Измененные расчеты
     const totalEarnedBeforeTax = (totalSales * 0.07) + (workDays * 1000);
     const totalEarned = totalEarnedBeforeTax * 0.87; // Учет 13% налога
     const salary = totalEarned - 10875; // Зарплата после аванса
     const balance = salary - 10875; // Остаток после вычета оф. части
-    // ИЗМЕНЕННЫЕ РАСЧЕТЫ ЗАКАНЧИВАЮТСЯ ЗДЕСЬ
     
     return {
         workDays,
