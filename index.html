@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -12,37 +13,43 @@
     <!-- Навигация -->
     <div class="header">
         <button id="prev-month">&lt;</button>
-        <h2 id="current-month-year">Октябрь 2023</h2>
+        <button id="month-year-selector" class="month-selector">
+            <h2 id="current-month-year">Октябрь 2023</h2>
+        </button>
         <button id="next-month">&gt;</button>
+        <button id="summary-btn">Расчеты</button>
     </div>
     
     <!-- Календарь -->
     <div id="calendar" class="calendar"></div>
     
-    <!-- Расчеты -->
-    <div class="summary">
-        <h3>Расчеты за месяц:</h3>
-        <p>Рабочих дней: <span id="work-days">0</span></p>
-        <p>Сумма продаж: <span id="total-sales">0</span> руб</p>
-        <p>Заработано: <span id="total-earned">0</span> руб</p>
-        <p>Зарплата: <span id="salary">0</span> руб</p>
-        <p>Остаток: <span id="balance">0</span> руб</p>
+    <!-- Модальное окно дня -->
+    <div id="modal" class="modal">
+        <!-- ... (существующий код) ... -->
     </div>
     
-    <!-- Модальное окно -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
+    <!-- Модальное окно расчетов -->
+    <div id="summary-modal" class="modal">
+        <!-- ... (существующий код) ... -->
+    </div>
+    
+    <!-- Новое модальное окно выбора периода -->
+    <div id="period-modal" class="modal">
+        <div class="modal-content period-selector">
             <span class="close">&times;</span>
-            <h3>День <span id="modal-day"></span></h3>
-            <input type="number" id="sales-input" placeholder="Сумма продаж">
-            <textarea id="comment-input" placeholder="Комментарий"></textarea>
-            <div class="color-picker">
-                <div class="color-option" style="background-color: #ffffff;" data-color="#ffffff"></div>
-                <div class="color-option" style="background-color: #ffcccc;" data-color="#ffcccc"></div>
-                <div class="color-option" style="background-color: #ccffcc;" data-color="#ccffcc"></div>
-                <div class="color-option" style="background-color: #ccccff;" data-color="#ccccff"></div>
+            <h3>Выберите период</h3>
+            
+            <div class="period-step" id="year-step">
+                <h4>Выберите год</h4>
+                <div class="period-options" id="year-options"></div>
             </div>
-            <button id="save-data">Сохранить</button>
+            
+            <div class="period-step" id="month-step" style="display:none">
+                <h4>Выберите месяц</h4>
+                <div class="period-options" id="month-options"></div>
+            </div>
+            
+            <button id="period-back" style="display:none">← Назад</button>
         </div>
     </div>
 
