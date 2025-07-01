@@ -7,8 +7,18 @@
     <meta name="theme-color" content="#4e73df">
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- PWA оптимизация -->
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Календарь продаж">
 </head>
 <body>
+    <!-- Индикатор загрузки -->
+    <div id="app-loading">Загрузка приложения...</div>
+    
     <!-- Навигация -->
     <div class="header">
         <button id="prev-month">&lt;</button>
@@ -22,68 +32,22 @@
     <!-- Календарь -->
     <div id="calendar" class="calendar"></div>
     
-    <!-- Модальное окно дня -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>День <span id="modal-day"></span></h3>
-            <input type="number" id="sales-input" placeholder="Сумма продаж">
-            <textarea id="comment-input" placeholder="Комментарий"></textarea>
-            <div class="color-picker">
-                <div class="color-option" style="background-color: #ffffff;" data-color="#ffffff"></div>
-                <div class="color-option" style="background-color: #ffcccc;" data-color="#ffcccc"></div>
-                <div class="color-option" style="background-color: #ccffcc;" data-color="#ccffcc"></div>
-                <div class="color-option" style="background-color: #ccccff;" data-color="#ccccff"></div>
-            </div>
-            <button id="save-data">Сохранить</button>
-        </div>
-    </div>
-    
-    <!-- Модальное окно расчетов -->
-    <div id="summary-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>Расчеты за <span id="summary-month-year">Октябрь 2023</span></h3>
-            <div class="summary-results">
-                <p>Рабочих дней: <span id="modal-work-days">0</span></p>
-                <p>Сумма продаж: <span id="modal-total-sales">0</span> руб</p>
-                <p>Заработано: <span id="modal-total-earned">0</span> руб</p>
-                <p>Зарплата: <span id="modal-salary">0</span> руб</p>
-                <p>Остаток: <span id="modal-balance">0</span> руб</p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Модальное окно выбора периода -->
-    <div id="period-modal" class="modal">
-        <div class="modal-content period-selector">
-            <span class="close">&times;</span>
-            <h3>Выберите период</h3>
-            
-            <div class="period-step" id="year-step">
-                <h4>Выберите год</h4>
-                <div class="period-options" id="year-options"></div>
-            </div>
-            
-            <div class="period-step" id="month-step" style="display:none">
-                <h4>Выберите месяц</h4>
-                <div class="period-options" id="month-options"></div>
-            </div>
-            
-            <button id="period-back" style="display:none">← Назад</button>
-        </div>
-    </div>
+    <!-- Модальные окна -->
+    <div id="modal" class="modal">...</div>
+    <div id="summary-modal" class="modal">...</div>
+    <div id="period-modal" class="modal">...</div>
 
     <script src="script.js"></script>
-    <!-- PWA Service Worker -->
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker зарегистрирован'))
-                    .catch(err => console.log('Ошибка регистрации Service Worker:', err));
-            });
+        // Проверка PWA статуса
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            console.log('Запущено как PWA - интерфейс браузера скрыт');
         }
+        
+        // Скрытие индикатора загрузки
+        window.addEventListener('load', () => {
+            document.getElementById('app-loading').style.display = 'none';
+        });
     </script>
 </body>
 </html>
