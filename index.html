@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь продаж</title>
+    <meta name="theme-color" content="#4e73df">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Навигация -->
+    <div class="header">
+        <button id="prev-month">&lt;</button>
+        <h2 id="current-month-year">Октябрь 2023</h2>
+        <button id="next-month">&gt;</button>
+    </div>
+    
+    <!-- Календарь -->
+    <div id="calendar" class="calendar"></div>
+    
+    <!-- Расчеты -->
+    <div class="summary">
+        <h3>Расчеты за месяц:</h3>
+        <p>Рабочих дней: <span id="work-days">0</span></p>
+        <p>Сумма продаж: <span id="total-sales">0</span> руб</p>
+        <p>Заработано: <span id="total-earned">0</span> руб</p>
+        <p>Зарплата: <span id="salary">0</span> руб</p>
+        <p>Остаток: <span id="balance">0</span> руб</p>
+    </div>
+    
+    <!-- Модальное окно -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>День <span id="modal-day"></span></h3>
+            <input type="number" id="sales-input" placeholder="Сумма продаж">
+            <textarea id="comment-input" placeholder="Комментарий"></textarea>
+            <div class="color-picker">
+                <div class="color-option" style="background-color: #ffffff;" data-color="#ffffff"></div>
+                <div class="color-option" style="background-color: #ffcccc;" data-color="#ffcccc"></div>
+                <div class="color-option" style="background-color: #ccffcc;" data-color="#ccffcc"></div>
+                <div class="color-option" style="background-color: #ccccff;" data-color="#ccccff"></div>
+            </div>
+            <button id="save-data">Сохранить</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <!-- PWA Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker зарегистрирован'))
+                    .catch(err => console.log('Ошибка регистрации Service Worker:', err));
+            });
+        }
+    </script>
+</body>
+</html>
