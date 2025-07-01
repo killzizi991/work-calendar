@@ -112,7 +112,12 @@ function setupEventListeners() {
             currentYear--;
         }
         generateCalendar();
-    });
+    // Добавить в конец setupEventListeners()
+window.addEventListener('load', () => {
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        console.log('Запущено как PWA - браузерный интерфейс скрыт');
+    }
+});
     
     document.getElementById('next-month').addEventListener('click', () => {
         currentMonth++;
