@@ -1,10 +1,207 @@
-/* style.css */
-/* ... (существующие стили) */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 12px 15px;
+    background-color: #4e73df;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.header button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.6em;
+    cursor: pointer;
+    padding: 5px 15px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.header button:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+#current-month-year {
+    margin: 0;
+    font-size: 1.4em;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.day-header {
+    text-align: center;
+    font-weight: bold;
+    padding: 12px 0;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    font-size: 0.95em;
+}
+
+.day {
+    position: relative;
+    min-height: 85px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    text-align: center;
+    padding: 8px 5px;
+    background-color: white;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.day:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-color: #4e73df;
+}
+
+.day-number {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.day-sales {
+    font-size: 0.85em;
+    color: #28a745;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: auto;
+}
 
 /* Обводка текущего дня */
 .day.today {
     border: 2px solid #4e73df !important;
     box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.3);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 25px;
+    width: 90%;
+    max-width: 450px;
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #6c757d;
+    transition: color 0.2s;
+}
+
+.close:hover {
+    color: #343a40;
+}
+
+#sales-input, #comment-input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+#sales-input:focus, #comment-input:focus {
+    border-color: #4e73df;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.2);
+}
+
+#comment-input {
+    height: 100px;
+    resize: vertical;
+}
+
+.color-picker {
+    display: flex;
+    gap: 12px;
+    margin: 18px 0;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.color-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+}
+
+.color-option.selected {
+    border-color: #495057;
+    transform: scale(1.15);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+#save-data {
+    width: 100%;
+    padding: 14px;
+    background-color: #4e73df;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+#save-data:hover {
+    background-color: #2e59d9;
 }
 
 /* Кнопка расчетов */
@@ -37,16 +234,118 @@
     color: #2c3e50;
 }
 
-/* Адаптивность */
+.empty {
+    background-color: #f8f9fa;
+    border: 1px dashed #dee2e6;
+}
+
+/* Стили для выбора периода */
+.month-selector {
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-grow: 1;
+    padding: 5px;
+    transition: background-color 0.3s;
+    border-radius: 4px;
+}
+
+.month-selector:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+.period-selector {
+    max-width: 400px;
+}
+
+.period-step h4 {
+    margin-top: 0;
+    color: #4e73df;
+    text-align: center;
+}
+
+.period-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.period-option {
+    padding: 12px 5px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.period-option:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+    border-color: #4e73df;
+}
+
+#period-back {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block;
+    margin: 15px auto 0;
+    width: 120px;
+}
+
+#period-back:hover {
+    background-color: #5a6268;
+}
+
+/* Адаптивность для мобильных устройств */
 @media (max-width: 480px) {
+    .calendar {
+        gap: 5px;
+    }
+    
+    .day {
+        min-height: 70px;
+        padding: 5px 3px;
+    }
+    
+    .day-number {
+        font-size: 1em;
+    }
+    
+    .day-sales {
+        font-size: 0.75em;
+    }
+    
+    .modal-content {
+        padding: 20px 15px;
+        margin: 5% auto;
+    }
+    
     .header {
-        flex-wrap: wrap;
+        padding: 10px;
+        flex-wrap: nowrap;
+    }
+    
+    #current-month-year {
+        font-size: 1.2em;
     }
     
     #summary-btn {
-        order: 3;
-        width: 100%;
-        margin-top: 10px;
-        margin-left: 0;
+        font-size: 0.9em;
+        padding: 6px 10px;
+    }
+    
+    .period-options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .month-selector h2 {
+        font-size: 1.1em;
     }
 }
