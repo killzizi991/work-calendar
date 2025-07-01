@@ -295,7 +295,7 @@ function saveDayData() {
     showNotification('Данные сохранены!');
 }
 
-// Расчет зарплаты
+// Расчет зарплаты (ИЗМЕНЕННЫЙ БЛОК)
 function calculateSummary() {
     let workDays = 0;
     let totalSales = 0;
@@ -309,9 +309,12 @@ function calculateSummary() {
         }
     }
     
-    const totalEarned = (totalSales * 0.07) + (workDays * 1000);
-    const salary = totalEarned - 10875;
-    const balance = salary - 10875;
+    // ИЗМЕНЕННЫЕ РАСЧЕТЫ НАЧИНАЮТСЯ ЗДЕСЬ
+    const totalEarnedBeforeTax = (totalSales * 0.07) + (workDays * 1000);
+    const totalEarned = totalEarnedBeforeTax * 0.87; // Учет 13% налога
+    const salary = totalEarned - 10875; // Зарплата после аванса
+    const balance = salary - 10875; // Остаток после вычета оф. части
+    // ИЗМЕНЕННЫЕ РАСЧЕТЫ ЗАКАНЧИВАЮТСЯ ЗДЕСЬ
     
     return {
         workDays,
