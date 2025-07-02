@@ -59,7 +59,6 @@ function generateCalendar() {
         dayElement.innerHTML = `
             <div class="day-number">${day}</div>
             ${dayData.sales ? `<div class="day-sales">${dayData.sales} руб</div>` : ''}
-            ${dayData.comment ? `<div class="day-comment">💬</div>` : ''}
         `;
         
         // Цвет фона
