@@ -1,369 +1,397 @@
+/* Основные стили */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 15px;
-    background-color: #f8f9fa;
-    color: #333;
-    line-height: 1.6;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+  color: #333;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 12px 15px;
-    background-color: #4e73df;
-    color: white;
-    border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 10px;
+  background-color: #4e73df;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.header button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.6em;
-    cursor: pointer;
-    padding: 5px 15px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-}
-
-.header button:hover {
-    background-color: rgba(255,255,255,0.2);
+.month-selector {
+  flex-grow: 1;
+  text-align: center;
 }
 
 #current-month-year {
-    margin: 0;
-    font-size: 1.4em;
-    text-align: center;
-    flex-grow: 1;
+  margin: 0;
+  font-size: 1.2rem;
 }
 
 .calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  padding: 15px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .day-header {
-    text-align: center;
-    font-weight: bold;
-    padding: 12px 0;
-    background-color: #e9ecef;
-    border-radius: 5px;
-    font-size: 0.95em;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px 0;
+  color: #4e73df;
+  font-size: 0.9rem;
 }
 
 .day {
-    position: relative;
-    min-height: 85px;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    text-align: center;
-    padding: 8px 5px;
-    background-color: white;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    aspect-ratio: 1/1;
+  position: relative;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  aspect-ratio: 1/1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #eaeaea;
 }
 
 .day:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    border-color: #4e73df;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.day.empty {
+  background-color: transparent;
+  box-shadow: none;
+  cursor: default;
+}
+
+.day.empty:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .day-number {
-    font-size: 1.2em;
-    font-weight: bold;
-    margin-bottom: 5px;
+  font-size: 1.1rem;
+  font-weight: bold;
 }
 
 .day-sales {
-    font-size: 0.85em;
-    color: #28a745;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-top: auto;
+  font-size: 0.75rem;
+  color: #28a745;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Обводка текущего дня */
-.day.today {
-    border: 2px solid #4e73df !important;
-    box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.3);
+.today {
+  border: 2px solid #4e73df;
 }
 
 .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.7);
-    z-index: 1000;
-    overflow-y: auto;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-content {
-    background-color: white;
-    margin: 10% auto;
-    padding: 25px;
-    width: 90%;
-    max-width: 450px;
-    border-radius: 10px;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.3);
-    position: relative;
+  background-color: white;
+  padding: 25px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  position: relative;
 }
 
 .close {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #6c757d;
-    transition: color 0.2s;
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #6c757d;
+  line-height: 1;
 }
 
-.close:hover {
-    color: #343a40;
+h3 {
+  margin-top: 0;
+  color: #4e73df;
 }
 
-#sales-input, #comment-input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    font-size: 1em;
-    box-sizing: border-box;
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 1rem;
 }
 
-#sales-input:focus, #comment-input:focus {
-    border-color: #4e73df;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.2);
-}
-
-#comment-input {
-    height: 100px;
-    resize: vertical;
+textarea {
+  height: 100px;
+  resize: vertical;
 }
 
 .color-picker {
-    display: flex;
-    gap: 12px;
-    margin: 18px 0;
-    justify-content: center;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 15px 0;
+  flex-wrap: wrap;
 }
 
 .color-option {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: transform 0.2s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.2s;
 }
 
 .color-option:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .color-option.selected {
-    border-color: #495057;
-    transform: scale(1.15);
-    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  border-color: #4e73df;
+  transform: scale(1.1);
 }
 
-#save-data {
-    width: 100%;
-    padding: 14px;
-    background-color: #4e73df;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1em;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 10px;
-    font-weight: 600;
+button {
+  background-color: #4e73df;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  width: 100%;
+  margin-top: 10px;
 }
 
-#save-data:hover {
-    background-color: #2e59d9;
+button:hover {
+  background-color: #2e59d9;
 }
 
-/* Кнопка расчетов */
-#summary-btn {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-left: 10px;
-    transition: background-color 0.3s;
-}
-
-#summary-btn:hover {
-    background-color: #218838;
-}
-
-/* Модальное окно расчетов */
 .summary-results p {
-    margin: 15px 0;
-    font-size: 1.1em;
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  margin: 0;
 }
 
-.summary-results p span {
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-.empty {
-    background-color: #f8f9fa;
-    border: 1px dashed #dee2e6;
-}
-
-/* Стили для выбора периода */
-.month-selector {
-    background: none;
-    border: none;
-    cursor: pointer;
-    flex-grow: 1;
-    padding: 5px;
-    transition: background-color 0.3s;
-    border-radius: 4px;
-}
-
-.month-selector:hover {
-    background-color: rgba(255,255,255,0.2);
+.summary-results span {
+  font-weight: bold;
+  color: #4e73df;
 }
 
 .period-selector {
-    max-width: 400px;
+  text-align: center;
 }
 
-.period-step h4 {
-    margin-top: 0;
-    color: #4e73df;
-    text-align: center;
+.period-step {
+  margin-bottom: 20px;
 }
 
 .period-options {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin: 20px 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 15px;
 }
 
 .period-option {
-    padding: 12px 5px;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
+  padding: 12px;
+  background-color: #4e73df;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
 }
 
 .period-option:hover {
-    background-color: #e9ecef;
-    transform: translateY(-2px);
-    border-color: #4e73df;
+  background-color: #2e59d9;
 }
 
 #period-back {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    display: block;
-    margin: 15px auto 0;
-    width: 120px;
+  width: auto;
+  margin: 20px auto 0;
+  display: block;
 }
 
-#period-back:hover {
-    background-color: #5a6268;
+/* Новые стили согласно ТЗ */
+
+/* 1. Расширение цветовой палитры */
+.fill-orange { background-color: #FFA500 !important; }
+.fill-aqua { background-color: #40E0D0 !important; }
+.fill-lime { background-color: #ADFF2F !important; }
+
+/* 2. Стиль функциональной обводки */
+.functional-border {
+  border: 3px solid #0000FF !important;
+  box-sizing: border-box;
+}
+
+/* 3. Стили для панели палитры */
+.palette-panel {
+  display: none;
+  position: fixed;
+  top: 70px;
+  right: 15px;
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  z-index: 500;
+  width: 180px;
+}
+
+.palette-tools {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.palette-tool {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+  font-size: 1.2rem;
+  background: #f8f9fa;
+}
+
+.palette-tool.fill {
+  font-size: 0;
+}
+
+.palette-tool:hover {
+  transform: scale(1.1);
+}
+
+.palette-tool.active {
+  border-color: #4e73df;
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* 4. Стили для кнопки палитры */
+#palette-btn {
+  width: auto;
+  padding: 10px 15px;
+  margin: 0 5px;
+  font-size: 1.2rem;
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+
+#palette-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.palette-btn.active {
+  background: #e0e0e0 !important;
+  color: #333;
+  border-radius: 8px;
+}
+
+/* Адаптивные стили */
+@media (max-width: 480px) {
+  .header {
+    padding: 12px 8px;
+  }
+  
+  #current-month-year {
+    font-size: 1rem;
+  }
+  
+  .calendar {
+    gap: 5px;
+    padding: 10px;
+  }
+  
+  .day {
+    padding: 5px;
+  }
+  
+  .day-number {
+    font-size: 0.9rem;
+  }
+  
+  .day-sales {
+    font-size: 0.65rem;
+  }
+  
+  .palette-panel {
+    top: 60px;
+    right: 10px;
+    padding: 12px;
+    width: 160px;
+  }
+  
+  .palette-tools {
+    gap: 8px;
+  }
+  
+  .palette-tool {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.palette-panel {
+  animation: fadeIn 0.3s ease-out;
 }
 
 /* Индикатор загрузки */
 #app-loading {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: #4e73df;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-    color: white;
-    font-size: 1.5em;
-    font-weight: bold;
-}
-
-/* Адаптивность для мобильных устройств */
-@media (max-width: 480px) {
-    .calendar {
-        gap: 5px;
-    }
-    
-    .day {
-        min-height: 70px;
-        padding: 5px 3px;
-    }
-    
-    .day-number {
-        font-size: 1em;
-    }
-    
-    .day-sales {
-        font-size: 0.75em;
-    }
-    
-    .modal-content {
-        padding: 20px 15px;
-        margin: 5% auto;
-    }
-    
-    .header {
-        padding: 10px;
-        flex-wrap: nowrap;
-    }
-    
-    #current-month-year {
-        font-size: 1.2em;
-    }
-    
-    #summary-btn {
-        font-size: 0.9em;
-        padding: 6px 10px;
-    }
-    
-    .period-options {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .month-selector h2 {
-        font-size: 1.1em;
-    }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #4e73df;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  z-index: 2000;
 }
