@@ -3,6 +3,7 @@ let currentDate = new Date();
 let currentYear = currentDate.getFullYear();
 let currentMonth = currentDate.getMonth();
 let selectedDay = null;
+let massColoringMode = null; // 'fill', 'border', или null
 
 // Хранение данных
 let calendarData = JSON.parse(localStorage.getItem('calendarData')) || {};
@@ -66,6 +67,11 @@ function generateCalendar() {
             dayElement.style.backgroundColor = dayData.color;
         }
         
+        // Функциональная обводка
+        if (dayData.functionalBorder) {
+            dayElement.classList.add('functional-border');
+        }
+        
         // Иконка комментария
         if (dayData.comment) {
             const commentIcon = document.createElement('div');
@@ -87,7 +93,7 @@ function generateCalendar() {
         }
         
         // Обработчик клика
-        dayElement.addEventListener('click', () => openModal(day));
+        dayElement.addEventListener('click', () => handleDayClick(day));
         calendar.appendChild(dayElement);
     }
     
@@ -99,6 +105,58 @@ function generateCalendar() {
     
     // Расчеты
     calculateSummary();
+}
+
+// Обработчик клика по дню
+function handleDayClick(day) {
+    if (massColoringMode === 'fill') {
+        applyFillColor(day);
+    } else if (massColoringMode === 'border') {
+        toggleFunctionalBorder(day);
+    } else {
+        openModal(day);
+    }
+}
+
+// Установка/снятие функциональной обводки
+function toggleFunctionalBorder(day) {
+    const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
+    let dayData = calendarData[dateKey] || {};
+    
+    if (dayData.functionalBorder) {
+        // Снятие обводки
+        dayData.functionalBorder = false;
+        dayData.sales = 0;
+        showNotification('Обводка снята');
+    } else {
+        // Проверка перед установкой
+        if (dayData.sales && dayData.sales !== 0) {
+            showNotification('Сначала обнулите значение');
+            return;
+        }
+        // Установка обводки
+        dayData.functionalBorder = true;
+        dayData.sales = 30000;
+        showNotification('Обводка установлена');
+    }
+    
+    calendarData[dateKey] = dayData;
+    localStorage.setItem('calendarData', JSON.stringify(calendarData));
+    generateCalendar();
+}
+
+// Применение цвета в режиме массового окрашивания
+function applyFillColor(day) {
+    const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
+    let dayData = calendarData[dateKey] || {};
+    const activeColor = document.querySelector('.palette-tool.fill.active');
+    
+    if (activeColor) {
+        dayData.color = activeColor.dataset.color;
+        calendarData[dateKey] = dayData;
+        localStorage.setItem('calendarData', JSON.stringify(calendarData));
+        generateCalendar();
+    }
 }
 
 // Настройка обработчиков событий
@@ -171,6 +229,49 @@ function setupEventListeners() {
             modal.style.display = 'none';
         });
     });
+    
+    // Кнопка палитры
+    document.getElementById('palette-btn').addEventListener('click', togglePaletteMode);
+    
+    // Инструменты палитры
+    document.querySelectorAll('.palette-tool.fill').forEach(tool => {
+        tool.addEventListener('click', function() {
+            // Сброс предыдущего выбора
+            document.querySelectorAll('.palette-tool').forEach(t => 
+                t.classList.remove('active'));
+            
+            // Активация выбранного
+            this.classList.add('active');
+            massColoringMode = 'fill';
+        });
+    });
+    
+    // Инструмент обводки
+    document.getElementById('palette-border').addEventListener('click', function() {
+        document.querySelectorAll('.palette-tool').forEach(t => 
+            t.classList.remove('active'));
+        this.classList.add('active');
+        massColoringMode = 'border';
+    });
+}
+
+// Переключение режима палитры
+function togglePaletteMode() {
+    const paletteBtn = document.getElementById('palette-btn');
+    const palettePanel = document.getElementById('palette-panel');
+    
+    if (palettePanel.style.display === 'flex') {
+        // Выход из режима
+        palettePanel.style.display = 'none';
+        paletteBtn.classList.remove('active');
+        massColoringMode = null;
+        document.querySelectorAll('.palette-tool').forEach(t => 
+            t.classList.remove('active'));
+    } else {
+        // Вход в режим
+        palettePanel.style.display = 'flex';
+        paletteBtn.classList.add('active');
+    }
 }
 
 // Инициализация выбора периода
@@ -278,6 +379,7 @@ function saveDayData() {
     const salesValue = parseInt(document.getElementById('sales-input').value) || 0;
     
     calendarData[dateKey] = {
+        ...calendarData[dateKey],
         sales: salesValue,
         comment: document.getElementById('comment-input').value || '',
         color: selectedColor
@@ -348,23 +450,20 @@ function closeSummaryModal() {
 // Показать уведомление
 function showNotification(message) {
     const notification = document.createElement('div');
+    notification.className = 'notification';
     notification.textContent = message;
-    notification.style.position = 'fixed';
-    notification.style.bottom = '20px';
-    notification.style.left = '50%';
-    notification.style.transform = 'translateX(-50%)';
-    notification.style.backgroundColor = '#4e73df';
-    notification.style.color = 'white';
-    notification.style.padding = '12px 25px';
-    notification.style.borderRadius = '25px';
-    notification.style.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
-    notification.style.zIndex = '1000';
-    notification.style.transition = 'opacity 0.3s';
     
     document.body.appendChild(notification);
     
+    // Анимация появления
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translate(-50%, 0)';
+    }, 10);
+    
     setTimeout(() => {
         notification.style.opacity = '0';
+        notification.style.transform = 'translate(-50%, 20px)';
         setTimeout(() => document.body.removeChild(notification), 300);
     }, 2000);
 }
@@ -410,4 +509,29 @@ function importData(event) {
         }
     };
     reader.readAsText(file);
+}
+
+// Добавление CSS для уведомлений при первом запуске
+if (!document.querySelector('#notification-styles')) {
+    const style = document.createElement('style');
+    style.id = 'notification-styles';
+    style.textContent = `
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background-color: #4e73df;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+    `;
+    document.head.appendChild(style);
 }
