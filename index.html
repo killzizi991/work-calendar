@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Календарь продаж</title>
     <meta name="theme-color" content="#4e73df">
     <link rel="manifest" href="manifest.json">
@@ -21,33 +21,30 @@
     
     <!-- Навигация -->
     <div class="header">
-        <button id="prev-month">&lt;</button>
-        <button id="month-year-selector" class="month-selector">
-            <h2 id="current-month-year">Октябрь 2023</h2>
-        </button>
-        <button id="next-month">&gt;</button>
+        <div class="header-top">
+            <button id="prev-month">&lt;</button>
+            <button id="month-year-selector" class="month-selector">
+                <h2 id="current-month-year">Июль 2025</h2>
+            </button>
+            <button id="next-month">&gt;</button>
+        </div>
         
-        <!-- Кнопка палитры -->
-        <button id="palette-btn" class="palette-btn">🎨</button>
-        
-        <button id="summary-btn">Расчеты</button>
+        <div class="header-bottom">
+            <button id="palette-btn" class="palette-btn">🎨</button>
+            <button id="summary-btn">Расчеты</button>
+        </div>
     </div>
     
     <!-- Панель инструментов палитры -->
     <div id="palette-panel" class="palette-panel">
         <div class="palette-tools">
-            <!-- Основные цвета -->
             <div class="palette-tool fill" data-color="#ffffff" style="background-color: #ffffff"></div>
             <div class="palette-tool fill" data-color="#ffcccc" style="background-color: #ffcccc"></div>
             <div class="palette-tool fill" data-color="#ccffcc" style="background-color: #ccffcc"></div>
             <div class="palette-tool fill" data-color="#ccccff" style="background-color: #ccccff"></div>
-            
-            <!-- Новые цвета -->
             <div class="palette-tool fill" data-color="#FFA500" style="background-color: #FFA500"></div>
             <div class="palette-tool fill" data-color="#40E0D0" style="background-color: #40E0D0"></div>
             <div class="palette-tool fill" data-color="#ADFF2F" style="background-color: #ADFF2F"></div>
-            
-            <!-- Инструмент обводки -->
             <div id="palette-border" class="palette-tool" title="Функциональная обводка">🔲</div>
         </div>
     </div>
@@ -55,19 +52,18 @@
     <!-- Календарь -->
     <div id="calendar" class="calendar"></div>
     
-    <!-- Модальное окно дня -->
+    <!-- Модальные окна -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h3>День <span id="modal-day"></span></h3>
-            <input type="number" id="sales-input" placeholder="Сумма продаж">
+            <input type="number" id="sales-input" placeholder="Сумма продаж" inputmode="numeric">
             <textarea id="comment-input" placeholder="Комментарий"></textarea>
             <div class="color-picker">
                 <div class="color-option" style="background-color: #ffffff;" data-color="#ffffff"></div>
                 <div class="color-option" style="background-color: #ffcccc;" data-color="#ffcccc"></div>
                 <div class="color-option" style="background-color: #ccffcc;" data-color="#ccffcc"></div>
                 <div class="color-option" style="background-color: #ccccff;" data-color="#ccccff"></div>
-                <!-- Новые цвета -->
                 <div class="color-option" style="background-color: #FFA500;" data-color="#FFA500"></div>
                 <div class="color-option" style="background-color: #40E0D0;" data-color="#40E0D0"></div>
                 <div class="color-option" style="background-color: #ADFF2F;" data-color="#ADFF2F"></div>
@@ -76,11 +72,10 @@
         </div>
     </div>
     
-    <!-- Модальное окно расчетов -->
     <div id="summary-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h3>Расчеты за <span id="summary-month-year">Октябрь 2023</span></h3>
+            <h3>Расчеты за <span id="summary-month-year">Июль 2025</span></h3>
             <div class="summary-results">
                 <p>Рабочих дней: <span id="modal-work-days">0</span></p>
                 <p>Сумма продаж: <span id="modal-total-sales">0</span> руб</p>
@@ -91,68 +86,51 @@
         </div>
     </div>
     
-    <!-- Модальное окно выбора периода -->
     <div id="period-modal" class="modal">
         <div class="modal-content period-selector">
             <span class="close">&times;</span>
             <h3>Выберите период</h3>
-            
             <div class="period-step" id="year-step">
                 <h4>Выберите год</h4>
                 <div class="period-options" id="year-options"></div>
             </div>
-            
             <div class="period-step" id="month-step" style="display:none">
                 <h4>Выберите месяц</h4>
                 <div class="period-options" id="month-options"></div>
             </div>
-            
             <button id="period-back" style="display:none">← Назад</button>
         </div>
     </div>
 
     <script src="script.js"></script>
     <script>
-        // Скрытие индикатора загрузки
         window.addEventListener('load', () => {
             document.getElementById('app-loading').style.display = 'none';
             
             // Регистрация Service Worker
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker зарегистрирован', reg))
-                    .catch(err => console.error('Ошибка регистрации Service Worker', err));
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.error('SW registration error:', err));
             }
-        });
-        
-        // Добавление события установки PWA
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            const installButton = document.createElement('button');
-            installButton.textContent = 'Установить приложение';
-            installButton.style.position = 'fixed';
-            installButton.style.bottom = '20px';
-            installButton.style.left = '50%';
-            installButton.style.transform = 'translateX(-50%)';
-            installButton.style.zIndex = '10000';
-            installButton.style.padding = '10px 20px';
-            installButton.style.backgroundColor = '#4e73df';
-            installButton.style.color = 'white';
-            installButton.style.border = 'none';
-            installButton.style.borderRadius = '5px';
-            installButton.style.cursor = 'pointer';
-            installButton.style.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
             
-            installButton.addEventListener('click', () => {
-                e.prompt();
-                installButton.style.display = 'none';
-            });
+            // Обработчик изменения ориентации
+            const updateOnResize = () => {
+                generateCalendar();
+                document.querySelectorAll('.modal').forEach(m => {
+                    if (m.style.display === 'block') {
+                        m.style.display = 'none';
+                    }
+                });
+            };
             
-            document.body.appendChild(installButton);
+            window.addEventListener('resize', updateOnResize);
+            window.addEventListener('orientationchange', updateOnResize);
             
-            setTimeout(() => {
-                installButton.style.display = 'none';
-            }, 10000);
+            // Отключение масштабирования
+            document.addEventListener('touchmove', function(e) {
+                if (e.scale !== 1) e.preventDefault();
+            }, { passive: false });
         });
     </script>
 </body>
