@@ -1,175 +1,397 @@
 /* Основные стили */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
   background-color: #f8f9fa;
+  color: #333;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* ... существующие стили ... */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 10px;
+  background-color: #4e73df;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
 
-/* Новые цвета заливки */
+.month-selector {
+  flex-grow: 1;
+  text-align: center;
+}
+
+#current-month-year {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  padding: 15px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.day-header {
+  text-align: center;
+  font-weight: bold;
+  padding: 10px 0;
+  color: #4e73df;
+  font-size: 0.9rem;
+}
+
+.day {
+  position: relative;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  aspect-ratio: 1/1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #eaeaea;
+}
+
+.day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.day.empty {
+  background-color: transparent;
+  box-shadow: none;
+  cursor: default;
+}
+
+.day.empty:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.day-number {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.day-sales {
+  font-size: 0.75rem;
+  color: #28a745;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.today {
+  border: 2px solid #4e73df;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #6c757d;
+  line-height: 1;
+}
+
+h3 {
+  margin-top: 0;
+  color: #4e73df;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.color-picker {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
+
+.color-option {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.2s;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.color-option.selected {
+  border-color: #4e73df;
+  transform: scale(1.1);
+}
+
+button {
+  background-color: #4e73df;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  width: 100%;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #2e59d9;
+}
+
+.summary-results p {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  margin: 0;
+}
+
+.summary-results span {
+  font-weight: bold;
+  color: #4e73df;
+}
+
+.period-selector {
+  text-align: center;
+}
+
+.period-step {
+  margin-bottom: 20px;
+}
+
+.period-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.period-option {
+  padding: 12px;
+  background-color: #4e73df;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.period-option:hover {
+  background-color: #2e59d9;
+}
+
+#period-back {
+  width: auto;
+  margin: 20px auto 0;
+  display: block;
+}
+
+/* Новые стили согласно ТЗ */
+
+/* 1. Расширение цветовой палитры */
 .fill-orange { background-color: #FFA500 !important; }
 .fill-aqua { background-color: #40E0D0 !important; }
 .fill-lime { background-color: #ADFF2F !important; }
 
-/* Функциональная обводка */
+/* 2. Стиль функциональной обводки */
 .functional-border {
   border: 3px solid #0000FF !important;
   box-sizing: border-box;
 }
 
-/* Панель палитры */
+/* 3. Стили для панели палитры */
 .palette-panel {
   display: none;
-  position: absolute;
-  top: 60px;
-  right: 10px;
+  position: fixed;
+  top: 70px;
+  right: 15px;
   background: white;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-  z-index: 100;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  z-index: 500;
+  width: 180px;
 }
 
 .palette-tools {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  width: 150px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
 }
 
 .palette-tool {
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 1px solid #ddd;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+  font-size: 1.2rem;
+  background: #f8f9fa;
+}
+
+.palette-tool.fill {
+  font-size: 0;
+}
+
+.palette-tool:hover {
+  transform: scale(1.1);
 }
 
 .palette-tool.active {
   border-color: #4e73df;
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* Подсветка активной кнопки палитры */
+/* 4. Стили для кнопки палитры */
+#palette-btn {
+  width: auto;
+  padding: 10px 15px;
+  margin: 0 5px;
+  font-size: 1.2rem;
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+
+#palette-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+
 .palette-btn.active {
-  background: #e0e0e0;
-  border-radius: 5px;
+  background: #e0e0e0 !important;
+  color: #333;
+  border-radius: 8px;
 }
 
-/* Адаптация календаря для Android */
-@media (max-width: 768px) {
-    .calendar {
-        gap: 4px;
-        padding: 8px;
-    }
-    
-    .day {
-        min-height: 60px;
-        padding: 4px;
-        aspect-ratio: unset;
-    }
-    
-    .day-number {
-        font-size: 0.9rem;
-        margin-bottom: 2px;
-    }
-    
-    .day-sales {
-        font-size: 0.65rem;
-        line-height: 1.2;
-    }
-    
-    .day-header {
-        font-size: 0.8rem;
-        padding: 8px 0;
-    }
-    
-    .header {
-        padding: 10px 5px;
-        flex-wrap: wrap;
-    }
-    
-    #current-month-year {
-        font-size: 1rem;
-        margin: 5px 0;
-        order: 1;
-        flex: 0 0 100%;
-    }
-    
-    #prev-month, #next-month {
-        order: 2;
-        padding: 6px 12px;
-    }
-    
-    #palette-btn, #summary-btn {
-        order: 3;
-        margin-top: 5px;
-        padding: 6px 10px;
-        font-size: 0.9rem;
-    }
-    
-    /* Оптимизация для таблицы */
-    .summary-results p {
-        font-size: 0.9rem;
-        padding: 5px 0;
-    }
-    
-    .period-option {
-        padding: 8px;
-        font-size: 0.9rem;
-    }
-    
-    .modal-content {
-        padding: 15px;
-    }
-}
-
+/* Адаптивные стили */
 @media (max-width: 480px) {
-    .day {
-        min-height: 50px;
-    }
-    
-    .day-number {
-        font-size: 0.8rem;
-    }
-    
-    .day-sales {
-        font-size: 0.6rem;
-    }
-    
-    /* Сокращение "руб" до "р" на маленьких экранах */
-    .day-sales::after {
-        content: "р";
-    }
-    
-    .day-sales {
-        font-size: 0; /* Скрываем основной текст */
-    }
-    
-    .day-sales::before {
-        content: attr(data-sales);
-        font-size: 0.6rem;
-        display: block;
-        line-height: 1.2;
-    }
-    
-    .header button {
-        font-size: 0.8rem;
-    }
-    
-    .palette-panel {
-        top: 50px;
-        right: 5px;
-        padding: 8px;
-        width: 140px;
-    }
-    
-    .palette-tool {
-        width: 25px;
-        height: 25px;
-    }
+  .header {
+    padding: 12px 8px;
+  }
+  
+  #current-month-year {
+    font-size: 1rem;
+  }
+  
+  .calendar {
+    gap: 5px;
+    padding: 10px;
+  }
+  
+  .day {
+    padding: 5px;
+  }
+  
+  .day-number {
+    font-size: 0.9rem;
+  }
+  
+  .day-sales {
+    font-size: 0.65rem;
+  }
+  
+  .palette-panel {
+    top: 60px;
+    right: 10px;
+    padding: 12px;
+    width: 160px;
+  }
+  
+  .palette-tools {
+    gap: 8px;
+  }
+  
+  .palette-tool {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.palette-panel {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Индикатор загрузки */
+#app-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #4e73df;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  z-index: 2000;
 }
