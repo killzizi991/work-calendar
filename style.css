@@ -16,8 +16,9 @@ body {
   top: 0;
   z-index: 100;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  width: 100%;
+  width: 100vw; /* ИЗМЕНЕНО: 100% → 100vw */
   padding: 0;
+  overflow: hidden; /* ДОБАВЛЕНО */
 }
 
 .header-container {
@@ -75,10 +76,12 @@ body {
   flex-direction: column;
   justify-content: space-between;
   padding: 8px;
-  box-sizing: border-box;
+  box-sizing: border-box; /* ДОБАВЛЕНО */
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid #eaeaea;
+  min-width: 0; /* ДОБАВЛЕНО */
+  overflow: hidden; /* ДОБАВЛЕНО */
 }
 
 .day:hover {
@@ -103,13 +106,15 @@ body {
 }
 
 .day-sales {
-  font-size: 0.75rem;
+  font-size: clamp(0.6rem, 2.5vw, 0.75rem); /* ИЗМЕНЕНО */
   color: #28a745;
   font-weight: bold;
   text-align: center;
   margin-top: 4px;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; /* ДОБАВЛЕНО */
+  white-space: nowrap; /* ДОБАВЛЕНО */
+  max-width: 100%; /* ДОБАВЛЕНО */
 }
 
 .today {
@@ -271,8 +276,9 @@ button:hover {
 
 /* 2. Стиль функциональной обводки */
 .functional-border {
-  border: 3px solid #0000FF !important;
-  box-sizing: border-box;
+  outline: 3px solid #0000FF !important; /* ИЗМЕНЕНО: border → outline */
+  outline-offset: -3px; /* ДОБАВЛЕНО */
+  box-sizing: border-box !important; /* ДОБАВЛЕНО */
 }
 
 /* 3. Стили для панели палитры */
@@ -346,11 +352,11 @@ button:hover {
 /* Адаптивные стили */
 @media (max-width: 480px) {
   .header-container {
-    padding: 12px 8px;
+    padding: 10px 5px; /* ИЗМЕНЕНО */
   }
   
   #current-month-year {
-    font-size: 1rem;
+    font-size: clamp(0.9rem, 4vw, 1rem); /* ИЗМЕНЕНО */
   }
   
   .calendar {
@@ -367,7 +373,7 @@ button:hover {
   }
   
   .day-sales {
-    font-size: 0.65rem;
+    font-size: clamp(0.5rem, 2.2vw, 0.65rem); /* ИЗМЕНЕНО */
   }
   
   .palette-panel {
@@ -420,44 +426,4 @@ button:hover {
   justify-content: center;
   font-size: 1.5rem;
   z-index: 2000;
-}
-
-/* ===== FIXES FOR FUNCTIONAL MARKERS ===== */
-.header {
-  width: 100vw;
-  overflow: hidden;
-}
-
-.day {
-  box-sizing: border-box;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.functional-border {
-  outline: 3px solid #0000FF !important;
-  outline-offset: -3px;
-  box-sizing: border-box !important;
-}
-
-.day-sales {
-  font-size: clamp(0.6rem, 2.5vw, 0.75rem);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
-@media (max-width: 480px) {
-  .day-sales {
-    font-size: clamp(0.5rem, 2.2vw, 0.65rem);
-  }
-  
-  .header-container {
-    padding: 10px 5px;
-  }
-  
-  #current-month-year {
-    font-size: clamp(0.9rem, 4vw, 1rem);
-  }
 }
