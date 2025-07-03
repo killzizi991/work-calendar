@@ -56,6 +56,13 @@ function generateCalendar() {
         const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
         const dayData = calendarData[dateKey] || {};
         
+        // Форматирование чисел для отображения
+        const formatSalesNumber = (value) => {
+            if (value >= 100000) return (value/1000).toFixed(0) + 'k';
+            if (value >= 10000) return (value/1000).toFixed(1) + 'k';
+            return value;
+        };
+        
         // Форматирование содержимого
         dayElement.innerHTML = `
             <div class="day-number">${day}</div>
@@ -105,11 +112,6 @@ function generateCalendar() {
     
     // Расчеты
     calculateSummary();
-
-    function formatSalesNumber(value) {
-  if (value >= 100000) return (value/1000).toFixed(0) + 'k';
-  if (value >= 10000) return (value/1000).toFixed(1) + 'k';
-  return value;
 }
 
 // Обработчик клика по дню
