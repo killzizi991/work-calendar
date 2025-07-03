@@ -348,7 +348,10 @@ function openModal(day) {
     const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
     const dayData = calendarData[dateKey] || {};
     
-    document.getElementById('sales-input').value = dayData.sales || '';
+    // Если есть обводка, показываем 30000
+    document.getElementById('sales-input').value = 
+        dayData.functionalBorder ? 30000 : (dayData.sales || '');
+    
     document.getElementById('comment-input').value = dayData.comment || '';
     
     // Сброс выбора цвета
@@ -378,11 +381,21 @@ function saveDayData() {
     const selectedColor = document.querySelector('.color-option.selected')?.dataset.color || '#ffffff';
     const salesValue = parseInt(document.getElementById('sales-input').value) || 0;
     
+    // Проверяем, было ли значение изменено
+    const hadFunctionalBorder = calendarData[dateKey]?.functionalBorder || false;
+    
+    // Снимаем обводку если:
+    // 1. Была обводка и значение изменилось с 30000
+    // 2. Пользователь вручную изменил значение
+    const removeBorder = hadFunctionalBorder && salesValue !== 30000;
+    
     calendarData[dateKey] = {
         ...calendarData[dateKey],
         sales: salesValue,
         comment: document.getElementById('comment-input').value || '',
-        color: selectedColor
+        color: selectedColor,
+        // Снимаем обводку если значение изменилось
+        functionalBorder: hadFunctionalBorder && !removeBorder
     };
     
     // Сохранение в localStorage
@@ -534,4 +547,18 @@ if (!document.querySelector('#notification-styles')) {
         }
     `;
     document.head.appendChild(style);
+}
+
+// Оптимизация для Android: перестраиваем календарь при изменении размера
+window.addEventListener('resize', () => {
+    generateCalendar();
+});
+
+// Инициализация Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Service Worker зарегистрирован', reg))
+            .catch(err => console.error('Ошибка регистрации Service Worker', err));
+    });
 }
