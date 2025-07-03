@@ -1,4 +1,4 @@
-const CACHE_NAME = 'work-calendar-final-v2';
+const CACHE_NAME = 'work-calendar-final-v3'; // Изменили версию кэша
 const urlsToCache = [
   '/',
   '/index.html',
@@ -11,6 +11,7 @@ const urlsToCache = [
 
 // Установка Service Worker и кеширование ресурсов
 self.addEventListener('install', event => {
+  console.log('Установка новой версии Service Worker v3');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
