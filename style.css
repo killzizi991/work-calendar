@@ -421,3 +421,43 @@ button:hover {
   font-size: 1.5rem;
   z-index: 2000;
 }
+
+/* ===== FIXES FOR FUNCTIONAL MARKERS ===== */
+.header {
+  width: 100vw;
+  overflow: hidden;
+}
+
+.day {
+  box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.functional-border {
+  outline: 3px solid #0000FF !important;
+  outline-offset: -3px;
+  box-sizing: border-box !important;
+}
+
+.day-sales {
+  font-size: clamp(0.6rem, 2.5vw, 0.75rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+@media (max-width: 480px) {
+  .day-sales {
+    font-size: clamp(0.5rem, 2.2vw, 0.65rem);
+  }
+  
+  .header-container {
+    padding: 10px 5px;
+  }
+  
+  #current-month-year {
+    font-size: clamp(0.9rem, 4vw, 1rem);
+  }
+}
