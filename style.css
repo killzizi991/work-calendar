@@ -16,9 +16,9 @@ body {
   top: 0;
   z-index: 100;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  width: 100vw; /* ИЗМЕНЕНО: 100% → 100vw */
+  width: 100vw; /* Фикс для ширины шапки */
   padding: 0;
-  overflow: hidden; /* ДОБАВЛЕНО */
+  overflow: hidden; /* Фикс для выпадающих элементов */
 }
 
 .header-container {
@@ -76,12 +76,12 @@ body {
   flex-direction: column;
   justify-content: space-between;
   padding: 8px;
-  box-sizing: border-box; /* ДОБАВЛЕНО */
+  box-sizing: border-box; /* Учитываем границы в размерах */
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid #eaeaea;
-  min-width: 0; /* ДОБАВЛЕНО */
-  overflow: hidden; /* ДОБАВЛЕНО */
+  min-width: 0; /* Разрешаем сжатие контента */
+  overflow: hidden; /* Скрываем выходящий за границы контент */
 }
 
 .day:hover {
@@ -106,42 +106,62 @@ body {
 }
 
 .day-sales {
-  font-size: clamp(0.6rem, 2.5vw, 0.75rem); /* ИЗМЕНЕНО */
+  font-size: clamp(0.6rem, 2.5vw, 0.75rem); /* Адаптивный размер */
   color: #28a745;
   font-weight: bold;
   text-align: center;
   margin-top: 4px;
   overflow: hidden;
-  text-overflow: ellipsis; /* ДОБАВЛЕНО */
-  white-space: nowrap; /* ДОБАВЛЕНО */
-  max-width: 100%; /* ДОБАВЛЕНО */
+  text-overflow: ellipsis; /* Многоточие при переполнении */
+  white-space: nowrap; /* Запрет переноса строк */
+  max-width: 100%; /* Ограничение по ширине */
 }
 
 .today {
   border: 2px solid #4e73df;
 }
 
+/* Фикс для модальных окон на Android */
 .modal {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 1000;
+  right: 0;
+  bottom: 0;
+  display: none; /* По умолчанию скрыто */
   align-items: center;
   justify-content: center;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1000;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Плавный скролл для iOS */
 }
 
 .modal-content {
+  position: relative;
   background-color: white;
   padding: 25px;
   border-radius: 15px;
   width: 90%;
   max-width: 500px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  position: relative;
+  transform: translateZ(0); /* Аппаратное ускорение */
+}
+
+/* Блокировка фона при открытых модальных окнах */
+body.modal-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  touch-action: none; /* Предотвращаем стандартные жесты */
+}
+
+@media (max-height: 600px) {
+  .modal-content {
+    max-height: 80vh;
+    overflow-y: auto;
+  }
 }
 
 .close {
@@ -276,9 +296,9 @@ button:hover {
 
 /* 2. Стиль функциональной обводки */
 .functional-border {
-  outline: 3px solid #0000FF !important; /* ИЗМЕНЕНО: border → outline */
-  outline-offset: -3px; /* ДОБАВЛЕНО */
-  box-sizing: border-box !important; /* ДОБАВЛЕНО */
+  outline: 3px solid #0000FF !important; /* Замена border на outline */
+  outline-offset: -3px; /* Компенсация смещения */
+  box-sizing: border-box !important; /* Фикс размеров */
 }
 
 /* 3. Стили для панели палитры */
@@ -352,11 +372,11 @@ button:hover {
 /* Адаптивные стили */
 @media (max-width: 480px) {
   .header-container {
-    padding: 10px 5px; /* ИЗМЕНЕНО */
+    padding: 10px 5px;
   }
   
   #current-month-year {
-    font-size: clamp(0.9rem, 4vw, 1rem); /* ИЗМЕНЕНО */
+    font-size: clamp(0.9rem, 4vw, 1rem); /* Адаптивный размер */
   }
   
   .calendar {
@@ -373,7 +393,7 @@ button:hover {
   }
   
   .day-sales {
-    font-size: clamp(0.5rem, 2.2vw, 0.65rem); /* ИЗМЕНЕНО */
+    font-size: clamp(0.5rem, 2.2vw, 0.65rem); /* Адаптивный размер */
   }
   
   .palette-panel {
@@ -398,6 +418,17 @@ button:hover {
   
   #palette-btn, #summary-btn {
     padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  
+  /* Оптимизация модальных окон на маленьких экранах */
+  .modal-content {
+    padding: 15px;
+    max-height: 85vh;
+  }
+  
+  input, textarea {
+    padding: 10px;
     font-size: 0.9rem;
   }
 }
@@ -426,4 +457,11 @@ button:hover {
   justify-content: center;
   font-size: 1.5rem;
   z-index: 2000;
+}
+
+/* Фикс для Android Chrome */
+@supports (-webkit-touch-callout: none) {
+  .modal {
+    -webkit-overflow-scrolling: auto !important;
+  }
 }
