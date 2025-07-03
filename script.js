@@ -384,16 +384,11 @@ function openModal(day) {
     modal.style.display = 'block';
     document.body.classList.add('modal-open');
     
-    // Фокусировка с задержкой для Android
+    // Отложенная фокусировка для Android
     setTimeout(() => {
         const input = document.getElementById('sales-input');
         input.focus();
-        
-        // Дополнительная проверка для Android
-        if (document.activeElement !== input) {
-            input.focus({preventScroll: true});
-        }
-    }, 300);
+    }, 100);
 }
 
 // Закрытие модального окна
@@ -577,18 +572,6 @@ if (!document.querySelector('#notification-styles')) {
     `;
     document.head.appendChild(style);
 }
-
-// Оптимизация для Android: перестраиваем календарь при изменении ориентации
-let resizeTimer;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-        // Перестраиваем только при изменении ориентации
-        if (Math.abs(window.orientation) === 90) {
-            generateCalendar();
-        }
-    }, 200);
-});
 
 // Инициализация Service Worker
 if ('serviceWorker' in navigator) {
