@@ -2,7 +2,9 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, 
+          maximum-scale=1.0, user-scalable=no, 
+          viewport-fit=cover">
     <title>Календарь продаж</title>
     <meta name="theme-color" content="#4e73df">
     <link rel="manifest" href="manifest.json">
@@ -104,6 +106,18 @@
 
     <script src="script.js"></script>
     <script>
+        // Принудительное обновление кэша при новой версии
+        const SW_VERSION = 'v3'; // Должно совпадать с версией в sw.js
+        if (localStorage.getItem('sw_version') !== SW_VERSION) {
+          caches.keys().then(cacheNames => {
+            cacheNames.forEach(cacheName => {
+              caches.delete(cacheName);
+            });
+          });
+          localStorage.setItem('sw_version', SW_VERSION);
+          location.reload(); // Перезагрузка для применения изменений
+        }
+
         window.addEventListener('load', () => {
             document.getElementById('app-loading').style.display = 'none';
             
@@ -113,19 +127,6 @@
                     .then(reg => console.log('SW registered'))
                     .catch(err => console.error('SW registration error:', err));
             }
-            
-            // Обработчик изменения ориентации
-            const updateOnResize = () => {
-                generateCalendar();
-                document.querySelectorAll('.modal').forEach(m => {
-                    if (m.style.display === 'block') {
-                        m.style.display = 'none';
-                    }
-                });
-            };
-            
-            window.addEventListener('resize', updateOnResize);
-            window.addEventListener('orientationchange', updateOnResize);
         });
     </script>
 </body>
