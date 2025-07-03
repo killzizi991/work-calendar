@@ -374,7 +374,9 @@ function openModal(day) {
     }
     
     modal.style.display = 'block';
-    document.getElementById('sales-input').focus();
+    setTimeout(() => {
+        document.getElementById('sales-input').focus();
+    }, 300);
 }
 
 // Закрытие модального окна
@@ -432,9 +434,9 @@ function calculateSummary() {
     
     // Измененные расчеты
     const totalEarnedBeforeTax = (totalSales * 0.07) + (workDays * 1000);
-    const totalEarned = totalEarnedBeforeTax * 0.87; // Учет 13% налога
-    const salary = totalEarned - 10875; // Зарплата после аванса
-    const balance = salary - 10875; // Остаток после вычета оф. части
+    const totalEarned = totalEarnedBeforeTax;
+    const balance = totalEarned - 25000; // Остаток = всего заработано - 25000
+    const salary = balance + 10875;     // Зарплата = остаток + 10875
     
     return {
         workDays,
