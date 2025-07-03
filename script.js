@@ -204,13 +204,17 @@ function setupEventListeners() {
     
     // Закрытие по клику вне окна
     window.addEventListener('click', (event) => {
-        if (event.target === document.getElementById('modal')) {
+        const modal = document.getElementById('modal');
+        const summaryModal = document.getElementById('summary-modal');
+        const periodModal = document.getElementById('period-modal');
+        
+        if (event.target === modal) {
             closeModal();
         }
-        if (event.target === document.getElementById('summary-modal')) {
+        if (event.target === summaryModal) {
             closeSummaryModal();
         }
-        if (event.target === document.getElementById('period-modal')) {
+        if (event.target === periodModal) {
             closePeriodModal();
         }
     });
@@ -234,6 +238,7 @@ function setupEventListeners() {
         btn.addEventListener('click', function() {
             const modal = this.closest('.modal');
             modal.style.display = 'none';
+            document.body.classList.remove('modal-open');
         });
     });
     
@@ -316,6 +321,7 @@ function openPeriodModal() {
     document.getElementById('year-step').style.display = 'block';
     document.getElementById('month-step').style.display = 'none';
     document.getElementById('period-back').style.display = 'none';
+    document.body.classList.add('modal-open');
 }
 
 // Выбор года
@@ -343,6 +349,7 @@ function goBackToYears() {
 // Закрытие модального окна периода
 function closePeriodModal() {
     document.getElementById('period-modal').style.display = 'none';
+    document.body.classList.remove('modal-open');
 }
 
 // Открытие модального окна дня
@@ -373,15 +380,26 @@ function openModal(day) {
         if (colorOption) colorOption.classList.add('selected');
     }
     
+    // Открываем модальное окно с блокировкой фоновых элементов
     modal.style.display = 'block';
+    document.body.classList.add('modal-open');
+    
+    // Фокусировка с задержкой для Android
     setTimeout(() => {
-        document.getElementById('sales-input').focus();
+        const input = document.getElementById('sales-input');
+        input.focus();
+        
+        // Дополнительная проверка для Android
+        if (document.activeElement !== input) {
+            input.focus({preventScroll: true});
+        }
     }, 300);
 }
 
 // Закрытие модального окна
 function closeModal() {
     document.getElementById('modal').style.display = 'none';
+    document.body.classList.remove('modal-open');
 }
 
 // Сохранение данных дня
@@ -432,9 +450,9 @@ function calculateSummary() {
         }
     }
     
-    // Измененные расчеты
+    // Новые расчеты
     const totalEarnedBeforeTax = (totalSales * 0.07) + (workDays * 1000);
-    const totalEarned = totalEarnedBeforeTax;
+    const totalEarned = totalEarnedBeforeTax * 0.87; // Учет 13% налога
     const balance = totalEarned - 25000; // Остаток = всего заработано - 25000
     const salary = balance + 10875;     // Зарплата = остаток + 10875
     
@@ -462,11 +480,13 @@ function showSummaryModal() {
         document.getElementById('current-month-year').textContent;
     
     modal.style.display = 'block';
+    document.body.classList.add('modal-open');
 }
 
 // Закрыть модальное окно расчетов
 function closeSummaryModal() {
     document.getElementById('summary-modal').style.display = 'none';
+    document.body.classList.remove('modal-open');
 }
 
 // Показать уведомление
@@ -558,9 +578,16 @@ if (!document.querySelector('#notification-styles')) {
     document.head.appendChild(style);
 }
 
-// Оптимизация для Android: перестраиваем календарь при изменении размера
+// Оптимизация для Android: перестраиваем календарь при изменении ориентации
+let resizeTimer;
 window.addEventListener('resize', () => {
-    generateCalendar();
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        // Перестраиваем только при изменении ориентации
+        if (Math.abs(window.orientation) === 90) {
+            generateCalendar();
+        }
+    }, 200);
 });
 
 // Инициализация Service Worker
