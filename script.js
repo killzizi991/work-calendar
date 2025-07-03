@@ -59,7 +59,7 @@ function generateCalendar() {
         // Форматирование содержимого
         dayElement.innerHTML = `
             <div class="day-number">${day}</div>
-            ${dayData.sales ? `<div class="day-sales">${dayData.sales} руб</div>` : ''}
+            ${dayData.sales ? `<div class="day-sales">${formatSalesNumber(dayData.sales)} руб</div>` : ''}
         `;
         
         // Цвет фона
@@ -105,6 +105,11 @@ function generateCalendar() {
     
     // Расчеты
     calculateSummary();
+
+    function formatSalesNumber(value) {
+  if (value >= 100000) return (value/1000).toFixed(0) + 'k';
+  if (value >= 10000) return (value/1000).toFixed(1) + 'k';
+  return value;
 }
 
 // Обработчик клика по дню
