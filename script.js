@@ -3,7 +3,9 @@ let currentDate = new Date();
 let currentYear = currentDate.getFullYear();
 let currentMonth = currentDate.getMonth();
 let selectedDay = null;
-let massColoringMode = null; // 'fill', 'border', или null
+let massColoringMode = null;
+let isKeyboardOpen = false; // Флаг для отслеживания состояния клавиатуры
+let lastWindowHeight = window.innerHeight; // Запоминаем начальную высоту окна
 
 // Хранение данных
 let calendarData = JSON.parse(localStorage.getItem('calendarData')) || {};
@@ -19,6 +21,18 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('firstRun', 'true');
         showWelcomeMessage();
     }
+    
+    // Отслеживание изменения размера для определения клавиатуры
+    window.addEventListener('resize', function() {
+        const newHeight = window.innerHeight;
+        const heightDifference = Math.abs(lastWindowHeight - newHeight);
+        
+        // Если изменение высоты значительное, считаем что клавиатура открыта/закрыта
+        if (heightDifference > 200) {
+            isKeyboardOpen = (newHeight < lastWindowHeight);
+            lastWindowHeight = newHeight;
+        }
+    });
 });
 
 // Генерация календаря
@@ -208,6 +222,9 @@ function setupEventListeners() {
         const summaryModal = document.getElementById('summary-modal');
         const periodModal = document.getElementById('period-modal');
         
+        // Если клавиатура открыта, игнорируем клик вне окна
+        if (isKeyboardOpen) return;
+        
         if (event.target === modal) {
             closeModal();
         }
@@ -388,6 +405,9 @@ function openModal(day) {
     setTimeout(() => {
         const input = document.getElementById('sales-input');
         input.focus();
+        
+        // Прокрутка к полю ввода
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 100);
 }
 
