@@ -8,17 +8,33 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Полноэкранная шапка */
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 10px;
   background-color: #4e73df;
   color: white;
   position: sticky;
   top: 0;
   z-index: 100;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: 100%;
+  padding: 0;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 10px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.tools-container {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  background-color: #3a63d1;
+  border-top: 1px solid rgba(255,255,255,0.1);
 }
 
 .month-selector {
@@ -29,6 +45,7 @@ body {
 #current-month-year {
   margin: 0;
   font-size: 1.2rem;
+  text-align: center;
 }
 
 .calendar {
@@ -328,7 +345,7 @@ button:hover {
 
 /* Адаптивные стили */
 @media (max-width: 480px) {
-  .header {
+  .header-container {
     padding: 12px 8px;
   }
   
@@ -367,6 +384,15 @@ button:hover {
   .palette-tool {
     width: 30px;
     height: 30px;
+  }
+  
+  .tools-container {
+    padding: 8px;
+  }
+  
+  #palette-btn, #summary-btn {
+    padding: 8px 12px;
+    font-size: 0.9rem;
   }
 }
 
