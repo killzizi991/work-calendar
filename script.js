@@ -56,26 +56,11 @@ function generateCalendar() {
         const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
         const dayData = calendarData[dateKey] || {};
         
-        // Контейнер содержимого
-        const dayContent = document.createElement('div');
-        dayContent.className = 'day-content';
-        
-        // Номер дня
-        const dayNumber = document.createElement('div');
-        dayNumber.className = 'day-number';
-        dayNumber.textContent = day;
-        dayContent.appendChild(dayNumber);
-        
-        // Сумма продаж (оптимизирована для Android)
-        if (dayData.sales) {
-            const salesEl = document.createElement('div');
-            salesEl.className = 'day-sales';
-            salesEl.setAttribute('data-sales', dayData.sales);
-            salesEl.textContent = dayData.sales;
-            dayContent.appendChild(salesEl);
-        }
-        
-        dayElement.appendChild(dayContent);
+        // Форматирование содержимого
+        dayElement.innerHTML = `
+            <div class="day-number">${day}</div>
+            ${dayData.sales ? `<div class="day-sales">${dayData.sales} руб</div>` : ''}
+        `;
         
         // Цвет фона
         if (dayData.color) {
@@ -92,6 +77,10 @@ function generateCalendar() {
             const commentIcon = document.createElement('div');
             commentIcon.className = 'day-comment';
             commentIcon.textContent = '💬';
+            commentIcon.style.position = 'absolute';
+            commentIcon.style.top = '5px';
+            commentIcon.style.right = '5px';
+            commentIcon.style.fontSize = '0.8em';
             dayElement.appendChild(commentIcon);
         }
         
@@ -545,18 +534,4 @@ if (!document.querySelector('#notification-styles')) {
         }
     `;
     document.head.appendChild(style);
-}
-
-// Оптимизация для Android: перестраиваем календарь при изменении размера
-window.addEventListener('resize', () => {
-    generateCalendar();
-});
-
-// Инициализация Service Worker
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-            .then(reg => console.log('Service Worker зарегистрирован', reg))
-            .catch(err => console.error('Ошибка регистрации Service Worker', err));
-    });
 }
