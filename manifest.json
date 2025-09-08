@@ -1,12 +1,12 @@
 {
   "name": "Календарь продаж",
-  "short_name": "SalesCalendar",
-  "description": "Простое приложение для учета продаж и расчетов",
+  "short_name": "Календарь",
+  "description": "Приложение для учета продаж и расчетов заработка",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f5f7f9",
+  "background_color": "#4a6cf7",
   "theme_color": "#4a6cf7",
-  "orientation": "portrait-primary",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icon-192.png",
