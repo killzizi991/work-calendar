@@ -384,6 +384,33 @@ button:hover {
   border-radius: 8px;
 }
 
+/* Стили для настроек */
+.setting-group {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+.setting-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.setting-group input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.setting-group input[type="checkbox"] {
+  margin-right: 8px;
+  width: auto;
+  transform: scale(1.2);
+}
+
 /* Адаптивные стили */
 @media (max-width: 480px) {
   .header-container {
