@@ -10,10 +10,10 @@
 /* Базовые стили */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: #ffd5b8;
+    background: #ffffff;
     min-height: 100vh;
     padding: 20px;
-    color: #333;
+    color: #2c3e50;
     overflow-x: hidden;
 }
 
@@ -32,23 +32,22 @@ body.modal-open {
     left: 0;
     width: 100%;
     height: 100%;
-    background: #ffd5b8;
+    background: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #333;
+    color: #2c3e50;
     font-size: 1.2rem;
     z-index: 9999;
 }
 
 /* Заголовок */
 .header {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
+    background: #ffffff;
+    border-radius: 8px;
     padding: 15px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -68,7 +67,7 @@ body.modal-open {
     border: none;
     cursor: pointer;
     font-size: 0.9rem;
-    font-weight: bold;
+    font-weight: 600;
     color: #2c3e50;
 }
 
@@ -80,21 +79,20 @@ body.modal-open {
 
 /* Кнопки */
 button {
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    background: #4e73df;
     color: white;
     border: none;
     padding: 12px 20px;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 500;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
 }
 
 button:hover {
+    background: #3a56c4;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
 }
 
 button:active {
@@ -102,7 +100,7 @@ button:active {
 }
 
 .palette-btn.active {
-    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    background: #e74c3c;
 }
 
 /* Календарь */
@@ -115,17 +113,16 @@ button:active {
 
 .day-header {
     text-align: center;
-    font-weight: bold;
+    font-weight: 600;
     padding: 10px;
-    color: #333;
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 8px;
-    backdrop-filter: blur(10px);
+    color: #5a6c7d;
+    background: #f8f9fa;
+    border-radius: 6px;
 }
 
 .day {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 10px;
+    background: #ffffff;
+    border-radius: 8px;
     padding: 10px;
     text-align: center;
     cursor: pointer;
@@ -135,12 +132,12 @@ button:active {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
 }
 
 .day:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    border-color: #4e73df;
+    box-shadow: 0 2px 8px rgba(78, 115, 223, 0.1);
 }
 
 .day.today {
@@ -154,24 +151,25 @@ button:active {
     right: 5px;
     width: 8px;
     height: 8px;
-    background-color: #100cf7;
+    background-color: #4e73df;
     border-radius: 50%;
 }
 
 .day.empty {
-    background: rgba(255, 255, 255, 0.4);
+    background: #f8f9fa;
     cursor: default;
 }
 
 .day-number {
-    font-weight: bold;
+    font-weight: 600;
     font-size: 1rem;
     margin-bottom: 4px;
+    color: #2c3e50;
 }
 
 .day-sales {
     font-size: 0.8rem;
-    color: #666;
+    color: #5a6c7d;
     word-break: break-word;
 }
 
@@ -184,7 +182,7 @@ button:active {
 
 /* Функциональная обводка */
 .day.functional-border {
-    border: 3px solid #e74c3c;
+    border: 2px solid #e74c3c;
     animation: pulse-border 2s infinite;
 }
 
@@ -197,12 +195,11 @@ button:active {
 /* Панель инструментов */
 .palette-panel {
     display: none;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
+    background: #ffffff;
+    border-radius: 8px;
     padding: 12px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     flex-wrap: wrap;
     gap: 8px;
     justify-content: center;
@@ -218,23 +215,23 @@ button:active {
 .palette-tool {
     width: 36px;
     height: 36px;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.1rem;
-    border: 2px solid transparent;
+    border: 1px solid #e9ecef;
 }
 
 .palette-tool:hover {
-    transform: scale(1.05);
+    border-color: #4e73df;
 }
 
 .palette-tool.active {
-    border: 2px solid #3498db;
-    box-shadow: 0 0 10px rgba(52, 152, 219, 0.4);
+    border: 2px solid #4e73df;
+    box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.2);
 }
 
 /* Модальные окна */
@@ -260,23 +257,23 @@ button:active {
     background: white;
     margin: 5% auto;
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 8px;
     width: 90%;
     max-width: 400px;
     max-height: 80vh;
     overflow-y: auto;
     position: relative;
     animation: slideIn 0.3s ease;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 @keyframes slideIn {
-    from { transform: translateY(-40px); opacity: 0; }
+    from { transform: translateY(-20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
 
 .close {
-    color: #aaa;
+    color: #5a6c7d;
     float: right;
     font-size: 24px;
     font-weight: bold;
@@ -287,7 +284,7 @@ button:active {
 }
 
 .close:hover {
-    color: #000;
+    color: #2c3e50;
 }
 
 /* Поля ввода */
@@ -295,18 +292,17 @@ input, textarea {
     width: 100%;
     padding: 12px;
     margin: 8px 0;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
     font-size: 1rem;
     transition: border-color 0.2s ease;
-    background: #f8f9fa;
+    background: #ffffff;
 }
 
 input:focus, textarea:focus {
     outline: none;
-    border-color: #3498db;
-    background: white;
-    box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+    border-color: #4e73df;
+    box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.2);
 }
 
 /* Выбор цвета */
@@ -324,7 +320,7 @@ input:focus, textarea:focus {
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 2px solid transparent;
+    border: 1px solid #e9ecef;
 }
 
 .color-option:hover {
@@ -332,22 +328,22 @@ input:focus, textarea:focus {
 }
 
 .color-option.selected {
-    border: 2px solid #2c3e50;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    border: 2px solid #4e73df;
+    box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.2);
 }
 
 /* Выбор периода */
 .period-selector {
     text-align: center;
-    background: #2c3e50;
-    color: white;
-    border-radius: 12px;
+    background: #ffffff;
+    color: #2c3e50;
+    border-radius: 8px;
     padding: 15px;
 }
 
 .period-step h4 {
     margin-bottom: 12px;
-    color: #3498db;
+    color: #4e73df;
 }
 
 .period-options {
@@ -359,18 +355,19 @@ input:focus, textarea:focus {
 
 .period-option {
     padding: 12px;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    border-radius: 8px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: 600;
-    color: white;
+    font-weight: 500;
+    color: #2c3e50;
     transition: all 0.2s ease;
 }
 
 .period-option:hover {
-    background: rgba(52, 152, 219, 0.7);
-    transform: translateY(-1px);
+    background: #4e73df;
+    color: white;
+    border-color: #4e73df;
 }
 
 /* Настройки */
@@ -382,14 +379,14 @@ input:focus, textarea:focus {
     display: block;
     margin-bottom: 5px;
     font-weight: 600;
-    color: #333;
+    color: #2c3e50;
 }
 
 .setting-group input[type="number"] {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
     font-size: 1rem;
 }
 
@@ -402,7 +399,7 @@ input:focus, textarea:focus {
 .summary-results {
     background: #f8f9fa;
     padding: 15px;
-    border-radius: 12px;
+    border-radius: 8px;
     margin: 12px 0;
 }
 
@@ -414,8 +411,8 @@ input:focus, textarea:focus {
 }
 
 .summary-results span {
-    font-weight: bold;
-    color: #3498db;
+    font-weight: 600;
+    color: #4e73df;
 }
 
 /* Адаптивность */
@@ -528,21 +525,44 @@ input:focus, textarea:focus {
 @media (prefers-color-scheme: dark) {
     body {
         background: #1a1a1a;
+        color: #e9ecef;
+    }
+    
+    .header {
+        background: #2d2d2d;
     }
     
     .modal-content {
-        background: #2d3436;
-        color: white;
+        background: #2d2d2d;
+        color: #e9ecef;
     }
     
     input, textarea {
-        background: #3b4144;
-        border-color: #3498db;
-        color: white;
+        background: #3b3b3b;
+        border-color: #5a6c7d;
+        color: #e9ecef;
     }
     
     .summary-results {
-        background: #3b4144;
+        background: #3b3b3b;
+    }
+    
+    .day {
+        background: #2d2d2d;
+        border-color: #3b3b3b;
+    }
+    
+    .day-header {
+        background: #3b3b3b;
+        color: #e9ecef;
+    }
+    
+    .day.empty {
+        background: #3b3b3b;
+    }
+    
+    .day-number {
+        color: #e9ecef;
     }
 }
 
@@ -585,7 +605,7 @@ input:focus, textarea:focus {
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-    outline: 2px solid #3498db;
+    outline: 2px solid #4e73df;
     outline-offset: 2px;
 }
 
