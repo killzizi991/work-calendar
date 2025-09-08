@@ -183,14 +183,8 @@ function toggleFunctionalBorder(day) {
         dayData.sales = 0;
         showNotification('Обводка снята');
     } else {
-        // Проверка перед установкой
-        if (dayData.sales && dayData.sales !== 0) {
-            showNotification('Сначала обнулите значение');
-            return;
-        }
         // Установка обводки
         dayData.functionalBorder = true;
-        dayData.sales = 30000;
         showNotification('Обводка установлена');
     }
     
@@ -199,18 +193,112 @@ function toggleFunctionalBorder(day) {
     generateCalendar();
 }
 
-// Применение цвета в режиме массового окрашивания
+// Применение заливки
 function applyFillColor(day) {
+    const color = document.querySelector('.palette-tool.fill.active')?.dataset.color || '#ffffff';
     const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
     let dayData = calendarData[dateKey] || {};
-    const activeColor = document.querySelector('.palette-tool.fill.active');
     
-    if (activeColor) {
-        dayData.color = activeColor.dataset.color;
-        calendarData[dateKey] = dayData;
-        saveToStorage('calendarData', calendarData);
-        generateCalendar();
+    dayData.color = color;
+    calendarData[dateKey] = dayData;
+    saveToStorage('calendarData', calendarData);
+    generateCalendar();
+}
+
+// Открытие модального окна
+function openModal(day) {
+    selectedDay = day;
+    const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
+    const dayData = calendarData[dateKey] || {};
+    
+    document.getElementById('modal-day').textContent = day;
+    document.getElementById('sales-input').value = dayData.sales || '';
+    document.getElementById('comment-input').value = dayData.comment || '';
+    
+    // Выбор цвета
+    document.querySelectorAll('.color-option').forEach(option => {
+        option.classList.remove('selected');
+        if (option.dataset.color === dayData.color) {
+            option.classList.add('selected');
+        }
+    });
+    
+    document.getElementById('modal').style.display = 'block';
+    document.body.classList.add('modal-open');
+}
+
+// Сохранение данных дня
+function saveDayData() {
+    const sales = parseInt(document.getElementById('sales-input').value) || 0;
+    const comment = document.getElementById('comment-input').value;
+    const selectedColor = document.querySelector('.color-option.selected')?.dataset.color;
+    
+    const dateKey = `${currentYear}-${currentMonth+1}-${selectedDay}`;
+    calendarData[dateKey] = {
+        sales: sales,
+        comment: comment,
+        color: selectedColor
+    };
+    
+    saveToStorage('calendarData', calendarData);
+    closeModal();
+    generateCalendar();
+}
+
+// Закрытие модального окна
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+    document.getElementById('summary-modal').style.display = 'none';
+    document.getElementById('period-modal').style.display = 'none';
+    document.getElementById('settings-modal').style.display = 'none';
+    document.body.classList.remove('modal-open');
+}
+
+// Расчеты
+function calculateSummary() {
+    const monthDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+    let workDays = 0;
+    let totalSales = 0;
+    let totalEarned = 0;
+    
+    for (let day = 1; day <= monthDays; day++) {
+        const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
+        const dayData = calendarData[dateKey] || {};
+        
+        if (dayData.sales > 0) {
+            workDays++;
+            totalSales += dayData.sales;
+            totalEarned += calculateEarnings(dayData.sales);
+        }
     }
+    
+    const salary = calculateSalary(totalEarned, workDays);
+    const balance = salary - appSettings.fixedDeduction;
+    
+    document.getElementById('modal-work-days').textContent = workDays;
+    document.getElementById('modal-total-sales').textContent = totalSales.toLocaleString();
+    document.getElementById('modal-total-earned').textContent = totalEarned.toLocaleString();
+    document.getElementById('modal-salary').textContent = salary.toLocaleString();
+    document.getElementById('modal-balance').textContent = balance.toLocaleString();
+    document.getElementById('summary-month-year').textContent = 
+        `${new Date(currentYear, currentMonth).toLocaleString('ru', { month: 'long' })} ${currentYear}`;
+}
+
+// Расчет заработка за день
+function calculateEarnings(sales) {
+    return sales * (appSettings.salesPercent / 100);
+}
+
+// Расчет зарплаты
+function calculateSalary(totalEarned, workDays) {
+    let salary = totalEarned + (workDays * appSettings.shiftRate);
+    salary += appSettings.extraBonus;
+    
+    if (appSettings.useTax) {
+        salary *= 0.87; // Налог 13%
+    }
+    
+    return Math.round(salary);
 }
 
 // Настройка обработчиков событий
@@ -234,216 +322,123 @@ function setupEventListeners() {
         generateCalendar();
     });
     
-    // Закрытие модального окна
-    document.querySelectorAll('.close').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const modal = this.closest('.modal');
-            modal.style.display = 'none';
-            document.body.classList.remove('modal-open');
+    // Выбор месяца/года
+    document.getElementById('month-year-selector').addEventListener('click', () => {
+        document.getElementById('period-modal').style.display = 'block';
+        document.body.classList.add('modal-open');
+    });
+    
+    // Палитра
+    document.getElementById('palette-btn').addEventListener('click', () => {
+        const palettePanel = document.getElementById('palette-panel');
+        palettePanel.style.display = palettePanel.style.display === 'flex' ? 'none' : 'flex';
+        document.getElementById('palette-btn').classList.toggle('active');
+    });
+    
+    // Инструменты палитры
+    document.querySelectorAll('.palette-tool.fill').forEach(tool => {
+        tool.addEventListener('click', () => {
+            document.querySelectorAll('.palette-tool.fill').forEach(t => t.classList.remove('active'));
+            tool.classList.add('active');
+            massColoringMode = 'fill';
         });
+    });
+    
+    document.getElementById('palette-border').addEventListener('click', () => {
+        massColoringMode = massColoringMode === 'border' ? null : 'border';
+        document.getElementById('palette-border').classList.toggle('active');
+    });
+    
+    // Модальные окна
+    document.querySelectorAll('.close').forEach(closeBtn => {
+        closeBtn.addEventListener('click', closeModal);
+    });
+    
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal')) {
+            closeModal();
+        }
     });
     
     // Сохранение данных
     document.getElementById('save-data').addEventListener('click', saveDayData);
     
-    // Выбор цвета
-    document.querySelectorAll('.color-option').forEach(option => {
-        option.addEventListener('click', function() {
-            document.querySelectorAll('.color-option').forEach(el => 
-                el.classList.remove('selected'));
-            this.classList.add('selected');
-        });
+    // Расчеты
+    document.getElementById('summary-btn').addEventListener('click', () => {
+        document.getElementById('summary-modal').style.display = 'block';
+        document.body.classList.add('modal-open');
     });
     
-    // Закрытие по клику вне окна
-    window.addEventListener('click', (event) => {
-        const modal = document.getElementById('modal');
-        const summaryModal = document.getElementById('summary-modal');
-        const periodModal = document.getElementById('period-modal');
-        const settingsModal = document.getElementById('settings-modal');
-        
-        // Если клавиатура открыта, игнорируем клик вне окна
-        if (isKeyboardOpen) return;
-        
-        if (event.target === modal) {
-            closeModal();
-        }
-        if (event.target === summaryModal) {
-            closeSummaryModal();
-        }
-        if (event.target === periodModal) {
-            closePeriodModal();
-        }
-        if (event.target === settingsModal) {
-            closeSettingsModal();
-        }
+    // Настройки
+    document.getElementById('settings-btn').addEventListener('click', () => {
+        document.getElementById('settings-modal').style.display = 'block';
+        document.body.classList.add('modal-open');
     });
     
-    // Сохранение при закрытии вкладки
-    window.addEventListener('beforeunload', () => {
-        saveToStorage('calendarData', calendarData);
-        saveToStorage('appSettings', appSettings);
-    });
-    
-    // Кнопка расчетов
-    document.getElementById('summary-btn').addEventListener('click', showSummaryModal);
-    
-    // Открытие выбора периода
-    document.getElementById('month-year-selector').addEventListener('click', openPeriodModal);
-    
-    // Кнопка "Назад" в выборе периода
-    document.getElementById('period-back').addEventListener('click', goBackToYears);
-    
-    // Кнопка палитры
-    document.getElementById('palette-btn').addEventListener('click', togglePaletteMode);
-    
-    // Инструменты палитры
-    document.querySelectorAll('.palette-tool.fill').forEach(tool => {
-        tool.addEventListener('click', function() {
-            // Сброс предыдущего выбора
-            document.querySelectorAll('.palette-tool').forEach(t => 
-                t.classList.remove('active'));
-            
-            // Активация выбранного
-            this.classList.add('active');
-            massColoringMode = 'fill';
-        });
-    });
-    
-    // Инструмент обводки
-    document.getElementById('palette-border').addEventListener('click', function() {
-        document.querySelectorAll('.palette-tool').forEach(t => 
-            t.classList.remove('active'));
-        this.classList.add('active');
-        massColoringMode = 'border';
-    });
-    
-    // Кнопка настроек
-    document.getElementById('settings-btn').addEventListener('click', openSettingsModal);
-    
-    // Сохранение настроек
     document.getElementById('save-settings').addEventListener('click', saveSettings);
     
-    // Кнопка экспорта
+    // Экспорт/импорт
     document.getElementById('export-btn').addEventListener('click', exportData);
-    
-    // Кнопка импорта
     document.getElementById('import-btn').addEventListener('click', () => {
         document.getElementById('import-file').click();
     });
     
-    // Обработка выбора файла для импорта
     document.getElementById('import-file').addEventListener('change', importData);
-}
-
-// Загрузка настроек в форму
-function loadSettingsToForm() {
-    document.getElementById('tax-toggle').checked = appSettings.useTax;
-    document.getElementById('sales-percent').value = appSettings.salesPercent;
-    document.getElementById('shift-rate').value = appSettings.shiftRate;
-    document.getElementById('fixed-deduction').value = appSettings.fixedDeduction;
-    document.getElementById('extra-bonus').value = appSettings.extraBonus;
-}
-
-// Сохранение настроек
-function saveSettings() {
-    const salesPercent = parseFloat(document.getElementById('sales-percent').value);
-    const shiftRate = parseInt(document.getElementById('shift-rate').value);
-    const fixedDeduction = parseInt(document.getElementById('fixed-deduction').value);
-    const extraBonus = parseInt(document.getElementById('extra-bonus').value);
     
-    // Валидация
-    if (salesPercent < 0 || salesPercent > 100) {
-        showNotification('Процент продаж должен быть между 0 и 100');
-        return;
-    }
-    if (shiftRate < 0 || fixedDeduction < 0 || extraBonus < 0) {
-        showNotification('Значения не могут быть отрицательными');
-        return;
-    }
+    // Выбор цвета в модальном окне
+    document.querySelectorAll('.color-option').forEach(option => {
+        option.addEventListener('click', () => {
+            document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+            option.classList.add('selected');
+        });
+    });
     
-    appSettings = {
-        useTax: document.getElementById('tax-toggle').checked,
-        salesPercent: salesPercent,
-        shiftRate: shiftRate,
-        fixedDeduction: fixedDeduction,
-        extraBonus: extraBonus
-    };
-    
-    saveToStorage('appSettings', appSettings);
-    closeSettingsModal();
-    generateCalendar(); // Пересчитываем с новыми настройками
-    showNotification('Настройки сохранены');
+    // Обработка клавиш
+    document.addEventListener('keydown', handleKeyPress);
 }
 
-// Открытие модального окна настроек
-function openSettingsModal() {
-    loadSettingsToForm();
-    document.getElementById('settings-modal').style.display = 'block';
-    document.body.classList.add('modal-open');
-}
-
-// Закрытие модального окна настроек
-function closeSettingsModal() {
-    document.getElementById('settings-modal').style.display = 'none';
-    document.body.classList.remove('modal-open');
-}
-
-// Переключение режима палитры
-function togglePaletteMode() {
-    const paletteBtn = document.getElementById('palette-btn');
-    const palettePanel = document.getElementById('palette-panel');
-    
-    if (palettePanel.style.display === 'flex') {
-        // Выход из режима
-        palettePanel.style.display = 'none';
-        paletteBtn.classList.remove('active');
-        massColoringMode = null;
-        document.querySelectorAll('.palette-tool').forEach(t => 
-            t.classList.remove('active'));
-    } else {
-        // Вход в режим
-        palettePanel.style.display = 'flex';
-        paletteBtn.classList.add('active');
+// Обработка нажатий клавиш
+function handleKeyPress(e) {
+    if (e.key === 'Escape') {
+        closeModal();
     }
 }
 
 // Инициализация выбора периода
 function initPeriodSelector() {
-    const yearsContainer = document.getElementById('year-options');
-    const monthsContainer = document.getElementById('month-options');
+    const currentYear = new Date().getFullYear();
+    const yearOptions = document.getElementById('year-options');
     
-    // Генерация годов (2024-2030)
-    for (let year = 2024; year <= 2030; year++) {
-        const yearBtn = document.createElement('button');
-        yearBtn.textContent = year;
-        yearBtn.className = 'period-option';
-        yearBtn.addEventListener('click', () => selectYear(year));
-        yearsContainer.appendChild(yearBtn);
+    // Годы от 2020 до текущего + 5 лет вперед
+    for (let year = 2020; year <= currentYear + 5; year++) {
+        const option = document.createElement('div');
+        option.className = 'period-option';
+        option.textContent = year;
+        option.dataset.year = year;
+        option.addEventListener('click', () => selectYear(year));
+        yearOptions.appendChild(option);
     }
     
-    // Генерация месяцев
-    const months = [
-        'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
-    ];
+    // Месяцы
+    const monthOptions = document.getElementById('month-options');
+    const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+      "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
     
-    months.forEach((month, index) => {
-        const monthBtn = document.createElement('button');
-        monthBtn.textContent = month;
-        monthBtn.className = 'period-option';
-        monthBtn.addEventListener('click', () => selectMonth(index));
-        monthsContainer.appendChild(monthBtn);
+    monthNames.forEach((month, index) => {
+        const option = document.createElement('div');
+        option.className = 'period-option';
+        option.textContent = month;
+        option.dataset.month = index;
+        option.addEventListener('click', () => selectMonth(index));
+        monthOptions.appendChild(option);
     });
-}
-
-// Открытие модального окна выбора периода
-function openPeriodModal() {
-    document.getElementById('period-modal').style.display = 'block';
-    document.getElementById('year-step').style.display = 'block';
-    document.getElementById('month-step').style.display = 'none';
-    document.getElementById('period-back').style.display = 'none';
-    document.body.classList.add('modal-open');
+    
+    // Кнопка назад
+    document.getElementById('period-back').addEventListener('click', () => {
+        document.getElementById('month-step').style.display = 'none';
+        document.getElementById('year-step').style.display = 'block';
+        document.getElementById('period-back').style.display = 'none';
+    });
 }
 
 // Выбор года
@@ -457,213 +452,50 @@ function selectYear(year) {
 // Выбор месяца
 function selectMonth(month) {
     currentMonth = month;
-    generateCalendar();
-    closePeriodModal();
-}
-
-// Кнопка "Назад" в выборе периода
-function goBackToYears() {
-    document.getElementById('year-step').style.display = 'block';
-    document.getElementById('month-step').style.display = 'none';
-    document.getElementById('period-back').style.display = 'none';
-}
-
-// Закрытие модального окна периода
-function closePeriodModal() {
-    document.getElementById('period-modal').style.display = 'none';
-    document.body.classList.remove('modal-open');
-}
-
-// Открытие модального окна дня
-function openModal(day) {
-    selectedDay = day;
-    const modal = document.getElementById('modal');
-    document.getElementById('modal-day').textContent = day;
-    
-    // Загрузка существующих данных
-    const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
-    const dayData = calendarData[dateKey] || {};
-    
-    // Если есть обводка, показываем 30000
-    document.getElementById('sales-input').value = 
-        dayData.functionalBorder ? 30000 : (dayData.sales || '');
-    
-    document.getElementById('comment-input').value = dayData.comment || '';
-    
-    // Сброс выбора цвета
-    document.querySelectorAll('.color-option').forEach(el => 
-        el.classList.remove('selected'));
-    
-    // Выбор сохраненного цвета
-    if (dayData.color) {
-        const colorOption = [...document.querySelectorAll('.color-option')].find(
-            opt => opt.dataset.color === dayData.color
-        );
-        if (colorOption) colorOption.classList.add('selected');
-    }
-    
-    // Открываем модальное окно с блокировкой фоновых элементов
-    modal.style.display = 'block';
-    document.body.classList.add('modal-open');
-    
-    // Отложенная фокусировка для Android
-    setTimeout(() => {
-        const input = document.getElementById('sales-input');
-        input.focus();
-        
-        // Прокрутка к полю ввода
-        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
-}
-
-// Закрытие модального окна
-function closeModal() {
-    document.getElementById('modal').style.display = 'none';
-    document.body.classList.remove('modal-open');
-}
-
-// Сохранение данных дня
-function saveDayData() {
-    const dateKey = `${currentYear}-${currentMonth+1}-${selectedDay}`;
-    const selectedColor = document.querySelector('.color-option.selected')?.dataset.color || '#ffffff';
-    const salesValue = parseInt(document.getElementById('sales-input').value) || 0;
-    
-    // Проверяем, было ли значение изменено
-    const hadFunctionalBorder = calendarData[dateKey]?.functionalBorder || false;
-    
-    // Снимаем обводку если:
-    // 1. Была обводка и значение изменилось с 30000
-    // 2. Пользователь вручную изменил значение
-    const removeBorder = hadFunctionalBorder && salesValue !== 30000;
-    
-    calendarData[dateKey] = {
-        ...calendarData[dateKey],
-        sales: salesValue,
-        comment: document.getElementById('comment-input').value || '',
-        color: selectedColor,
-        // Снимаем обводку если значение изменилось
-        functionalBorder: hadFunctionalBorder && !removeBorder
-    };
-    
-    // Сохранение в localStorage
-    saveToStorage('calendarData', calendarData);
-    
-    // Обновление интерфейса
-    generateCalendar();
     closeModal();
-    
-    // Уведомление о сохранении
-    showNotification('Данные сохранены!');
+    generateCalendar();
 }
 
-// Расчет зарплаты
-function calculateSummary() {
-    let workDays = 0;
-    let totalSales = 0;
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    
-    for (let day = 1; day <= daysInMonth; day++) {
-        const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
-        if (calendarData[dateKey] && calendarData[dateKey].sales > 0) {
-            workDays++;
-            totalSales += calendarData[dateKey].sales;
-        }
-    }
-    
-    // Расчеты с учетом настроек
-    const salesPercent = appSettings.salesPercent / 100;
-    const shiftRate = appSettings.shiftRate;
-    const fixedDeduction = appSettings.fixedDeduction;
-    const extraBonus = appSettings.extraBonus;
-    const taxRate = 0.13;
-    
-    const totalEarnedBeforeTax = (totalSales * salesPercent) + (workDays * shiftRate);
-    
-    // Учет налога, если включен
-    const totalEarned = appSettings.useTax ? 
-        totalEarnedBeforeTax * (1 - taxRate) : 
-        totalEarnedBeforeTax;
-    
-    const balance = totalEarned - fixedDeduction;
-    const salary = balance + extraBonus;
-    
-    return {
-        workDays,
-        totalSales,
-        totalEarned,
-        salary,
-        balance
+// Загрузка настроек в форму
+function loadSettingsToForm() {
+    document.getElementById('tax-toggle').checked = appSettings.useTax;
+    document.getElementById('sales-percent').value = appSettings.salesPercent;
+    document.getElementById('shift-rate').value = appSettings.shiftRate;
+    document.getElementById('fixed-deduction').value = appSettings.fixedDeduction;
+    document.getElementById('extra-bonus').value = appSettings.extraBonus;
+}
+
+// Сохранение настроек
+function saveSettings() {
+    appSettings = {
+        useTax: document.getElementById('tax-toggle').checked,
+        salesPercent: parseFloat(document.getElementById('sales-percent').value),
+        shiftRate: parseInt(document.getElementById('shift-rate').value),
+        fixedDeduction: parseInt(document.getElementById('fixed-deduction').value),
+        extraBonus: parseInt(document.getElementById('extra-bonus').value)
     };
-}
-
-// Показать модальное окно с расчетами
-function showSummaryModal() {
-    const summaryData = calculateSummary();
-    const modal = document.getElementById('summary-modal');
     
-    document.getElementById('modal-work-days').textContent = summaryData.workDays;
-    document.getElementById('modal-total-sales').textContent = summaryData.totalSales.toLocaleString();
-    document.getElementById('modal-total-earned').textContent = summaryData.totalEarned.toFixed(2);
-    document.getElementById('modal-salary').textContent = summaryData.salary.toFixed(2);
-    document.getElementById('modal-balance').textContent = summaryData.balance.toFixed(2);
-    
-    document.getElementById('summary-month-year').textContent = 
-        document.getElementById('current-month-year').textContent;
-    
-    modal.style.display = 'block';
-    document.body.classList.add('modal-open');
-}
-
-// Закрыть модальное окно расчетов
-function closeSummaryModal() {
-    document.getElementById('summary-modal').style.display = 'none';
-    document.body.classList.remove('modal-open');
-}
-
-// Показать уведомление
-function showNotification(message) {
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    // Анимация появления
-    setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translate(-50%, 0)';
-    }, 10);
-    
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translate(-50%, 20px)';
-        setTimeout(() => document.body.removeChild(notification), 300);
-    }, 2000);
-}
-
-// Приветственное сообщение
-function showWelcomeMessage() {
-    setTimeout(() => {
-        showNotification('Добро пожаловать! Кликните на день для ввода данных');
-    }, 1000);
+    saveToStorage('appSettings', appSettings);
+    closeModal();
+    calculateSummary();
+    showNotification('Настройки сохранены');
 }
 
 // Экспорт данных
 function exportData() {
-    const dataToExport = {
+    const data = {
         calendarData: calendarData,
         appSettings: appSettings,
         exportDate: new Date().toISOString(),
         version: '1.0'
     };
     
-    const dataStr = JSON.stringify(dataToExport, null, 2);
-    const blob = new Blob([dataStr], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     
     const a = document.createElement('a');
     a.href = url;
-    a.download = `calendar-backup-${new Date().toISOString().slice(0,10)}.json`;
+    a.download = `calendar-backup-${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -680,66 +512,102 @@ function importData(event) {
     const reader = new FileReader();
     reader.onload = function(e) {
         try {
-            const importedData = JSON.parse(e.target.result);
+            const data = JSON.parse(e.target.result);
             
-            // Проверка формата файла
-            if (!importedData.calendarData || !importedData.appSettings) {
-                showNotification('Неверный формат файла');
-                return;
-            }
-            
-            // Подтверждение импорта
-            if (confirm('Импортировать данные? Текущие данные будут перезаписаны.')) {
-                calendarData = importedData.calendarData;
-                appSettings = importedData.appSettings;
-                
+            if (data.calendarData) {
+                calendarData = data.calendarData;
                 saveToStorage('calendarData', calendarData);
-                saveToStorage('appSettings', appSettings);
-                
-                generateCalendar();
-                showNotification('Данные успешно импортированы');
             }
+            
+            if (data.appSettings) {
+                appSettings = data.appSettings;
+                saveToStorage('appSettings', appSettings);
+                loadSettingsToForm();
+            }
+            
+            generateCalendar();
+            showNotification('Данные импортированы');
         } catch (error) {
-            showNotification('Ошибка импорта: неверный формат файла');
-            console.error('Import error:', error);
+            console.error('Ошибка импорта:', error);
+            showNotification('Ошибка импорта данных');
         }
     };
     reader.readAsText(file);
+    event.target.value = ''; // Сброс input
+}
+
+// Показ уведомлений
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
     
-    // Сброс значения input для возможности повторного выбора того же файла
-    event.target.value = '';
+    // Анимация появления
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(-50%) translateY(0)';
+    }, 100);
+    
+    // Автоматическое скрытие
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(-50%) translateY(20px)';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
 }
 
-// Добавление CSS для уведомлений при первом запуске
-if (!document.querySelector('#notification-styles')) {
-    const style = document.createElement('style');
-    style.id = 'notification-styles';
-    style.textContent = `
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background-color: #3498db;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 25px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
-            opacity: 0;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            white-space: nowrap;
+// Приветственное сообщение
+function showWelcomeMessage() {
+    setTimeout(() => {
+        showNotification('Добро пожаловать! Для начала работы нажмите на любой день');
+    }, 1000);
+}
+
+// Оптимизация для мобильных устройств
+function optimizeForMobile() {
+    // Предотвращение масштабирования при фокусе
+    document.addEventListener('focusin', function() {
+        if (window.innerWidth < 768) {
+            document.body.style.zoom = '100%';
         }
-    `;
-    document.head.appendChild(style);
+    });
+    
+    // Восстановление после потери фокуса
+    document.addEventListener('focusout', function() {
+        setTimeout(() => {
+            document.body.style.zoom = '';
+        }, 100);
+    });
 }
 
-// Инициализация Service Worker
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-            .then(reg => console.log('Service Worker зарегистрирован', reg))
-            .catch(err => console.error('Ошибка регистрации Service Worker', err));
-    });
+// Вызов оптимизации
+optimizeForMobile();
+
+// Обработка ошибок
+window.addEventListener('error', function(e) {
+    console.error('Произошла ошибка:', e.error);
+    showNotification('Произошла ошибка приложения');
+});
+
+// Обработка необработанных промисов
+window.addEventListener('unhandledrejection', function(e) {
+    console.error('Необработанный промис:', e.reason);
+    e.preventDefault();
+});
+
+// Проверка поддержки localStorage
+function checkLocalStorageSupport() {
+    try {
+        const test = 'test';
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+if (!checkLocalStorageSupport()) {
+    showNotification('Ваш браузер не поддерживает сохранение данных');
 }
