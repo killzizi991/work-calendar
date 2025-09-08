@@ -323,6 +323,17 @@ function setupEventListeners() {
     
     // Сохранение настроек
     document.getElementById('save-settings').addEventListener('click', saveSettings);
+    
+    // Кнопка экспорта
+    document.getElementById('export-btn').addEventListener('click', exportData);
+    
+    // Кнопка импорта
+    document.getElementById('import-btn').addEventListener('click', () => {
+        document.getElementById('import-file').click();
+    });
+    
+    // Обработка выбора файла для импорта
+    document.getElementById('import-file').addEventListener('change', importData);
 }
 
 // Загрузка настроек в форму
@@ -639,17 +650,26 @@ function showWelcomeMessage() {
 
 // Экспорт данных
 function exportData() {
-    const dataStr = JSON.stringify(calendarData, null, 2);
+    const dataToExport = {
+        calendarData: calendarData,
+        appSettings: appSettings,
+        exportDate: new Date().toISOString(),
+        version: '1.0'
+    };
+    
+    const dataStr = JSON.stringify(dataToExport, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     
     const a = document.createElement('a');
     a.href = url;
-    a.download = `calendar-data-${new Date().toISOString().slice(0,10)}.json`;
+    a.download = `calendar-backup-${new Date().toISOString().slice(0,10)}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    
+    showNotification('Данные экспортированы');
 }
 
 // Импорт данных
@@ -661,16 +681,33 @@ function importData(event) {
     reader.onload = function(e) {
         try {
             const importedData = JSON.parse(e.target.result);
-            calendarData = importedData;
-            saveToStorage('calendarData', calendarData);
-            generateCalendar();
-            showNotification('Данные успешно импортированы!');
+            
+            // Проверка формата файла
+            if (!importedData.calendarData || !importedData.appSettings) {
+                showNotification('Неверный формат файла');
+                return;
+            }
+            
+            // Подтверждение импорта
+            if (confirm('Импортировать данные? Текущие данные будут перезаписаны.')) {
+                calendarData = importedData.calendarData;
+                appSettings = importedData.appSettings;
+                
+                saveToStorage('calendarData', calendarData);
+                saveToStorage('appSettings', appSettings);
+                
+                generateCalendar();
+                showNotification('Данные успешно импортированы');
+            }
         } catch (error) {
             showNotification('Ошибка импорта: неверный формат файла');
             console.error('Import error:', error);
         }
     };
     reader.readAsText(file);
+    
+    // Сброс значения input для возможности повторного выбора того же файла
+    event.target.value = '';
 }
 
 // Добавление CSS для уведомлений при первом запуске
