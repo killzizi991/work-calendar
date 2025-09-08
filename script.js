@@ -8,16 +8,39 @@ let isKeyboardOpen = false; // Флаг для отслеживания сост
 let lastWindowHeight = window.innerHeight; // Запоминаем начальную высоту окна
 
 // Хранение данных
-let calendarData = JSON.parse(localStorage.getItem('calendarData')) || {};
+let calendarData = loadFromStorage('calendarData') || {};
 
 // Настройки приложения
-let appSettings = JSON.parse(localStorage.getItem('appSettings')) || {
+let appSettings = loadFromStorage('appSettings') || {
   useTax: true,
   salesPercent: 7,
   shiftRate: 1000,
   fixedDeduction: 25000,
   extraBonus: 10875
 };
+
+// Функция безопасной загрузки из localStorage
+function loadFromStorage(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.error('Ошибка загрузки из localStorage:', error);
+    return null;
+  }
+}
+
+// Функция безопасного сохранения в localStorage
+function saveToStorage(key, data) {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+    return true;
+  } catch (error) {
+    console.error('Ошибка сохранения в localStorage:', error);
+    showNotification('Ошибка сохранения данных');
+    return false;
+  }
+}
 
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', () => {
@@ -172,7 +195,7 @@ function toggleFunctionalBorder(day) {
     }
     
     calendarData[dateKey] = dayData;
-    localStorage.setItem('calendarData', JSON.stringify(calendarData));
+    saveToStorage('calendarData', calendarData);
     generateCalendar();
 }
 
@@ -185,7 +208,7 @@ function applyFillColor(day) {
     if (activeColor) {
         dayData.color = activeColor.dataset.color;
         calendarData[dateKey] = dayData;
-        localStorage.setItem('calendarData', JSON.stringify(calendarData));
+        saveToStorage('calendarData', calendarData);
         generateCalendar();
     }
 }
@@ -258,8 +281,8 @@ function setupEventListeners() {
     
     // Сохранение при закрытии вкладки
     window.addEventListener('beforeunload', () => {
-        localStorage.setItem('calendarData', JSON.stringify(calendarData));
-        localStorage.setItem('appSettings', JSON.stringify(appSettings));
+        saveToStorage('calendarData', calendarData);
+        saveToStorage('appSettings', appSettings);
     });
     
     // Кнопка расчетов
@@ -313,15 +336,30 @@ function loadSettingsToForm() {
 
 // Сохранение настроек
 function saveSettings() {
+    const salesPercent = parseFloat(document.getElementById('sales-percent').value);
+    const shiftRate = parseInt(document.getElementById('shift-rate').value);
+    const fixedDeduction = parseInt(document.getElementById('fixed-deduction').value);
+    const extraBonus = parseInt(document.getElementById('extra-bonus').value);
+    
+    // Валидация
+    if (salesPercent < 0 || salesPercent > 100) {
+        showNotification('Процент продаж должен быть между 0 и 100');
+        return;
+    }
+    if (shiftRate < 0 || fixedDeduction < 0 || extraBonus < 0) {
+        showNotification('Значения не могут быть отрицательными');
+        return;
+    }
+    
     appSettings = {
         useTax: document.getElementById('tax-toggle').checked,
-        salesPercent: parseFloat(document.getElementById('sales-percent').value),
-        shiftRate: parseInt(document.getElementById('shift-rate').value),
-        fixedDeduction: parseInt(document.getElementById('fixed-deduction').value),
-        extraBonus: parseInt(document.getElementById('extra-bonus').value)
+        salesPercent: salesPercent,
+        shiftRate: shiftRate,
+        fixedDeduction: fixedDeduction,
+        extraBonus: extraBonus
     };
     
-    localStorage.setItem('appSettings', JSON.stringify(appSettings));
+    saveToStorage('appSettings', appSettings);
     closeSettingsModal();
     generateCalendar(); // Пересчитываем с новыми настройками
     showNotification('Настройки сохранены');
@@ -497,7 +535,7 @@ function saveDayData() {
     };
     
     // Сохранение в localStorage
-    localStorage.setItem('calendarData', JSON.stringify(calendarData));
+    saveToStorage('calendarData', calendarData);
     
     // Обновление интерфейса
     generateCalendar();
@@ -526,12 +564,13 @@ function calculateSummary() {
     const shiftRate = appSettings.shiftRate;
     const fixedDeduction = appSettings.fixedDeduction;
     const extraBonus = appSettings.extraBonus;
+    const taxRate = 0.13;
     
     const totalEarnedBeforeTax = (totalSales * salesPercent) + (workDays * shiftRate);
     
     // Учет налога, если включен
     const totalEarned = appSettings.useTax ? 
-        totalEarnedBeforeTax * 0.87 : 
+        totalEarnedBeforeTax * (1 - taxRate) : 
         totalEarnedBeforeTax;
     
     const balance = totalEarned - fixedDeduction;
@@ -552,7 +591,7 @@ function showSummaryModal() {
     const modal = document.getElementById('summary-modal');
     
     document.getElementById('modal-work-days').textContent = summaryData.workDays;
-    document.getElementById('modal-total-sales').textContent = summaryData.totalSales;
+    document.getElementById('modal-total-sales').textContent = summaryData.totalSales.toLocaleString();
     document.getElementById('modal-total-earned').textContent = summaryData.totalEarned.toFixed(2);
     document.getElementById('modal-salary').textContent = summaryData.salary.toFixed(2);
     document.getElementById('modal-balance').textContent = summaryData.balance.toFixed(2);
@@ -623,7 +662,7 @@ function importData(event) {
         try {
             const importedData = JSON.parse(e.target.result);
             calendarData = importedData;
-            localStorage.setItem('calendarData', JSON.stringify(calendarData));
+            saveToStorage('calendarData', calendarData);
             generateCalendar();
             showNotification('Данные успешно импортированы!');
         } catch (error) {
