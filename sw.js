@@ -1,4 +1,4 @@
-const CACHE_NAME = 'work-calendar-final-v3'; // Изменили версию кэша
+const CACHE_NAME = 'work-calendar-final-v4'; // Изменили версию кэша
 const urlsToCache = [
   '/',
   '/index.html',
@@ -11,7 +11,7 @@ const urlsToCache = [
 
 // Установка Service Worker и кеширование ресурсов
 self.addEventListener('install', event => {
-  console.log('Установка новой версии Service Worker v3');
+  console.log('Установка новой версии Service Worker v4');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -65,41 +65,3 @@ self.addEventListener('fetch', event => {
             // return caches.match('/offline.html');
           });
       })
-  );
-});
-
-// Активация Service Worker и очистка старых кешей
-self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
-  
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          // Удаляем кеши, не входящие в белый список
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('Удаление старого кеша:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-    .then(() => {
-      // Активируем Service Worker для всех клиентов
-      return self.clients.claim();
-    })
-  );
-});
-
-// Обработчик фоновых синхронизаций
-self.addEventListener('sync', event => {
-  if (event.tag === 'sync-data') {
-    event.waitUntil(syncCalendarData());
-  }
-});
-
-// Функция фоновой синхронизации данных
-function syncCalendarData() {
-  // Здесь можно реализовать синхронизацию с сервером
-  return Promise.resolve();
-}
