@@ -1,4 +1,4 @@
-// FILE: style.css
+/* Сброс стилей */
 * {
     margin: 0;
     padding: 0;
@@ -7,6 +7,7 @@
     touch-action: manipulation;
 }
 
+/* Базовые стили */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background: #f5f7f9;
@@ -16,6 +17,7 @@ body {
     overflow-x: hidden;
 }
 
+/* Убираем скролл при открытом модальном окне */
 body.modal-open {
     overflow: hidden;
     position: fixed;
@@ -23,6 +25,7 @@ body.modal-open {
     height: 100%;
 }
 
+/* Индикатор загрузки */
 #app-loading {
     position: fixed;
     top: 0;
@@ -38,6 +41,7 @@ body.modal-open {
     z-index: 9999;
 }
 
+/* Заголовок */
 .header {
     background: #ffffff;
     border-radius: 6px;
@@ -63,7 +67,7 @@ body.modal-open {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #2c3e50;
 }
@@ -74,6 +78,7 @@ body.modal-open {
     justify-content: center;
 }
 
+/* Кнопки */
 button {
     background: #4a6cf7;
     color: white;
@@ -84,11 +89,11 @@ button {
     font-size: 0.9rem;
     font-weight: 500;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(74, 108, 247, 0.2);
+    box-shadow: 0 2px 6px rgba(74, 108, 247, 0.2);
 }
 
 button:hover {
-    background: #3a56c4;
+    background: #3a56d8;
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(74, 108, 247, 0.3);
 }
@@ -102,6 +107,7 @@ button:active {
     background: #e74c3c;
 }
 
+/* Календарь */
 .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -114,10 +120,10 @@ button:active {
     font-weight: 600;
     padding: 12px;
     color: #5a6c7d;
-    background: #e8ecf1;
+    background: #edf2f7;
     border-radius: 5px;
     font-size: 0.9rem;
-    border: 1px solid #dde1e6;
+    border: 1px solid #e2e8f0;
 }
 
 .day {
@@ -132,7 +138,7 @@ button:active {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border: 1px solid #e1e5e9;
+    border: 1px solid #e2e8f0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
@@ -144,8 +150,7 @@ button:active {
 
 .day.today {
     position: relative;
-    background: #f0f7ff;
-    border-color: #4a6cf7;
+    border: 2px solid #4a6cf7;
 }
 
 .day.today::after {
@@ -160,20 +165,20 @@ button:active {
 }
 
 .day.empty {
-    background: #f8f9fa;
+    background: #f8fafc;
     cursor: default;
-    box-shadow: none;
+    border-color: #e2e8f0;
 }
 
 .day-number {
     font-weight: 600;
     font-size: 1rem;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     color: #2c3e50;
 }
 
 .day-sales {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #5a6c7d;
     word-break: break-word;
     font-weight: 500;
@@ -183,9 +188,10 @@ button:active {
     position: absolute;
     top: 5px;
     right: 5px;
-    font-size: 0.8em;
+    font-size: 0.75em;
 }
 
+/* Функциональная обводка */
 .day.functional-border {
     border: 2px solid #e74c3c;
     animation: pulse-border 2s infinite;
@@ -197,6 +203,7 @@ button:active {
     100% { border-color: #e74c3c; }
 }
 
+/* Панель инструментов */
 .palette-panel {
     display: none;
     background: #ffffff;
@@ -227,8 +234,8 @@ button:active {
     align-items: center;
     justify-content: center;
     font-size: 1.1rem;
-    border: 1px solid #e1e5e9;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .palette-tool:hover {
@@ -239,9 +246,9 @@ button:active {
 .palette-tool.active {
     border: 2px solid #4a6cf7;
     box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
-    transform: scale(1.05);
 }
 
+/* Модальные окна */
 .modal {
     display: none;
     position: fixed;
@@ -250,7 +257,7 @@ button:active {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
     animation: fadeIn 0.3s ease;
 }
@@ -264,14 +271,14 @@ button:active {
     background: white;
     margin: 5% auto;
     padding: 25px;
-    border-radius: 6px;
+    border-radius: 8px;
     width: 90%;
     max-width: 400px;
     max-height: 80vh;
     overflow-y: auto;
     position: relative;
     animation: slideIn 0.3s ease;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
     border: 1px solid #e1e5e9;
 }
 
@@ -289,31 +296,32 @@ button:active {
     position: absolute;
     top: 15px;
     right: 20px;
-    transition: color 0.2s ease;
 }
 
 .close:hover {
     color: #2c3e50;
 }
 
+/* Поля ввода */
 input, textarea {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     margin: 10px 0;
-    border: 1px solid #e1e5e9;
+    border: 1px solid #e2e8f0;
     border-radius: 5px;
     font-size: 1rem;
     transition: all 0.2s ease;
     background: #ffffff;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 input:focus, textarea:focus {
     outline: none;
     border-color: #4a6cf7;
-    box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2), inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
 }
 
+/* Выбор цвета */
 .color-picker {
     display: flex;
     justify-content: center;
@@ -328,7 +336,7 @@ input:focus, textarea:focus {
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 1px solid #e1e5e9;
+    border: 1px solid #e2e8f0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -339,22 +347,20 @@ input:focus, textarea:focus {
 .color-option.selected {
     border: 2px solid #4a6cf7;
     box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
-    transform: scale(1.1);
 }
 
+/* Выбор периода */
 .period-selector {
     text-align: center;
     background: #ffffff;
     color: #2c3e50;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 20px;
-    border: 1px solid #e1e5e9;
 }
 
 .period-step h4 {
     margin-bottom: 15px;
     color: #4a6cf7;
-    font-size: 1.1rem;
 }
 
 .period-options {
@@ -365,9 +371,9 @@ input:focus, textarea:focus {
 }
 
 .period-option {
-    padding: 14px;
-    background: #f8f9fa;
-    border: 1px solid #e1e5e9;
+    padding: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     border-radius: 5px;
     cursor: pointer;
     font-weight: 500;
@@ -381,15 +387,11 @@ input:focus, textarea:focus {
     color: white;
     border-color: #4a6cf7;
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(74, 108, 247, 0.3);
 }
 
+/* Настройки */
 .setting-group {
     margin: 15px 0;
-    padding: 12px;
-    background: #f8f9fa;
-    border-radius: 5px;
-    border: 1px solid #e1e5e9;
 }
 
 .setting-group label {
@@ -397,31 +399,30 @@ input:focus, textarea:focus {
     margin-bottom: 8px;
     font-weight: 600;
     color: #2c3e50;
-    font-size: 0.95rem;
 }
 
 .setting-group input[type="number"] {
     width: 100%;
     padding: 12px;
-    border: 1px solid #e1e5e9;
+    border: 1px solid #e2e8f0;
     border-radius: 5px;
     font-size: 1rem;
     background: #ffffff;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .setting-group input[type="checkbox"] {
     margin-right: 10px;
     transform: scale(1.1);
-    accent-color: #4a6cf7;
 }
 
+/* Результаты расчетов */
 .summary-results {
-    background: #f8f9fa;
+    background: #f8fafc;
     padding: 20px;
     border-radius: 6px;
     margin: 15px 0;
-    border: 1px solid #e1e5e9;
+    border: 1px solid #e2e8f0;
 }
 
 .summary-results p {
@@ -430,7 +431,7 @@ input:focus, textarea:focus {
     display: flex;
     justify-content: space-between;
     padding: 8px 0;
-    border-bottom: 1px solid #e1e5e9;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .summary-results p:last-child {
@@ -442,9 +443,10 @@ input:focus, textarea:focus {
     color: #4a6cf7;
 }
 
+/* Адаптивность */
 @media (max-width: 768px) {
     body {
-        padding: 12px;
+        padding: 15px;
     }
     
     .calendar {
@@ -461,7 +463,7 @@ input:focus, textarea:focus {
     }
     
     .day-sales {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
     }
     
     .modal-content {
@@ -475,12 +477,17 @@ input:focus, textarea:focus {
     }
     
     button {
-        padding: 11px 18px;
+        padding: 10px 16px;
         font-size: 0.85rem;
     }
     
     .period-options {
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .palette-tool {
+        width: 36px;
+        height: 36px;
     }
 }
 
@@ -495,7 +502,7 @@ input:focus, textarea:focus {
     }
     
     .day {
-        min-height: 65px;
+        min-height: 60px;
         padding: 8px;
     }
     
@@ -506,14 +513,30 @@ input:focus, textarea:focus {
     .period-options {
         grid-template-columns: 1fr;
     }
+    
+    .palette-panel {
+        padding: 12px;
+    }
+    
+    .palette-tools {
+        gap: 8px;
+    }
+    
+    .palette-tool {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
 }
 
+/* Портретный режим */
 @media (orientation: portrait) {
     .calendar {
         grid-template-columns: repeat(7, 1fr);
     }
 }
 
+/* Ландшафтный режим */
 @media (orientation: landscape) and (max-height: 500px) {
     .header {
         position: static;
@@ -525,65 +548,77 @@ input:focus, textarea:focus {
     }
     
     .day {
-        min-height: 45px;
-        padding: 5px;
+        min-height: 40px;
+        padding: 4px;
         font-size: 0.8rem;
+    }
+    
+    .day-number {
+        font-size: 0.8rem;
+    }
+    
+    .day-sales {
+        font-size: 0.7rem;
     }
 }
 
+/* Высокие устройства (например, iPhone SE) */
 @media (max-height: 700px) {
     .day {
         min-height: 65px;
     }
 }
 
+/* Очень высокие устройства */
 @media (min-height: 1000px) {
     .day {
-        min-height: 95px;
+        min-height: 90px;
     }
 }
 
+/* Поддержка темной темы */
 @media (prefers-color-scheme: dark) {
     body {
-        background: #1a1a1a;
+        background: #1a1d21;
         color: #e9ecef;
     }
     
     .header {
-        background: #2d2d2d;
-        border-color: #3b3b3b;
+        background: #2d3035;
+        border-color: #3b3e45;
     }
     
     .modal-content {
-        background: #2d2d2d;
+        background: #2d3035;
         color: #e9ecef;
-        border-color: #3b3b3b;
+        border-color: #3b3e45;
     }
     
     input, textarea {
-        background: #3b3b3b;
+        background: #3b3e45;
         border-color: #5a6c7d;
         color: #e9ecef;
     }
     
     .summary-results {
-        background: #3b3b3b;
-        border-color: #5a6c7d;
+        background: #3b3e45;
+        border-color: #4a4d55;
     }
     
     .day {
-        background: #2d2d2d;
-        border-color: #3b3b3b;
+        background: #2d3035;
+        border-color: #3b3e45;
     }
     
     .day-header {
-        background: #3b3b3b;
+        background: #3b3e45;
         color: #e9ecef;
-        border-color: #5a6c7d;
+        border-color: #4a4d55;
     }
     
     .day.empty {
-        background: #3b3b3b;
+        background: #3b3e45;
+        border-color: #4a4d55;
     }
     
     .day-number {
@@ -591,25 +626,33 @@ input:focus, textarea:focus {
     }
     
     .palette-panel {
-        background: #2d2d2d;
-        border-color: #3b3b3b;
+        background: #2d3035;
+        border-color: #3b3e45;
     }
     
-    .setting-group {
-        background: #3b3b3b;
-        border-color: #5a6c7d;
+    .period-option {
+        background: #3b3e45;
+        border-color: #4a4d55;
+        color: #e9ecef;
+    }
+    
+    .period-selector {
+        background: #2d3035;
+        color: #e9ecef;
     }
 }
 
+/* Улучшенная поддержка мобильных устройств */
 @supports (padding: max(0px)) {
     body {
-        padding-left: max(12px, env(safe-area-inset-left));
-        padding-right: max(12px, env(safe-area-inset-right));
-        padding-top: max(12px, env(safe-area-inset-top));
-        padding-bottom: max(12px, env(safe-area-inset-bottom));
+        padding-left: max(15px, env(safe-area-inset-left));
+        padding-right: max(15px, env(safe-area-inset-right));
+        padding-top: max(15px, env(safe-area-inset-top));
+        padding-bottom: max(15px, env(safe-area-inset-bottom));
     }
 }
 
+/* Анимации для улучшения UX */
 .day {
     animation: fadeInUp 0.3s ease;
 }
@@ -625,6 +668,7 @@ input:focus, textarea:focus {
     }
 }
 
+/* Улучшенная доступность */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
@@ -633,6 +677,7 @@ input:focus, textarea:focus {
     }
 }
 
+/* Подсветка фокуса для доступности */
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
@@ -640,8 +685,28 @@ textarea:focus-visible {
     outline-offset: 2px;
 }
 
+/* Специфичные стили для iOS */
 @supports (-webkit-touch-callout: none) {
     input, textarea {
-        font-size: 16px;
+        font-size: 16px; /* Предотвращает масштабирование в iOS */
     }
+}
+
+/* Стили для уведомлений */
+.notification {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background-color: #4a6cf7;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    font-weight: 500;
 }
