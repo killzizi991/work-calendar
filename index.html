@@ -35,6 +35,8 @@
         <div class="tools-container">
             <button id="palette-btn" class="palette-btn">🎨</button>
             <button id="summary-btn">Расчеты</button>
+            <button id="export-btn">Экспорт</button>
+            <button id="import-btn">Импорт</button>
         </div>
     </div>
     
@@ -140,6 +142,9 @@
             <button id="save-settings">Сохранить настройки</button>
         </div>
     </div>
+
+    <!-- Скрытый input для импорта -->
+    <input type="file" id="import-file" accept=".json" style="display: none;">
 
     <script src="script.js"></script>
     <script>
