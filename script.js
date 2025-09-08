@@ -683,7 +683,7 @@ if (!document.querySelector('#notification-styles')) {
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
-            background-color: #4e73df;
+            background-color: #3498db;
             color: white;
             padding: 12px 25px;
             border-radius: 25px;
