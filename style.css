@@ -10,7 +10,7 @@
 /* Базовые стили */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
     min-height: 100vh;
     padding: 20px;
     color: #333;
@@ -32,7 +32,7 @@ body.modal-open {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -45,10 +45,10 @@ body.modal-open {
 .header {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    border-radius: 20px;
+    border-radius: 12px;
     padding: 15px;
     margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -69,7 +69,7 @@ body.modal-open {
     cursor: pointer;
     font-size: 1.2rem;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
 }
 
 .tools-container {
@@ -80,21 +80,21 @@ body.modal-open {
 
 /* Кнопки */
 button {
-    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
     color: white;
     border: none;
     padding: 12px 20px;
-    border-radius: 15px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(78, 115, 223, 0.3);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
 }
 
 button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(78, 115, 223, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
 }
 
 button:active {
@@ -102,14 +102,14 @@ button:active {
 }
 
 .palette-btn.active {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
 }
 
 /* Календарь */
 .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
+    gap: 6px;
     margin-bottom: 20px;
 }
 
@@ -118,49 +118,49 @@ button:active {
     font-weight: bold;
     padding: 10px;
     color: white;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
     backdrop-filter: blur(10px);
 }
 
 .day {
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 15px;
-    padding: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 10px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     position: relative;
-    min-height: 80px;
+    min-height: 70px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .day:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .day.today {
-    border: 2px solid #4e73df;
-    box-shadow: 0 0 20px rgba(78, 115, 223, 0.5);
+    border: 2px solid #3498db;
+    box-shadow: 0 0 15px rgba(52, 152, 219, 0.4);
 }
 
 .day.empty {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.4);
     cursor: default;
 }
 
 .day-number {
     font-weight: bold;
-    font-size: 1.1rem;
-    margin-bottom: 5px;
+    font-size: 1rem;
+    margin-bottom: 4px;
 }
 
 .day-sales {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #666;
     word-break: break-word;
 }
@@ -169,19 +169,19 @@ button:active {
     position: absolute;
     top: 5px;
     right: 5px;
-    font-size: 0.8em;
+    font-size: 0.75em;
 }
 
 /* Функциональная обводка */
 .day.functional-border {
-    border: 3px solid #ff6b6b;
+    border: 2px solid #e74c3c;
     animation: pulse-border 2s infinite;
 }
 
 @keyframes pulse-border {
-    0% { border-color: #ff6b6b; }
-    50% { border-color: #ff8e8e; }
-    100% { border-color: #ff6b6b; }
+    0% { border-color: #e74c3c; }
+    50% { border-color: #ff6b6b; }
+    100% { border-color: #e74c3c; }
 }
 
 /* Панель инструментов */
@@ -189,42 +189,42 @@ button:active {
     display: none;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 15px;
+    border-radius: 12px;
+    padding: 12px;
     margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
     justify-content: center;
 }
 
 .palette-tools {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
     justify-content: center;
 }
 
 .palette-tool {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     border: 2px solid transparent;
 }
 
 .palette-tool:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .palette-tool.active {
-    border: 2px solid #4e73df;
-    box-shadow: 0 0 15px rgba(78, 115, 223, 0.5);
+    border: 2px solid #3498db;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.4);
 }
 
 /* Модальные окна */
@@ -249,31 +249,31 @@ button:active {
 .modal-content {
     background: white;
     margin: 5% auto;
-    padding: 25px;
-    border-radius: 20px;
+    padding: 20px;
+    border-radius: 12px;
     width: 90%;
     max-width: 400px;
     max-height: 80vh;
     overflow-y: auto;
     position: relative;
     animation: slideIn 0.3s ease;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
+    from { transform: translateY(-40px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
 
 .close {
     color: #aaa;
     float: right;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
     cursor: pointer;
     position: absolute;
-    top: 15px;
-    right: 20px;
+    top: 12px;
+    right: 15px;
 }
 
 .close:hover {
@@ -283,85 +283,89 @@ button:active {
 /* Поля ввода */
 input, textarea {
     width: 100%;
-    padding: 15px;
-    margin: 10px 0;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.2s ease;
     background: #f8f9fa;
 }
 
 input:focus, textarea:focus {
     outline: none;
-    border-color: #4e73df;
+    border-color: #3498db;
     background: white;
-    box-shadow: 0 0 10px rgba(78, 115, 223, 0.2);
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
 }
 
 /* Выбор цвета */
 .color-picker {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin: 15px 0;
+    gap: 8px;
+    margin: 12px 0;
     flex-wrap: wrap;
 }
 
 .color-option {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     border: 2px solid transparent;
 }
 
 .color-option:hover {
-    transform: scale(1.2);
+    transform: scale(1.1);
 }
 
 .color-option.selected {
-    border: 2px solid #333;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border: 2px solid #2c3e50;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Выбор периода */
 .period-selector {
     text-align: center;
+    background: #2c3e50;
+    color: white;
+    border-radius: 12px;
+    padding: 15px;
 }
 
 .period-step h4 {
-    margin-bottom: 15px;
-    color: #4e73df;
+    margin-bottom: 12px;
+    color: #3498db;
 }
 
 .period-options {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 15px;
 }
 
 .period-option {
-    padding: 15px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    transition: all 0.3s ease;
+    color: white;
+    transition: all 0.2s ease;
 }
 
 .period-option:hover {
-    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
-    color: white;
-    transform: translateY(-2px);
+    background: rgba(52, 152, 219, 0.7);
+    transform: translateY(-1px);
 }
 
 /* Настройки */
 .setting-group {
-    margin: 15px 0;
+    margin: 12px 0;
 }
 
 .setting-group label {
@@ -373,35 +377,35 @@ input:focus, textarea:focus {
 
 .setting-group input[type="number"] {
     width: 100%;
-    padding: 12px;
-    border: 2px solid #e0e0e0;
+    padding: 10px;
+    border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 1rem;
 }
 
 .setting-group input[type="checkbox"] {
-    margin-right: 10px;
-    transform: scale(1.2);
+    margin-right: 8px;
+    transform: scale(1.1);
 }
 
 /* Результаты расчетов */
 .summary-results {
     background: #f8f9fa;
-    padding: 20px;
-    border-radius: 15px;
-    margin: 15px 0;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 12px 0;
 }
 
 .summary-results p {
-    margin: 10px 0;
-    font-size: 1.1rem;
+    margin: 8px 0;
+    font-size: 1rem;
     display: flex;
     justify-content: space-between;
 }
 
 .summary-results span {
     font-weight: bold;
-    color: #4e73df;
+    color: #3498db;
 }
 
 /* Адаптивность */
@@ -411,7 +415,7 @@ input:focus, textarea:focus {
     }
     
     .calendar {
-        gap: 5px;
+        gap: 4px;
     }
     
     .day {
@@ -420,17 +424,17 @@ input:focus, textarea:focus {
     }
     
     .day-number {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
     
     .day-sales {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
     }
     
     .modal-content {
-        margin: 10% auto;
+        margin: 8% auto;
         width: 95%;
-        padding: 20px;
+        padding: 15px;
     }
     
     .header {
@@ -454,16 +458,16 @@ input:focus, textarea:focus {
     
     .tools-container {
         width: 100%;
-        margin-top: 10px;
+        margin-top: 8px;
     }
     
     .day {
         min-height: 50px;
-        padding: 5px;
+        padding: 6px;
     }
     
     .day-number {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
     
     .period-options {
@@ -486,49 +490,49 @@ input:focus, textarea:focus {
     
     .calendar {
         grid-template-columns: repeat(7, 1fr);
-        gap: 3px;
+        gap: 2px;
     }
     
     .day {
-        min-height: 40px;
+        min-height: 35px;
         padding: 3px;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
     }
 }
 
 /* Высокие устройства (например, iPhone SE) */
 @media (max-height: 700px) {
     .day {
-        min-height: 60px;
+        min-height: 55px;
     }
 }
 
 /* Очень высокие устройства */
 @media (min-height: 1000px) {
     .day {
-        min-height: 100px;
+        min-height: 90px;
     }
 }
 
 /* Поддержка темной темы */
 @media (prefers-color-scheme: dark) {
     body {
-        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
     }
     
     .modal-content {
-        background: #2c3e50;
+        background: #2d3436;
         color: white;
     }
     
     input, textarea {
-        background: #34495e;
-        border-color: #4e73df;
+        background: #3b4144;
+        border-color: #3498db;
         color: white;
     }
     
     .summary-results {
-        background: #34495e;
+        background: #3b4144;
     }
 }
 
@@ -544,13 +548,13 @@ input:focus, textarea:focus {
 
 /* Анимации для улучшения UX */
 .day {
-    animation: fadeInUp 0.5s ease;
+    animation: fadeInUp 0.3s ease;
 }
 
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
     }
     to {
         opacity: 1;
@@ -571,7 +575,7 @@ input:focus, textarea:focus {
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-    outline: 2px solid #4e73df;
+    outline: 2px solid #3498db;
     outline-offset: 2px;
 }
 
