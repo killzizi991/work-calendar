@@ -13,7 +13,7 @@
     <!-- PWA оптимизация -->
     <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Календарь продаж">
 </head>
@@ -41,13 +41,13 @@
     <!-- Панель инструментов палитры -->
     <div id="palette-panel" class="palette-panel">
         <div class="palette-tools">
-            <div class="palette-tool fill" data-color="#ffffff" style="background-color: #ffffff"></div>
-            <div class="palette-tool fill" data-color="#ffcccc" style="background-color: #ffcccc"></div>
-            <div class="palette-tool fill" data-color="#ccffcc" style="background-color: #ccffcc"></div>
-            <div class="palette-tool fill" data-color="#ccccff" style="background-color: #ccccff"></div>
-            <div class="palette-tool fill" data-color="#FFA500" style="background-color: #FFA500"></div>
-            <div class="palette-tool fill" data-color="#40E0D0" style="background-color: #40E0D0"></div>
-            <div class="palette-tool fill" data-color="#ADFF2F" style="background-color: #ADFF2F"></div>
+            <div class="palette-tool fill" data-color="#ffffff" style="background-color: #ffffff; border: 1px solid #e9ecef;"></div>
+            <div class="palette-tool fill" data-color="#f8d7da" style="background-color: #f8d7da;"></div>
+            <div class="palette-tool fill" data-color="#d4edda" style="background-color: #d4edda;"></div>
+            <div class="palette-tool fill" data-color="#d1ecf1" style="background-color: #d1ecf1;"></div>
+            <div class="palette-tool fill" data-color="#fff3cd" style="background-color: #fff3cd;"></div>
+            <div class="palette-tool fill" data-color="#d1ecf1" style="background-color: #d1ecf1;"></div>
+            <div class="palette-tool fill" data-color="#d4edda" style="background-color: #d4edda;"></div>
             <div id="palette-border" class="palette-tool" title="Функциональная обводка">🔲</div>
         </div>
     </div>
@@ -63,13 +63,13 @@
             <input type="number" id="sales-input" placeholder="Сумма продаж" inputmode="numeric">
             <textarea id="comment-input" placeholder="Комментарий"></textarea>
             <div class="color-picker">
-                <div class="color-option" style="background-color: #ffffff;" data-color="#ffffff"></div>
-                <div class="color-option" style="background-color: #ffcccc;" data-color="#ffcccc"></div>
-                <div class="color-option" style="background-color: #ccffcc;" data-color="#ccffcc"></div>
-                <div class="color-option" style="background-color: #ccccff;" data-color="#ccccff"></div>
-                <div class="color-option" style="background-color: #FFA500;" data-color="#FFA500"></div>
-                <div class="color-option" style="background-color: #40E0D0;" data-color="#40E0D0"></div>
-                <div class="color-option" style="background-color: #ADFF2F;" data-color="#ADFF2F"></div>
+                <div class="color-option" style="background-color: #ffffff; border: 1px solid #e9ecef;" data-color="#ffffff"></div>
+                <div class="color-option" style="background-color: #f8d7da;" data-color="#f8d7da"></div>
+                <div class="color-option" style="background-color: #d4edda;" data-color="#d4edda"></div>
+                <div class="color-option" style="background-color: #d1ecf1;" data-color="#d1ecf1"></div>
+                <div class="color-option" style="background-color: #fff3cd;" data-color="#fff3cd"></div>
+                <div class="color-option" style="background-color: #d1ecf1;" data-color="#d1ecf1"></div>
+                <div class="color-option" style="background-color: #d4edda;" data-color="#d4edda"></div>
             </div>
             <button id="save-data">Сохранить</button>
         </div>
