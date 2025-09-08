@@ -65,3 +65,33 @@ self.addEventListener('fetch', event => {
             // return caches.match('/offline.html');
           });
       })
+  );
+});
+
+// Активация нового Service Worker и удаление старого кеша
+self.addEventListener('activate', event => {
+  console.log('Активация новой версии Service Worker v4');
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          // Удаляем старые версии кеша
+          if (cacheName !== CACHE_NAME) {
+            console.log('Удаление старого кеша:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => {
+      console.log('Активация завершена');
+      return self.clients.claim();
+    })
+  );
+});
+
+// Обработка сообщений от основного потока
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
