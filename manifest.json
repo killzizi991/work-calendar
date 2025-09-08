@@ -1,11 +1,12 @@
 {
   "name": "Календарь продаж",
-  "short_name": "Продажи",
-  "start_url": ".",
+  "short_name": "Календарь",
+  "description": "Приложение для учета продаж и расчета заработка",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#4e73df",
   "theme_color": "#4e73df",
-  "description": "Приложение для учета продаж и расчета заработной платы",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "icon-192.png",
@@ -16,11 +17,9 @@
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ],
-  "orientation": "portrait",
-  "scope": "/",
-  "categories": ["business", "productivity"]
+  "categories": ["business", "productivity"],
+  "lang": "ru"
 }
