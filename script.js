@@ -10,11 +10,21 @@ let lastWindowHeight = window.innerHeight; // Запоминаем началь�
 // Хранение данных
 let calendarData = JSON.parse(localStorage.getItem('calendarData')) || {};
 
+// Настройки приложения
+let appSettings = JSON.parse(localStorage.getItem('appSettings')) || {
+  useTax: true,
+  salesPercent: 7,
+  shiftRate: 1000,
+  fixedDeduction: 25000,
+  extraBonus: 10875
+};
+
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', () => {
     generateCalendar();
     setupEventListeners();
     initPeriodSelector();
+    loadSettingsToForm();
     
     // Проверка первого запуска
     if (!localStorage.getItem('firstRun')) {
@@ -202,7 +212,13 @@ function setupEventListeners() {
     });
     
     // Закрытие модального окна
-    document.querySelector('.close').addEventListener('click', closeModal);
+    document.querySelectorAll('.close').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            modal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+        });
+    });
     
     // Сохранение данных
     document.getElementById('save-data').addEventListener('click', saveDayData);
@@ -221,6 +237,7 @@ function setupEventListeners() {
         const modal = document.getElementById('modal');
         const summaryModal = document.getElementById('summary-modal');
         const periodModal = document.getElementById('period-modal');
+        const settingsModal = document.getElementById('settings-modal');
         
         // Если клавиатура открыта, игнорируем клик вне окна
         if (isKeyboardOpen) return;
@@ -234,11 +251,15 @@ function setupEventListeners() {
         if (event.target === periodModal) {
             closePeriodModal();
         }
+        if (event.target === settingsModal) {
+            closeSettingsModal();
+        }
     });
     
     // Сохранение при закрытии вкладки
     window.addEventListener('beforeunload', () => {
         localStorage.setItem('calendarData', JSON.stringify(calendarData));
+        localStorage.setItem('appSettings', JSON.stringify(appSettings));
     });
     
     // Кнопка расчетов
@@ -249,15 +270,6 @@ function setupEventListeners() {
     
     // Кнопка "Назад" в выборе периода
     document.getElementById('period-back').addEventListener('click', goBackToYears);
-    
-    // Закрытие всех модальных окон
-    document.querySelectorAll('.modal .close').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const modal = this.closest('.modal');
-            modal.style.display = 'none';
-            document.body.classList.remove('modal-open');
-        });
-    });
     
     // Кнопка палитры
     document.getElementById('palette-btn').addEventListener('click', togglePaletteMode);
@@ -282,6 +294,50 @@ function setupEventListeners() {
         this.classList.add('active');
         massColoringMode = 'border';
     });
+    
+    // Кнопка настроек
+    document.getElementById('settings-btn').addEventListener('click', openSettingsModal);
+    
+    // Сохранение настроек
+    document.getElementById('save-settings').addEventListener('click', saveSettings);
+}
+
+// Загрузка настроек в форму
+function loadSettingsToForm() {
+    document.getElementById('tax-toggle').checked = appSettings.useTax;
+    document.getElementById('sales-percent').value = appSettings.salesPercent;
+    document.getElementById('shift-rate').value = appSettings.shiftRate;
+    document.getElementById('fixed-deduction').value = appSettings.fixedDeduction;
+    document.getElementById('extra-bonus').value = appSettings.extraBonus;
+}
+
+// Сохранение настроек
+function saveSettings() {
+    appSettings = {
+        useTax: document.getElementById('tax-toggle').checked,
+        salesPercent: parseFloat(document.getElementById('sales-percent').value),
+        shiftRate: parseInt(document.getElementById('shift-rate').value),
+        fixedDeduction: parseInt(document.getElementById('fixed-deduction').value),
+        extraBonus: parseInt(document.getElementById('extra-bonus').value)
+    };
+    
+    localStorage.setItem('appSettings', JSON.stringify(appSettings));
+    closeSettingsModal();
+    generateCalendar(); // Пересчитываем с новыми настройками
+    showNotification('Настройки сохранены');
+}
+
+// Открытие модального окна настроек
+function openSettingsModal() {
+    loadSettingsToForm();
+    document.getElementById('settings-modal').style.display = 'block';
+    document.body.classList.add('modal-open');
+}
+
+// Закрытие модального окна настроек
+function closeSettingsModal() {
+    document.getElementById('settings-modal').style.display = 'none';
+    document.body.classList.remove('modal-open');
 }
 
 // Переключение режима палитры
@@ -465,11 +521,21 @@ function calculateSummary() {
         }
     }
     
-    // Новые расчеты
-    const totalEarnedBeforeTax = (totalSales * 0.07) + (workDays * 1000);
-    const totalEarned = totalEarnedBeforeTax * 0.87; // Учет 13% налога
-    const balance = totalEarned - 25000; // Остаток = всего заработано - 25000
-    const salary = balance + 10875;     // Зарплата = остаток + 10875
+    // Расчеты с учетом настроек
+    const salesPercent = appSettings.salesPercent / 100;
+    const shiftRate = appSettings.shiftRate;
+    const fixedDeduction = appSettings.fixedDeduction;
+    const extraBonus = appSettings.extraBonus;
+    
+    const totalEarnedBeforeTax = (totalSales * salesPercent) + (workDays * shiftRate);
+    
+    // Учет налога, если включен
+    const totalEarned = appSettings.useTax ? 
+        totalEarnedBeforeTax * 0.87 : 
+        totalEarnedBeforeTax;
+    
+    const balance = totalEarned - fixedDeduction;
+    const salary = balance + extraBonus;
     
     return {
         workDays,
