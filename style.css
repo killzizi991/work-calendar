@@ -1,509 +1,583 @@
-/* Основные стили */
+/* Сброс стилей */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+/* Базовые стили */
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f8f9fa;
-  color: #333;
-  -webkit-tap-highlight-color: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+    overflow-x: hidden;
 }
 
-/* Полноэкранная шапка */
-.header {
-  background-color: #4e73df;
-  color: white;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  width: 100vw;
-  padding: 0;
-  overflow: hidden;
-}
-
-.header-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 10px;
-  max-width: 100%;
-  margin: 0 auto;
-}
-
-.tools-container {
-  display: flex;
-  justify-content: center;
-  padding: 10px;
-  background-color: #3a63d1;
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-.month-selector {
-  flex-grow: 1;
-  text-align: center;
-}
-
-#current-month-year {
-  margin: 0;
-  font-size: 1.2rem;
-  text-align: center;
-}
-
-.calendar {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-  padding: 15px;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.day-header {
-  text-align: center;
-  font-weight: bold;
-  padding: 10px 0;
-  color: #4e73df;
-  font-size: 0.9rem;
-}
-
-.day {
-  position: relative;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  aspect-ratio: 1/1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 8px;
-  box-sizing: border-box;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1px solid #eaeaea;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.day:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.day.empty {
-  background-color: transparent;
-  box-shadow: none;
-  cursor: default;
-}
-
-.day.empty:hover {
-  transform: none;
-  box-shadow: none;
-}
-
-.day-number {
-  font-size: 1.1rem;
-  font-weight: bold;
-}
-
-.day-sales {
-  font-size: clamp(0.6rem, 2.5vw, 0.75rem);
-  color: #28a745;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-}
-
-.today {
-  border: 2px solid #4e73df;
-}
-
-/* КРИТИЧЕСКИЕ ИСПРАВЛЕНИЯ ДЛЯ МОДАЛЬНЫХ ОКОН */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 1000;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  touch-action: manipulation; /* Предотвращаем стандартные жесты */
-}
-
-.modal-content {
-  position: relative;
-  background-color: white;
-  padding: 25px;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  transform: translateZ(0); /* Включаем аппаратное ускорение */
-  max-height: 80vh;
-  overflow-y: auto;
-  overscroll-behavior: contain; /* Блокируем скролл фона */
-}
-
-/* Блокировка фона при открытых модальных окнах */
+/* Убираем скролл при открытом модальном окне */
 body.modal-open {
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  touch-action: none; /* Полная блокировка жестов */
-}
-
-/* Фикс для виртуальной клавиатуры */
-@media (max-height: 600px) {
-  .modal {
-    align-items: flex-start;
-    padding-top: 20px;
-  }
-  
-  .modal-content {
-    max-height: 60vh;
-    padding: 15px;
-  }
-  
-  /* Предотвращаем масштабирование на iOS */
-  input, textarea {
-    font-size: 16px !important;
-  }
-}
-
-.close {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 1.8rem;
-  cursor: pointer;
-  color: #6c757d;
-  line-height: 1;
-}
-
-h3 {
-  margin-top: 0;
-  color: #4e73df;
-}
-
-input, textarea {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-sizing: border-box;
-  font-family: inherit;
-  font-size: 1rem;
-}
-
-textarea {
-  height: 100px;
-  resize: vertical;
-}
-
-.color-picker {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin: 15px 0;
-  flex-wrap: wrap;
-}
-
-.color-option {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: transform 0.2s;
-}
-
-.color-option:hover {
-  transform: scale(1.1);
-}
-
-.color-option.selected {
-  border-color: #4e73df;
-  transform: scale(1.1);
-}
-
-button {
-  background-color: #4e73df;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-  transition: background-color 0.2s;
-  width: 100%;
-  margin-top: 10px;
-}
-
-button:hover {
-  background-color: #2e59d9;
-}
-
-.summary-results p {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #eee;
-  margin: 0;
-}
-
-.summary-results span {
-  font-weight: bold;
-  color: #4e73df;
-}
-
-.period-selector {
-  text-align: center;
-}
-
-.period-step {
-  margin-bottom: 20px;
-}
-
-.period-options {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.period-option {
-  padding: 12px;
-  background-color: #4e73df;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.period-option:hover {
-  background-color: #2e59d9;
-}
-
-#period-back {
-  width: auto;
-  margin: 20px auto 0;
-  display: block;
-}
-
-/* Новые стили согласно ТЗ */
-
-/* 1. Расширение цветовой палитры */
-.fill-orange { background-color: #FFA500 !important; }
-.fill-aqua { background-color: #40E0D0 !important; }
-.fill-lime { background-color: #ADFF2F !important; }
-
-/* 2. Стиль функциональной обводки */
-.functional-border {
-  outline: 3px solid #0000FF !important;
-  outline-offset: -3px;
-  box-sizing: border-box !important;
-}
-
-/* 3. Стили для панели палитры */
-.palette-panel {
-  display: none;
-  position: fixed;
-  top: 70px;
-  right: 15px;
-  background: white;
-  padding: 15px;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  z-index: 500;
-  width: 180px;
-}
-
-.palette-tools {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-
-.palette-tool {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.2s;
-  font-size: 1.2rem;
-  background: #f8f9fa;
-}
-
-.palette-tool.fill {
-  font-size: 0;
-}
-
-.palette-tool:hover {
-  transform: scale(1.1);
-}
-
-.palette-tool.active {
-  border-color: #4e73df;
-  transform: scale(1.1);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-/* 4. Стили для кнопки палитры */
-#palette-btn {
-  width: auto;
-  padding: 10px 15px;
-  margin: 0 5px;
-  font-size: 1.2rem;
-  background: transparent;
-  border: 2px solid rgba(255,255,255,0.3);
-}
-
-#palette-btn:hover {
-  background: rgba(255,255,255,0.2);
-}
-
-.palette-btn.active {
-  background: #e0e0e0 !important;
-  color: #333;
-  border-radius: 8px;
-}
-
-/* Стили для настроек */
-.setting-group {
-  margin-bottom: 15px;
-  padding: 10px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-}
-
-.setting-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.setting-group input[type="number"] {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.setting-group input[type="checkbox"] {
-  margin-right: 8px;
-  width: auto;
-  transform: scale(1.2);
-}
-
-/* Адаптивные стили */
-@media (max-width: 480px) {
-  .header-container {
-    padding: 10px 5px;
-  }
-  
-  #current-month-year {
-    font-size: clamp(0.9rem, 4vw, 1rem);
-  }
-  
-  .calendar {
-    gap: 5px;
-    padding: 10px;
-  }
-  
-  .day {
-    padding: 5px;
-  }
-  
-  .day-number {
-    font-size: 0.9rem;
-  }
-  
-  .day-sales {
-    font-size: clamp(0.5rem, 2.2vw, 0.65rem);
-  }
-  
-  .palette-panel {
-    top: 60px;
-    right: 10px;
-    padding: 12px;
-    width: 160px;
-  }
-  
-  .palette-tools {
-    gap: 8px;
-  }
-  
-  .palette-tool {
-    width: 30px;
-    height: 30px;
-  }
-  
-  .tools-container {
-    padding: 8px;
-  }
-  
-  #palette-btn, #summary-btn {
-    padding: 8px 12px;
-    font-size: 0.9rem;
-  }
-}
-
-/* Анимации */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.palette-panel {
-  animation: fadeIn 0.3s ease-out;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
 }
 
 /* Индикатор загрузки */
 #app-loading {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #4e73df;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  z-index: 2000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 1.2rem;
+    z-index: 9999;
 }
 
-/* Фикс для Android Chrome */
-@supports (-webkit-touch-callout: none) {
-  .modal {
+/* Заголовок */
+.header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.month-selector {
+    flex: 1;
+    text-align: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.tools-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* Кнопки */
+button {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(78, 115, 223, 0.3);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(78, 115, 223, 0.4);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.palette-btn.active {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+}
+
+/* Календарь */
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.day-header {
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.day {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.day:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.day.today {
+    border: 2px solid #4e73df;
+    box-shadow: 0 0 20px rgba(78, 115, 223, 0.5);
+}
+
+.day.empty {
+    background: rgba(255, 255, 255, 0.3);
+    cursor: default;
+}
+
+.day-number {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.day-sales {
+    font-size: 0.85rem;
+    color: #666;
+    word-break: break-word;
+}
+
+.day-comment {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 0.8em;
+}
+
+/* Функциональная обводка */
+.day.functional-border {
+    border: 3px solid #ff6b6b;
+    animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+    0% { border-color: #ff6b6b; }
+    50% { border-color: #ff8e8e; }
+    100% { border-color: #ff6b6b; }
+}
+
+/* Панель инструментов */
+.palette-panel {
+    display: none;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.palette-tools {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.palette-tool {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border: 2px solid transparent;
+}
+
+.palette-tool:hover {
+    transform: scale(1.1);
+}
+
+.palette-tool.active {
+    border: 2px solid #4e73df;
+    box-shadow: 0 0 15px rgba(78, 115, 223, 0.5);
+}
+
+/* Модальные окна */
+.modal {
+    display: none;
     position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
     height: 100%;
-    overscroll-behavior-y: contain;
-  }
-  
-  textarea {
-    resize: none; /* Отключаем изменение размера */
-  }
-  
-  /* Предотвращаем масштабирование при фокусе */
-  input, textarea {
-    font-size: 16px;
-  }
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: white;
+    margin: 5% auto;
+    padding: 25px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideIn 0.3s ease;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+}
+
+.close:hover {
+    color: #000;
+}
+
+/* Поля ввода */
+input, textarea {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    background: #f8f9fa;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #4e73df;
+    background: white;
+    box-shadow: 0 0 10px rgba(78, 115, 223, 0.2);
+}
+
+/* Выбор цвета */
+.color-picker {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.color-option {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.color-option:hover {
+    transform: scale(1.2);
+}
+
+.color-option.selected {
+    border: 2px solid #333;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Выбор периода */
+.period-selector {
+    text-align: center;
+}
+
+.period-step h4 {
+    margin-bottom: 15px;
+    color: #4e73df;
+}
+
+.period-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.period-option {
+    padding: 15px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.period-option:hover {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Настройки */
+.setting-group {
+    margin: 15px 0;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #333;
+}
+
+.setting-group input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.setting-group input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+/* Результаты расчетов */
+.summary-results {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+    margin: 15px 0;
+}
+
+.summary-results p {
+    margin: 10px 0;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.summary-results span {
+    font-weight: bold;
+    color: #4e73df;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .calendar {
+        gap: 5px;
+    }
+    
+    .day {
+        min-height: 60px;
+        padding: 8px;
+    }
+    
+    .day-number {
+        font-size: 1rem;
+    }
+    
+    .day-sales {
+        font-size: 0.75rem;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .header {
+        padding: 10px;
+    }
+    
+    button {
+        padding: 10px 15px;
+        font-size: 0.8rem;
+    }
+    
+    .period-options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .header-container {
+        flex-wrap: wrap;
+    }
+    
+    .tools-container {
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .day {
+        min-height: 50px;
+        padding: 5px;
+    }
+    
+    .day-number {
+        font-size: 0.9rem;
+    }
+    
+    .period-options {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Портретный режим */
+@media (orientation: portrait) {
+    .calendar {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+
+/* Ландшафтный режим */
+@media (orientation: landscape) and (max-height: 500px) {
+    .header {
+        position: static;
+    }
+    
+    .calendar {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 3px;
+    }
+    
+    .day {
+        min-height: 40px;
+        padding: 3px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Высокие устройства (например, iPhone SE) */
+@media (max-height: 700px) {
+    .day {
+        min-height: 60px;
+    }
+}
+
+/* Очень высокие устройства */
+@media (min-height: 1000px) {
+    .day {
+        min-height: 100px;
+    }
+}
+
+/* Поддержка темной темы */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    }
+    
+    .modal-content {
+        background: #2c3e50;
+        color: white;
+    }
+    
+    input, textarea {
+        background: #34495e;
+        border-color: #4e73df;
+        color: white;
+    }
+    
+    .summary-results {
+        background: #34495e;
+    }
+}
+
+/* Улучшенная поддержка мобильных устройств */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(10px, env(safe-area-inset-left));
+        padding-right: max(10px, env(safe-area-inset-right));
+        padding-top: max(10px, env(safe-area-inset-top));
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+}
+
+/* Анимации для улучшения UX */
+.day {
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Улучшенная доступность */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Подсветка фокуса для доступности */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid #4e73df;
+    outline-offset: 2px;
+}
+
+/* Специфичные стили для iOS */
+@supports (-webkit-touch-callout: none) {
+    input, textarea {
+        font-size: 16px; /* Предотвращает масштабирование в iOS */
+    }
 }
