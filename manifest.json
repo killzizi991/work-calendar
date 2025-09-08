@@ -4,7 +4,7 @@
   "description": "Приложение для учета продаж и расчета заработка",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#4e73df",
+  "background_color": "#ffffff",
   "theme_color": "#4e73df",
   "orientation": "portrait-primary",
   "icons": [
