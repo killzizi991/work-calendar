@@ -16,8 +16,17 @@ let appSettings = loadFromStorage('appSettings') || {
   salesPercent: 7,
   shiftRate: 1000,
   fixedDeduction: 25000,
-  extraBonus: 10875
+  advance: 10875,
+  fixedSalaryPart: 10875
 };
+
+// Миграция старых настроек
+if (appSettings.hasOwnProperty('extraBonus')) {
+  appSettings.advance = appSettings.extraBonus;
+  appSettings.fixedSalaryPart = appSettings.extraBonus;
+  delete appSettings.extraBonus;
+  saveToStorage('appSettings', appSettings);
+}
 
 // Функция безопасной загрузки из localStorage
 function loadFromStorage(key) {
@@ -259,7 +268,7 @@ function calculateSummary() {
     const monthDays = new Date(currentYear, currentMonth + 1, 0).getDate();
     let workDays = 0;
     let totalSales = 0;
-    let totalEarned = 0;
+    let totalEarnedWithoutTax = 0;
     
     for (let day = 1; day <= monthDays; day++) {
         const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
@@ -268,12 +277,15 @@ function calculateSummary() {
         if (dayData.sales > 0) {
             workDays++;
             totalSales += dayData.sales;
-            totalEarned += calculateEarnings(dayData.sales);
+            totalEarnedWithoutTax += calculateEarnings(dayData.sales);
         }
     }
     
-    const salary = calculateSalary(totalEarned, workDays);
-    const balance = salary - appSettings.fixedDeduction;
+    totalEarnedWithoutTax += workDays * appSettings.shiftRate;
+    const tax = appSettings.useTax ? (appSettings.fixedDeduction * 0.13) : 0;
+    const totalEarned = totalEarnedWithoutTax - tax;
+    const salary = totalEarned - appSettings.advance;
+    const balance = salary - appSettings.fixedSalaryPart;
     
     document.getElementById('modal-work-days').textContent = workDays;
     document.getElementById('modal-total-sales').textContent = totalSales.toLocaleString();
@@ -287,18 +299,6 @@ function calculateSummary() {
 // Расчет заработка за день
 function calculateEarnings(sales) {
     return sales * (appSettings.salesPercent / 100);
-}
-
-// Расчет зарплаты
-function calculateSalary(totalEarned, workDays) {
-    let salary = totalEarned + (workDays * appSettings.shiftRate);
-    salary += appSettings.extraBonus;
-    
-    if (appSettings.useTax) {
-        salary *= 0.87; // Налог 13%
-    }
-    
-    return Math.round(salary);
 }
 
 // Настройка обработчиков событий
@@ -473,7 +473,8 @@ function loadSettingsToForm() {
     document.getElementById('sales-percent').value = appSettings.salesPercent;
     document.getElementById('shift-rate').value = appSettings.shiftRate;
     document.getElementById('fixed-deduction').value = appSettings.fixedDeduction;
-    document.getElementById('extra-bonus').value = appSettings.extraBonus;
+    document.getElementById('advance').value = appSettings.advance;
+    document.getElementById('fixed-salary-part').value = appSettings.fixedSalaryPart;
 }
 
 // Сохранение настроек
@@ -483,7 +484,8 @@ function saveSettings() {
         salesPercent: parseFloat(document.getElementById('sales-percent').value),
         shiftRate: parseInt(document.getElementById('shift-rate').value),
         fixedDeduction: parseInt(document.getElementById('fixed-deduction').value),
-        extraBonus: parseInt(document.getElementById('extra-bonus').value)
+        advance: parseInt(document.getElementById('advance').value),
+        fixedSalaryPart: parseInt(document.getElementById('fixed-salary-part').value)
     };
     
     saveToStorage('appSettings', appSettings);
@@ -532,6 +534,12 @@ function importData(event) {
             
             if (data.appSettings) {
                 appSettings = data.appSettings;
+                // Миграция старых данных
+                if (appSettings.hasOwnProperty('extraBonus')) {
+                    appSettings.advance = appSettings.extraBonus;
+                    appSettings.fixedSalaryPart = appSettings.extraBonus;
+                    delete appSettings.extraBonus;
+                }
                 saveToStorage('appSettings', appSettings);
                 loadSettingsToForm();
             }
