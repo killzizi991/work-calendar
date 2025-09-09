@@ -82,7 +82,7 @@
             <div class="summary-results">
                 <p>Рабочих дней: <span id="modal-work-days">0</span></p>
                 <p>Сумма продаж: <span id="modal-total-sales">0</span> руб</p>
-                <p>Заработано: <span id="modal-total-earned">0</span> руб</p>
+                <p>Заработано всего: <span id="modal-total-earned">0</span> руб</p>
                 <p>Зарплата: <span id="modal-salary">0</span> руб</p>
                 <p>Остаток: <span id="modal-balance">0</span> руб</p>
             </div>
@@ -133,8 +133,13 @@
             </div>
             
             <div class="setting-group">
-                <label>Дополнительная надбавка (руб):</label>
-                <input type="number" id="extra-bonus" value="10875" min="0" step="1000">
+                <label>Аванс (руб):</label>
+                <input type="number" id="advance" value="10875" min="0" step="1000">
+            </div>
+
+            <div class="setting-group">
+                <label>Фиксированная часть зарплаты (руб):</label>
+                <input type="number" id="fixed-salary-part" value="10875" min="0" step="1000">
             </div>
 
             <div class="setting-group" style="display: flex; gap: 10px; margin-top: 20px;">
