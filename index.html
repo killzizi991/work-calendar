@@ -2,216 +2,199 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Календарь продаж и зарплат</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, 
+          maximum-scale=1.0, user-scalable=no, 
+          viewpoint-fit=cover">
+    <title>Календарь продаж</title>
     <meta name="theme-color" content="#4a6cf7">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- PWA оптимизация -->
+    <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Календарь продаж">
-    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Календарь продаж">
 </head>
 <body>
-    <div id="app-loading">Загрузка...</div>
+    <!-- Индикатор загрузки -->
+    <div id="app-loading">Загрузка приложения...</div>
     
+    <!-- Навигация -->
     <div class="header">
         <div class="header-container">
-            <button id="prev-month">←</button>
-            <div class="month-selector" id="month-year-selector">
-                <span id="current-month-year">Январь 2024</span>
-            </div>
-            <button id="next-month">→</button>
+            <button id="prev-month">&lt;</button>
+            <button id="month-year-selector" class="month-selector">
+                <h2 id="current-month-year">Июль 2025</h2>
+            </button>
+            <button id="next-month">&gt;</button>
+            <button id="settings-btn" style="margin-left: 10px;">⚙️</button>
         </div>
         
         <div class="tools-container">
             <button id="palette-btn" class="palette-btn">🎨</button>
-            <button id="summary-btn">📊 Отчет</button>
-            <button id="settings-btn">⚙️ Настройки</button>
-            <button id="export-btn">📤 Экспорт</button>
-            <button id="import-btn">📥 Импорт</button>
-            <input type="file" id="import-file" accept=".json" style="display: none;">
-        </div>
-        
-        <div class="palette-panel" id="palette-panel">
-            <div class="palette-tools">
-                <div class="palette-tool fill" data-color="#ffebee" style="background-color: #ffebee;">❤️</div>
-                <div class="palette-tool fill" data-color="#e8f5e8" style="background-color: #e8f5e8;">💚</div>
-                <div class="palette-tool fill" data-color="#e3f2fd" style="background-color: #e3f2fd;">💙</div>
-                <div class="palette-tool fill" data-color="#fff8e1" style="background-color: #fff8e1;">💛</div>
-                <div class="palette-tool" id="palette-border">🔲</div>
-            </div>
+            <button id="summary-btn">Расчеты</button>
         </div>
     </div>
     
-    <div class="calendar" id="calendar">
-        <!-- Календарь генерируется через JavaScript -->
+    <!-- Панель инструментов палитры -->
+    <div id="palette-panel" class="palette-panel">
+        <div class="palette-tools">
+            <div class="palette-tool fill" data-color="#ffffff" style="background-color: #ffffff; border: 1px solid #e2e8f0;"></div>
+            <div class="palette-tool fill" data-color="#e3f2fd" style="background-color: #e3f2fd;"></div>
+            <div class="palette-tool fill" data-color="#e8f5e8" style="background-color: #e8f5e8;"></div>
+            <div class="palette-tool fill" data-color="#e0f7fa" style="background-color: #e0f7fa;"></div>
+            <div class="palette-tool fill" data-color="#fff8e1" style="background-color: #fff8e1;"></div>
+            <div class="palette-tool fill" data-color="#f3e5f5" style="background-color: #f3e5f5;"></div>
+            <div class="palette-tool fill" data-color="#ffebee" style="background-color: #ffebee;"></div>
+            <div id="palette-border" class="palette-tool" title="Функциональная обводка">🔲</div>
+        </div>
     </div>
     
-    <!-- Модальное окно дня -->
-    <div class="modal" id="modal">
+    <!-- Календарь -->
+    <div id="calendar" class="calendar"></div>
+    
+    <!-- Модальные окна -->
+    <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h3>День <span id="modal-day"></span></h3>
-            
-            <label for="sales-input">Продажи (руб):</label>
-            <input type="number" id="sales-input" placeholder="Введите сумму продаж">
-            
-            <label for="comment-input">Комментарий:</label>
-            <textarea id="comment-input" placeholder="Дополнительная информация" rows="3"></textarea>
-            
+            <input type="number" id="sales-input" placeholder="Сумма продаж" inputmode="numeric">
+            <textarea id="comment-input" placeholder="Комментарий"></textarea>
             <div class="color-picker">
-                <div class="color-option" data-color="#ffebee" style="background-color: #ffebee;"></div>
-                <div class="color-option" data-color="#e8f5e8" style="background-color: #e8f5e8;"></div>
-                <div class="color-option" data-color="#e3f2fd" style="background-color: #e3f2fd;"></div>
-                <div class="color-option" data-color="#fff8e1" style="background-color: #fff8e1;"></div>
-                <div class="color-option" data-color="#f3e5f5" style="background-color: #f3e5f5;"></div>
-                <div class="color-option" data-color="#ffffff" style="background-color: #ffffff; border: 1px solid #ccc;"></div>
+                <div class="color-option" style="background-color: #ffffff; border: 1px solid #e2e8f0;" data-color="#ffffff"></div>
+                <div class="color-option" style="background-color: #e3f2fd;" data-color="#e3f2fd"></div>
+                <div class="color-option" style="background-color: #e8f5e8;" data-color="#e8f5e8"></div>
+                <div class="color-option" style="background-color: #e0f7fa;" data-color="#e0f7fa"></div>
+                <div class="color-option" style="background-color: #fff8e1;" data-color="#fff8e1"></div>
+                <div class="color-option" style="background-color: #f3e5f5;" data-color="#f3e5f5"></div>
+                <div class="color-option" style="background-color: #ffebee;" data-color="#ffebee"></div>
             </div>
             
-            <button id="day-settings-btn">⚙️ Настройки дня</button>
+            <!-- Кнопка для открытия настроек дня -->
+            <button id="day-settings-btn" style="margin-top: 10px; background: #6c757d;">⚙️ Настройки дня</button>
             
-            <div class="day-settings" id="day-settings" style="display: none;">
-                <h5>Индивидуальные настройки дня</h5>
-                
+            <!-- Блок настроек дня (изначально скрыт) -->
+            <div id="day-settings" style="display: none; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+                <h4>Настройки для этого дня</h4>
                 <div class="setting-group">
-                    <label for="day-sales-percent">Процент с продаж (%):</label>
-                    <input type="number" id="day-sales-percent" step="0.1" min="0" max="100" 
-                           placeholder="Оставьте пустым для общих настроек">
+                    <label>Процент с продаж (%):</label>
+                    <input type="number" id="day-sales-percent" min="0" max="100" step="0.1">
                 </div>
-                
                 <div class="setting-group">
-                    <label for="day-shift-rate">Ставка за смену (руб):</label>
-                    <input type="number" id="day-shift-rate" min="0" 
-                           placeholder="Оставьте пустым для общих настроек">
+                    <label>Фиксированный выход (руб):</label>
+                    <input type="number" id="day-shift-rate" min="0" step="100">
                 </div>
-                
-                <button id="reset-day-settings">Сбросить настройки дня</button>
+                <button id="reset-day-settings" style="background: #dc3545; margin-top: 10px;">Сбросить к общим</button>
             </div>
             
             <button id="save-data">Сохранить</button>
         </div>
     </div>
     
-    <!-- Модальное окно отчета -->
-    <div class="modal" id="summary-modal">
+    <div id="summary-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h3>Отчет за <span id="summary-month-year"></span></h3>
-            
-            <div class="summary-item">
-                <span class="summary-label">Рабочих дней:</span>
-                <span class="summary-value" id="modal-work-days">0</span>
-            </div>
-            
-            <div class="summary-item">
-                <span class="summary-label">Всего продаж:</span>
-                <span class="summary-value" id="modal-total-sales">0</span>
-            </div>
-            
-            <div class="summary-item">
-                <span class="summary-label">Всего заработано:</span>
-                <span class="summary-value" id="modal-total-earned">0</span>
-            </div>
-            
-            <div class="summary-item">
-                <span class="summary-label">Зарплата:</span>
-                <span class="summary-value" id="modal-salary">0</span>
-            </div>
-            
-            <div class="summary-item">
-                <span class="summary-label">Остаток:</span>
-                <span class="summary-value" id="modal-balance">0</span>
+            <h3>Расчеты за <span id="summary-month-year">Июль 2025</span></h3>
+            <div class="summary-results">
+                <p>Рабочих дней: <span id="modal-work-days">0</span></p>
+                <p>Сумма продаж: <span id="modal-total-sales">0</span> руб</p>
+                <p>Заработано всего: <span id="modal-total-earned">0</span> руб</p>
+                <p>Зарплата: <span id="modal-salary">0</span> руб</p>
+                <p>Остаток: <span id="modal-balance">0</span> руб</p>
             </div>
         </div>
     </div>
     
-    <!-- Модальное окно выбора периода -->
-    <div class="modal" id="period-modal">
-        <div class="modal-content">
+    <div id="period-modal" class="modal">
+        <div class="modal-content period-selector">
             <span class="close">&times;</span>
-            <div class="period-selector">
-                <div class="period-step" id="year-step">
-                    <h4>Выберите год</h4>
-                    <div class="period-options" id="year-options">
-                        <!-- Годы будут добавлены через JavaScript -->
-                    </div>
-                </div>
-                
-                <div class="period-step" id="month-step" style="display: none;">
-                    <h4>Выберите месяц</h4>
-                    <div class="period-options" id="month-options">
-                        <!-- Месяцы будут добавлены через JavaScript -->
-                    </div>
-                    <button id="period-back" style="display: none;">← Назад</button>
-                </div>
+            <h3>Выберите период</h3>
+            <div class="period-step" id="year-step">
+                <h4>Выберите год</h4>
+                <div class="period-options" id="year-options"></div>
             </div>
+            <div class="period-step" id="month-step" style="display:none">
+                <h4>Выберите месяц</h4>
+                <div class="period-options" id="month-options"></div>
+            </div>
+            <button id="period-back" style="display:none">← Назад</button>
         </div>
     </div>
-    
-    <!-- Модальное окно настроек -->
-    <div class="modal" id="settings-modal">
+
+    <div id="settings-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h3>Настройки приложения</h3>
+            <h3>Настройки расчетов</h3>
             
-            <div class="mode-selector">
-                <label for="mode-selector">Режим работы:</label>
-                <select id="mode-selector">
-                    <option value="official">Официально</option>
-                    <option value="unofficial">Не официально</option>
-                </select>
+            <div class="setting-group">
+                <label>
+                    <input type="checkbox" id="tax-toggle" checked>
+                    Учитывать налог (13%)
+                </label>
             </div>
             
-            <!-- Официальные настройки -->
-            <div class="settings-section" id="official-settings">
-                <h4>⚖️ Официальные настройки</h4>
-                
-                <div class="setting-group">
-                    <label>
-                        <span class="switch">
-                            <input type="checkbox" id="tax-toggle">
-                            <span class="slider"></span>
-                        </span>
-                        Налог 13%
-                    </label>
-                </div>
-                
-                <div class="setting-group">
-                    <label for="sales-percent">Процент с продаж (%):</label>
-                    <input type="number" id="sales-percent" step="0.1" min="0" max="100" value="7">
-                </div>
-                
-                <div class="setting-group">
-                    <label for="shift-rate">Ставка за смену (руб):</label>
-                    <input type="number" id="shift-rate" min="0" value="1000">
-                </div>
-                
-                <div class="setting-group">
-                    <label for="advance">Аванс (руб):</label>
-                    <input type="number" id="advance" min="0" value="10875">
-                </div>
-                
-                <div class="setting-group">
-                    <label for="fixed-salary-part">Фиксированная часть (руб):</label>
-                    <input type="number" id="fixed-salary-part" min="0" value="10875">
-                </div>
+            <div class="setting-group">
+                <label>Процент с продаж (%):</label>
+                <input type="number" id="sales-percent" value="7" min="0" max="100" step="0.1">
             </div>
             
-            <!-- Неофициальные настройки -->
-            <div class="settings-section" id="unofficial-settings" style="display: none;">
-                <h4>🤝 Неофициальные настройки</h4>
-                
-                <div class="setting-group">
-                    <label for="unofficial-advance">Аванс (руб):</label>
-                    <input type="number" id="unofficial-advance" min="0" value="15000">
-                </div>
+            <div class="setting-group">
+                <label>Ставка за смену (руб):</label>
+                <input type="number" id="shift-rate" value="1000" min="0" step="100">
+            </div>
+            
+            <div class="setting-group">
+                <label>Фиксированный вычет (руб):</label>
+                <input type="number" id="fixed-deduction" value="25000" min="0" step="1000">
+            </div>
+            
+            <div class="setting-group">
+                <label>Аванс (руб):</label>
+                <input type="number" id="advance" value="10875" min="0" step="1000">
+            </div>
+
+            <div class="setting-group">
+                <label>Фиксированная часть зарплаты (руб):</label>
+                <input type="number" id="fixed-salary-part" value="10875" min="0" step="1000">
+            </div>
+
+            <div class="setting-group" style="display: flex; gap: 10px; margin-top: 20px;">
+                <button id="export-btn" style="flex: 1;">Экспорт</button>
+                <button id="import-btn" style="flex: 1;">Импорт</button>
             </div>
             
             <button id="save-settings">Сохранить настройки</button>
         </div>
     </div>
-    
+
+    <!-- Скрытый input для импорта -->
+    <input type="file" id="import-file" accept=".json" style="display: none;">
+
     <script src="script.js"></script>
+    <script>
+        // Принудительное обновление кэша при новой версии
+        const SW_VERSION = 'v4'; // Должно совпадать с версией в sw.js
+        if (localStorage.getItem('sw_version') !== SW_VERSION) {
+          caches.keys().then(cacheNames => {
+            cacheNames.forEach(cacheName => caches.delete(cacheName));
+          }).then(() => {
+            localStorage.setItem('sw_version', SW_VERSION);
+            console.log('Кеш очищен для версии', SW_VERSION);
+          });
+        }
+
+        window.addEventListener('load', () => {
+            document.getElementById('app-loading').style.display = 'none';
+            
+            // Регистрация Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.error('SW registration error:', err));
+            }
+        });
+    </script>
 </body>
 </html>
