@@ -185,7 +185,8 @@ function toggleFunctionalBorder(day) {
     } else {
         // Установка обводки
         dayData.functionalBorder = true;
-        showNotification('Обводка установлена');
+        dayData.sales = 30000;
+        showNotification('Обводка установлена, продажи: 30000 руб');
     }
     
     calendarData[dateKey] = dayData;
@@ -331,8 +332,19 @@ function setupEventListeners() {
     // Палитра
     document.getElementById('palette-btn').addEventListener('click', () => {
         const palettePanel = document.getElementById('palette-panel');
-        palettePanel.style.display = palettePanel.style.display === 'flex' ? 'none' : 'flex';
-        document.getElementById('palette-btn').classList.toggle('active');
+        const isOpen = palettePanel.style.display === 'flex';
+        
+        if (isOpen) {
+            palettePanel.style.display = 'none';
+            document.getElementById('palette-btn').classList.remove('active');
+            massColoringMode = null;
+            document.querySelectorAll('.palette-tool').forEach(tool => {
+                tool.classList.remove('active');
+            });
+        } else {
+            palettePanel.style.display = 'flex';
+            document.getElementById('palette-btn').classList.add('active');
+        }
     });
     
     // Инструменты палитры
