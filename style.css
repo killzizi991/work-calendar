@@ -303,7 +303,7 @@ button:active {
 }
 
 /* Поля ввода */
-input, textarea {
+input, textarea, select {
     width: 100%;
     padding: 12px;
     margin: 10px 0;
@@ -315,7 +315,7 @@ input, textarea {
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-input:focus, textarea:focus {
+input:focus, textarea:focus, select:focus {
     outline: none;
     border-color: #4a6cf7;
     box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
@@ -371,15 +371,14 @@ input:focus, textarea:focus {
 }
 
 .period-option {
-    padding: 12px;
+    padding: 15px;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 5px;
     cursor: pointer;
-    font-weight: 500;
-    color: #2c3e50;
     transition: all 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    font-weight: 500;
 }
 
 .period-option:hover {
@@ -390,63 +389,128 @@ input:focus, textarea:focus {
 }
 
 /* Настройки */
+.settings-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 5px;
+    border: 1px solid #e2e8f0;
+}
+
+.settings-section h4 {
+    margin-bottom: 15px;
+    color: #4a6cf7;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .setting-group {
-    margin: 15px 0;
+    margin-bottom: 15px;
 }
 
 .setting-group label {
     display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
+    margin-bottom: 5px;
+    font-weight: 500;
     color: #2c3e50;
 }
 
-.setting-group input[type="number"] {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #e2e8f0;
-    border-radius: 5px;
-    font-size: 1rem;
-    background: #ffffff;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+.setting-group input {
+    margin: 5px 0;
 }
 
-.setting-group input[type="checkbox"] {
+/* Переключатель */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
     margin-right: 10px;
-    transform: scale(1.1);
 }
 
-/* Результаты расчетов */
-.summary-results {
-    background: #f8fafc;
-    padding: 20px;
-    border-radius: 6px;
-    margin: 15px 0;
-    border: 1px solid #e2e8f0;
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
-.summary-results p {
-    margin: 10px 0;
-    font-size: 1rem;
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #e2e8f0;
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
 }
 
-.summary-results p:last-child {
-    border-bottom: none;
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
 }
 
-.summary-results span {
-    font-weight: 600;
-    color: #4a6cf7;
+input:checked + .slider {
+    background-color: #4a6cf7;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Уведомления */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #2c3e50;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 90%;
+    text-align: center;
 }
 
 /* Адаптивность */
 @media (max-width: 768px) {
     body {
-        padding: 15px;
+        padding: 10px;
+    }
+    
+    .header {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .header-container {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .tools-container {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    
+    button {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+        flex: 1;
+        min-width: 80px;
     }
     
     .calendar {
@@ -454,12 +518,17 @@ input:focus, textarea:focus {
     }
     
     .day {
+        padding: 8px;
         min-height: 70px;
+    }
+    
+    .day-header {
         padding: 10px;
+        font-size: 0.8rem;
     }
     
     .day-number {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
     }
     
     .day-sales {
@@ -467,200 +536,96 @@ input:focus, textarea:focus {
     }
     
     .modal-content {
-        margin: 8% auto;
-        width: 95%;
+        margin: 10% auto;
         padding: 20px;
+        width: 95%;
+        max-height: 85vh;
     }
     
-    .header {
-        padding: 12px;
+    .color-picker {
+        gap: 8px;
     }
     
-    button {
-        padding: 10px 16px;
-        font-size: 0.85rem;
+    .color-option {
+        width: 28px;
+        height: 28px;
     }
     
     .period-options {
         grid-template-columns: repeat(2, 1fr);
     }
     
-    .palette-tool {
-        width: 36px;
-        height: 36px;
+    .period-option {
+        padding: 12px;
+        font-size: 0.9rem;
     }
 }
 
 @media (max-width: 480px) {
-    .header-container {
-        flex-wrap: wrap;
+    .tools-container {
+        gap: 6px;
     }
     
-    .tools-container {
-        width: 100%;
-        margin-top: 10px;
+    button {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        min-width: 70px;
     }
     
     .day {
         min-height: 60px;
-        padding: 8px;
+        padding: 6px;
     }
     
-    .day-number {
-        font-size: 0.9rem;
+    .day-header {
+        padding: 8px;
+        font-size: 0.75rem;
     }
     
     .period-options {
         grid-template-columns: 1fr;
     }
     
-    .palette-panel {
-        padding: 12px;
-    }
-    
-    .palette-tools {
-        gap: 8px;
-    }
-    
     .palette-tool {
-        width: 32px;
-        height: 32px;
+        width: 35px;
+        height: 35px;
         font-size: 1rem;
     }
 }
 
-/* Портретный режим */
-@media (orientation: portrait) {
-    .calendar {
-        grid-template-columns: repeat(7, 1fr);
-    }
-}
-
-/* Ландшафтный режим */
-@media (orientation: landscape) and (max-height: 500px) {
-    .header {
-        position: static;
-    }
-    
-    .calendar {
-        grid-template-columns: repeat(7, 1fr);
-        gap: 3px;
-    }
-    
-    .day {
-        min-height: 40px;
-        padding: 4px;
-        font-size: 0.8rem;
-    }
-    
-    .day-number {
-        font-size: 0.8rem;
-    }
-    
-    .day-sales {
-        font-size: 0.7rem;
-    }
-}
-
-/* Высокие устройства (например, iPhone SE) */
-@media (max-height: 700px) {
-    .day {
-        min-height: 65px;
-    }
-}
-
-/* Очень высокие устройства */
-@media (min-height: 1000px) {
-    .day {
-        min-height: 90px;
-    }
-}
-
-/* Поддержка темной темы */
+/* Улучшенная поддержка темной темы */
 @media (prefers-color-scheme: dark) {
     body {
-        background: #1a1d21;
-        color: #e9ecef;
+        background: #1a202c;
+        color: #e2e8f0;
     }
     
-    .header {
-        background: #2d3035;
-        border-color: #3b3e45;
-    }
-    
-    .modal-content {
-        background: #2d3035;
-        color: #e9ecef;
-        border-color: #3b3e45;
-    }
-    
-    input, textarea {
-        background: #3b3e45;
-        border-color: #5a6c7d;
-        color: #e9ecef;
-    }
-    
-    .summary-results {
-        background: #3b3e45;
-        border-color: #4a4d55;
-    }
-    
-    .day {
-        background: #2d3035;
-        border-color: #3b3e45;
-    }
-    
-    .day-header {
-        background: #3b3e45;
-        color: #e9ecef;
-        border-color: #4a4d55;
+    .header, .modal-content, .palette-panel, .day, .day-header, .settings-section {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
     }
     
     .day.empty {
-        background: #3b3e45;
-        border-color: #4a4d55;
+        background: #2d3748;
     }
     
-    .day-number {
-        color: #e9ecef;
+    input, textarea, select {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
     }
     
-    .palette-panel {
-        background: #2d3035;
-        border-color: #3b3e45;
-    }
-    
-    .period-option {
-        background: #3b3e45;
-        border-color: #4a4d55;
-        color: #e9ecef;
-    }
-    
-    .period-selector {
-        background: #2d3035;
-        color: #e9ecef;
-    }
-}
-
-/* Улучшенная поддержка мобильных устройств */
-@supports (padding: max(0px)) {
-    body {
-        padding-left: max(15px, env(safe-area-inset-left));
-        padding-right: max(15px, env(safe-area-inset-right));
-        padding-top: max(15px, env(safe-area-inset-top));
-        padding-bottom: max(15px, env(safe-area-inset-bottom));
+    .notification {
+        background: #4a5568;
     }
 }
 
 /* Анимации для улучшения UX */
-.day {
-    animation: fadeInUp 0.3s ease;
-}
-
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
@@ -668,7 +633,51 @@ input:focus, textarea:focus {
     }
 }
 
+.calendar {
+    animation: fadeInUp 0.5s ease;
+}
+
 /* Улучшенная доступность */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid #4a6cf7;
+    outline-offset: 2px;
+}
+
+/* Улучшенная читаемость для больших экранов */
+@media (min-width: 1200px) {
+    .calendar {
+        max-width: 1200px;
+        margin: 0 auto 30px;
+    }
+    
+    .header {
+        max-width: 1200px;
+        margin: 0 auto 30px;
+    }
+}
+
+/* Специальные стили для iOS */
+@supports (-webkit-touch-callout: none) {
+    input, textarea, select {
+        font-size: 16px; /* Предотвращает масштабирование в iOS */
+    }
+}
+
+/* Улучшенная поддержка высокого контраста */
+@media (prefers-contrast: high) {
+    .day {
+        border: 2px solid currentColor;
+    }
+    
+    button {
+        border: 2px solid currentColor;
+    }
+}
+
+/* Улучшенная поддержка редукции движения */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
@@ -677,36 +686,114 @@ input:focus, textarea:focus {
     }
 }
 
-/* Подсветка фокуса для доступности */
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-    outline: 2px solid #4a6cf7;
-    outline-offset: 2px;
+/* Стили для скрытого input файла */
+#import-file {
+    display: none;
 }
 
-/* Специфичные стили для iOS */
-@supports (-webkit-touch-callout: none) {
-    input, textarea {
-        font-size: 16px; /* Предотвращает масштабирование в iOS */
-    }
+/* Стили для настроек дня */
+.day-settings {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 5px;
+    border: 1px solid #e2e8f0;
 }
 
-/* Стили для уведомлений */
-.notification {
-    position: fixed;
-    bottom: 25px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background-color: #4a6cf7;
-    color: white;
-    padding: 14px 28px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    z-index: 1000;
-    opacity: 0;
+.day-settings h5 {
+    margin-bottom: 10px;
+    color: #4a6cf7;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.day-settings-btn {
+    background: #718096;
+    margin-top: 10px;
+}
+
+.day-settings-btn:hover {
+    background: #4a5568;
+}
+
+#reset-day-settings {
+    background: #e53e3e;
+    margin-top: 10px;
+}
+
+#reset-day-settings:hover {
+    background: #c53030;
+}
+
+/* Стили для выбора режима */
+.mode-selector {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 5px;
+    border: 1px solid #e2e8f0;
+}
+
+.mode-selector label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.mode-selector select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+    background: white;
+    font-size: 1rem;
+}
+
+/* Стили для официальных и неофициальных настроек */
+.settings-section {
     transition: all 0.3s ease;
-    font-size: 0.95rem;
-    white-space: nowrap;
+}
+
+.settings-section.hidden {
+    display: none;
+}
+
+/* Улучшенные стили для summary */
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+}
+
+.summary-label {
     font-weight: 500;
+    color: #5a6c7d;
+}
+
+.summary-value {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Специальные стили для темной темы в summary */
+@media (prefers-color-scheme: dark) {
+    .summary-label {
+        color: #a0aec0;
+    }
+    
+    .summary-value {
+        color: #e2e8f0;
+    }
+    
+    .summary-item {
+        border-bottom-color: #4a5568;
+    }
 }
