@@ -12,12 +12,14 @@ let calendarData = loadFromStorage('calendarData') || {};
 
 // Настройки приложения
 let appSettings = loadFromStorage('appSettings') || {
+  mode: 'official',
   useTax: true,
   salesPercent: 7,
   shiftRate: 1000,
   fixedDeduction: 25000,
   advance: 10875,
-  fixedSalaryPart: 10875
+  fixedSalaryPart: 10875,
+  unofficialAdvance: 15000
 };
 
 // Миграция старых настроек
@@ -299,16 +301,32 @@ function calculateSummary() {
         }
     }
     
-    const tax = appSettings.useTax ? (appSettings.fixedDeduction * 0.13) : 0;
-    const totalEarned = totalEarnedWithoutTax - tax;
-    const salary = totalEarned - appSettings.advance;
-    const balance = salary - appSettings.fixedSalaryPart;
+    if (appSettings.mode === 'official') {
+        const tax = appSettings.useTax ? (appSettings.fixedDeduction * 0.13) : 0;
+        const totalEarned = totalEarnedWithoutTax - tax;
+        const salary = totalEarned - appSettings.advance;
+        const balance = salary - appSettings.fixedSalaryPart;
+        
+        document.getElementById('modal-work-days').textContent = workDays;
+        document.getElementById('modal-total-sales').textContent = totalSales.toLocaleString();
+        document.getElementById('modal-total-earned').textContent = totalEarned.toLocaleString();
+        document.getElementById('modal-salary').textContent = salary.toLocaleString();
+        document.getElementById('modal-balance').textContent = balance.toLocaleString();
+    } else {
+        // Неофициальный режим
+        const totalEarned = totalEarnedWithoutTax;
+        const salary = totalEarned - appSettings.unofficialAdvance;
+        
+        document.getElementById('modal-work-days').textContent = workDays;
+        document.getElementById('modal-total-sales').textContent = totalSales.toLocaleString();
+        document.getElementById('modal-total-earned').textContent = totalEarned.toLocaleString();
+        document.getElementById('modal-salary').textContent = salary.toLocaleString();
+        document.getElementById('modal-balance').textContent = '';
+        
+        // Скрываем поле "Остаток" для неофициального режима
+        document.querySelector('#modal-balance').parentElement.style.display = 'none';
+    }
     
-    document.getElementById('modal-work-days').textContent = workDays;
-    document.getElementById('modal-total-sales').textContent = totalSales.toLocaleString();
-    document.getElementById('modal-total-earned').textContent = totalEarned.toLocaleString();
-    document.getElementById('modal-salary').textContent = salary.toLocaleString();
-    document.getElementById('modal-balance').textContent = balance.toLocaleString();
     document.getElementById('summary-month-year').textContent = 
         `${new Date(currentYear, currentMonth).toLocaleString('ru', { month: 'long' })} ${currentYear}`;
 }
@@ -432,6 +450,12 @@ function setupEventListeners() {
         document.getElementById('day-shift-rate').value = '';
     });
     
+    // Переключение режимов
+    document.getElementById('mode-selector').addEventListener('change', function() {
+        const mode = this.value;
+        toggleModeSettings(mode);
+    });
+    
     // Обработка клавиш
     document.addEventListener('keydown', handleKeyPress);
 }
@@ -497,23 +521,42 @@ function selectMonth(month) {
 
 // Загрузка настроек в форму
 function loadSettingsToForm() {
+    document.getElementById('mode-selector').value = appSettings.mode;
     document.getElementById('tax-toggle').checked = appSettings.useTax;
     document.getElementById('sales-percent').value = appSettings.salesPercent;
     document.getElementById('shift-rate').value = appSettings.shiftRate;
-    document.getElementById('fixed-deduction').value = appSettings.fixedDeduction;
     document.getElementById('advance').value = appSettings.advance;
     document.getElementById('fixed-salary-part').value = appSettings.fixedSalaryPart;
+    document.getElementById('unofficial-advance').value = appSettings.unofficialAdvance;
+    
+    toggleModeSettings(appSettings.mode);
+}
+
+// Переключение видимости настроек в зависимости от режима
+function toggleModeSettings(mode) {
+    const officialSettings = document.getElementById('official-settings');
+    const unofficialSettings = document.getElementById('unofficial-settings');
+    
+    if (mode === 'official') {
+        officialSettings.style.display = 'block';
+        unofficialSettings.style.display = 'none';
+    } else {
+        officialSettings.style.display = 'none';
+        unofficialSettings.style.display = 'block';
+    }
 }
 
 // Сохранение настроек
 function saveSettings() {
     appSettings = {
+        mode: document.getElementById('mode-selector').value,
         useTax: document.getElementById('tax-toggle').checked,
         salesPercent: parseFloat(document.getElementById('sales-percent').value),
         shiftRate: parseInt(document.getElementById('shift-rate').value),
-        fixedDeduction: parseInt(document.getElementById('fixed-deduction').value),
+        fixedDeduction: 25000, // Статичное значение
         advance: parseInt(document.getElementById('advance').value),
-        fixedSalaryPart: parseInt(document.getElementById('fixed-salary-part').value)
+        fixedSalaryPart: parseInt(document.getElementById('fixed-salary-part').value),
+        unofficialAdvance: parseInt(document.getElementById('unofficial-advance').value)
     };
     
     saveToStorage('appSettings', appSettings);
