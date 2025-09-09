@@ -105,15 +105,14 @@ function generateCalendar() {
         
         // Форматирование чисел для отображения
         const formatSalesNumber = (value) => {
-            if (value >= 100000) return (value/1000).toFixed(0) + 'k';
-            if (value >= 10000) return (value/1000).toFixed(1) + 'k';
+            if (value >= 10000) return Math.floor(value / 1000);
             return value;
         };
         
         // Форматирование содержимого
         dayElement.innerHTML = `
             <div class="day-number">${day}</div>
-            ${dayData.sales ? `<div class="day-sales">${formatSalesNumber(dayData.sales)} руб</div>` : ''}
+            ${dayData.sales ? `<div class="day-sales">${formatSalesNumber(dayData.sales)}</div>` : ''}
         `;
         
         // Цвет фона
