@@ -103,10 +103,10 @@ function generateCalendar() {
         const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
         const dayData = calendarData[dateKey] || {};
         
-        // Форматирование чисел для отображения - только целое число тысяч
+        // Форматирование чисел для отображения
         const formatSalesNumber = (value) => {
-            if (value >= 1000) return Math.floor(value/1000);
-            return '';
+            if (value >= 1000) return Math.floor(value / 1000);
+            return value;
         };
         
         // Форматирование содержимого
