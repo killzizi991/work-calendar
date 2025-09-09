@@ -12,19 +12,36 @@ let calendarData = loadFromStorage('calendarData') || {};
 
 // Настройки приложения
 let appSettings = loadFromStorage('appSettings') || {
-  useTax: true,
-  salesPercent: 7,
-  shiftRate: 1000,
-  fixedDeduction: 25000,
-  advance: 10875,
-  fixedSalaryPart: 10875
+  mode: 'official',
+  official: {
+    useTax: true,
+    salesPercent: 7,
+    shiftRate: 1000,
+    fixedDeduction: 25000,
+    advance: 10875,
+    fixedSalaryPart: 10875
+  },
+  unofficial: {
+    advance: 0
+  }
 };
 
 // Миграция старых настроек
-if (appSettings.hasOwnProperty('extraBonus')) {
-  appSettings.advance = appSettings.extraBonus;
-  appSettings.fixedSalaryPart = appSettings.extraBonus;
-  delete appSettings.extraBonus;
+if (appSettings.hasOwnProperty('useTax') && !appSettings.hasOwnProperty('mode')) {
+  appSettings = {
+    mode: 'official',
+    official: {
+      useTax: appSettings.useTax,
+      salesPercent: appSettings.salesPercent,
+      shiftRate: appSettings.shiftRate,
+      fixedDeduction: appSettings.fixedDeduction,
+      advance: appSettings.advance,
+      fixedSalaryPart: appSettings.fixedSalaryPart
+    },
+    unofficial: {
+      advance: 0
+    }
+  };
   saveToStorage('appSettings', appSettings);
 }
 
@@ -291,18 +308,34 @@ function calculateSummary() {
             workDays++;
             totalSales += dayData.sales;
             
-            // Используем индивидуальные настройки дня или общие
-            const dayPercent = dayData.customSalesPercent || appSettings.salesPercent;
-            const dayShiftRate = dayData.customShiftRate || appSettings.shiftRate;
-            
-            totalEarnedWithoutTax += calculateEarnings(dayData.sales, dayPercent) + dayShiftRate;
+            if (appSettings.mode === 'official') {
+                // Используем индивидуальные настройки дня или общие
+                const dayPercent = dayData.customSalesPercent || appSettings.official.salesPercent;
+                const dayShiftRate = dayData.customShiftRate || appSettings.official.shiftRate;
+                
+                totalEarnedWithoutTax += calculateEarnings(dayData.sales, dayPercent) + dayShiftRate;
+            } else {
+                // Неофициальный режим: 7% от продаж + 1000 за смену
+                totalEarnedWithoutTax += (dayData.sales * 0.07) + 1000;
+            }
         }
     }
     
-    const tax = appSettings.useTax ? (appSettings.fixedDeduction * 0.13) : 0;
-    const totalEarned = totalEarnedWithoutTax - tax;
-    const salary = totalEarned - appSettings.advance;
-    const balance = salary - appSettings.fixedSalaryPart;
+    let totalEarned = 0;
+    let salary = 0;
+    let balance = 0;
+    
+    if (appSettings.mode === 'official') {
+        const tax = appSettings.official.useTax ? (appSettings.official.fixedDeduction * 0.13) : 0;
+        totalEarned = totalEarnedWithoutTax - tax;
+        salary = totalEarned - appSettings.official.advance;
+        balance = salary - appSettings.official.fixedSalaryPart;
+    } else {
+        // Неофициальный режим
+        totalEarned = totalEarnedWithoutTax;
+        salary = totalEarned - appSettings.unofficial.advance;
+        balance = salary;
+    }
     
     document.getElementById('modal-work-days').textContent = workDays;
     document.getElementById('modal-total-sales').textContent = totalSales.toLocaleString();
@@ -401,6 +434,7 @@ function setupEventListeners() {
     document.getElementById('settings-btn').addEventListener('click', () => {
         document.getElementById('settings-modal').style.display = 'block';
         document.body.classList.add('modal-open');
+        updateSettingsUI();
     });
     
     document.getElementById('save-settings').addEventListener('click', saveSettings);
@@ -430,6 +464,11 @@ function setupEventListeners() {
     document.getElementById('reset-day-settings').addEventListener('click', function() {
         document.getElementById('day-sales-percent').value = '';
         document.getElementById('day-shift-rate').value = '';
+    });
+    
+    // Переключение режимов в настройках
+    document.getElementById('mode-selector').addEventListener('change', function() {
+        updateSettingsUI();
     });
     
     // Обработка клавиш
@@ -497,24 +536,55 @@ function selectMonth(month) {
 
 // Загрузка настроек в форму
 function loadSettingsToForm() {
-    document.getElementById('tax-toggle').checked = appSettings.useTax;
-    document.getElementById('sales-percent').value = appSettings.salesPercent;
-    document.getElementById('shift-rate').value = appSettings.shiftRate;
-    document.getElementById('fixed-deduction').value = appSettings.fixedDeduction;
-    document.getElementById('advance').value = appSettings.advance;
-    document.getElementById('fixed-salary-part').value = appSettings.fixedSalaryPart;
+    document.getElementById('mode-selector').value = appSettings.mode;
+    updateSettingsUI();
+}
+
+// Обновление интерфейса настроек в зависимости от выбранного режима
+function updateSettingsUI() {
+    const mode = document.getElementById('mode-selector').value;
+    const officialSettings = document.getElementById('official-settings');
+    const unofficialSettings = document.getElementById('unofficial-settings');
+    
+    if (mode === 'official') {
+        officialSettings.style.display = 'block';
+        unofficialSettings.style.display = 'none';
+        
+        // Заполняем значения для официального режима
+        document.getElementById('tax-toggle').checked = appSettings.official.useTax;
+        document.getElementById('sales-percent').value = appSettings.official.salesPercent;
+        document.getElementById('shift-rate').value = appSettings.official.shiftRate;
+        document.getElementById('advance').value = appSettings.official.advance;
+        document.getElementById('fixed-salary-part').value = appSettings.official.fixedSalaryPart;
+    } else {
+        officialSettings.style.display = 'none';
+        unofficialSettings.style.display = 'block';
+        
+        // Заполняем значения для неофициального режима
+        document.getElementById('unofficial-advance').value = appSettings.unofficial.advance;
+    }
 }
 
 // Сохранение настроек
 function saveSettings() {
-    appSettings = {
-        useTax: document.getElementById('tax-toggle').checked,
-        salesPercent: parseFloat(document.getElementById('sales-percent').value),
-        shiftRate: parseInt(document.getElementById('shift-rate').value),
-        fixedDeduction: parseInt(document.getElementById('fixed-deduction').value),
-        advance: parseInt(document.getElementById('advance').value),
-        fixedSalaryPart: parseInt(document.getElementById('fixed-salary-part').value)
-    };
+    const mode = document.getElementById('mode-selector').value;
+    
+    if (mode === 'official') {
+        appSettings.official = {
+            useTax: document.getElementById('tax-toggle').checked,
+            salesPercent: parseFloat(document.getElementById('sales-percent').value),
+            shiftRate: parseInt(document.getElementById('shift-rate').value),
+            fixedDeduction: 25000, // Фиксированное значение
+            advance: parseInt(document.getElementById('advance').value),
+            fixedSalaryPart: parseInt(document.getElementById('fixed-salary-part').value)
+        };
+    } else {
+        appSettings.unofficial = {
+            advance: parseInt(document.getElementById('unofficial-advance').value)
+        };
+    }
+    
+    appSettings.mode = mode;
     
     saveToStorage('appSettings', appSettings);
     closeModal();
@@ -528,7 +598,7 @@ function exportData() {
         calendarData: calendarData,
         appSettings: appSettings,
         exportDate: new Date().toISOString(),
-        version: '1.0'
+        version: '1.1'
     };
     
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -561,13 +631,26 @@ function importData(event) {
             }
             
             if (data.appSettings) {
-                appSettings = data.appSettings;
                 // Миграция старых данных
-                if (appSettings.hasOwnProperty('extraBonus')) {
-                    appSettings.advance = appSettings.extraBonus;
-                    appSettings.fixedSalaryPart = appSettings.extraBonus;
-                    delete appSettings.extraBonus;
+                if (data.appSettings.hasOwnProperty('useTax') && !data.appSettings.hasOwnProperty('mode')) {
+                    appSettings = {
+                        mode: 'official',
+                        official: {
+                            useTax: data.appSettings.useTax,
+                            salesPercent: data.appSettings.salesPercent,
+                            shiftRate: data.appSettings.shiftRate,
+                            fixedDeduction: data.appSettings.fixedDeduction,
+                            advance: data.appSettings.advance,
+                            fixedSalaryPart: data.appSettings.fixedSalaryPart
+                        },
+                        unofficial: {
+                            advance: 0
+                        }
+                    };
+                } else {
+                    appSettings = data.appSettings;
                 }
+                
                 saveToStorage('appSettings', appSettings);
                 loadSettingsToForm();
             }
