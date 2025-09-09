@@ -14,7 +14,6 @@ let calendarData = loadFromStorage('calendarData') || {};
 let appSettings = loadFromStorage('appSettings') || {
   mode: 'official',
   official: {
-    useTax: true,
     salesPercent: 7,
     shiftRate: 1000,
     fixedDeduction: 25000,
@@ -22,6 +21,8 @@ let appSettings = loadFromStorage('appSettings') || {
     fixedSalaryPart: 10875
   },
   unofficial: {
+    salesPercent: 7,
+    shiftRate: 1000,
     advance: 0
   }
 };
@@ -31,7 +32,6 @@ if (appSettings.hasOwnProperty('useTax') && !appSettings.hasOwnProperty('mode'))
   appSettings = {
     mode: 'official',
     official: {
-      useTax: appSettings.useTax,
       salesPercent: appSettings.salesPercent,
       shiftRate: appSettings.shiftRate,
       fixedDeduction: appSettings.fixedDeduction,
@@ -39,6 +39,8 @@ if (appSettings.hasOwnProperty('useTax') && !appSettings.hasOwnProperty('mode'))
       fixedSalaryPart: appSettings.fixedSalaryPart
     },
     unofficial: {
+      salesPercent: 7,
+      shiftRate: 1000,
       advance: 0
     }
   };
@@ -315,8 +317,11 @@ function calculateSummary() {
                 
                 totalEarnedWithoutTax += calculateEarnings(dayData.sales, dayPercent) + dayShiftRate;
             } else {
-                // Неофициальный режим: 7% от продаж + 1000 за смену
-                totalEarnedWithoutTax += (dayData.sales * 0.07) + 1000;
+                // Неофициальный режим: используем настройки из unofficial
+                const dayPercent = dayData.customSalesPercent || appSettings.unofficial.salesPercent;
+                const dayShiftRate = dayData.customShiftRate || appSettings.unofficial.shiftRate;
+                
+                totalEarnedWithoutTax += calculateEarnings(dayData.sales, dayPercent) + dayShiftRate;
             }
         }
     }
@@ -326,7 +331,7 @@ function calculateSummary() {
     let balance = 0;
     
     if (appSettings.mode === 'official') {
-        const tax = appSettings.official.useTax ? (appSettings.official.fixedDeduction * 0.13) : 0;
+        const tax = appSettings.official.fixedDeduction * 0.13;
         totalEarned = totalEarnedWithoutTax - tax;
         salary = totalEarned - appSettings.official.advance;
         balance = salary - appSettings.official.fixedSalaryPart;
@@ -344,6 +349,14 @@ function calculateSummary() {
     document.getElementById('modal-balance').textContent = balance.toLocaleString();
     document.getElementById('summary-month-year').textContent = 
         `${new Date(currentYear, currentMonth).toLocaleString('ru', { month: 'long' })} ${currentYear}`;
+        
+    // Скрываем строку с остатком в неофициальном режиме
+    const balanceRow = document.getElementById('balance-row');
+    if (appSettings.mode === 'unofficial') {
+        balanceRow.style.display = 'none';
+    } else {
+        balanceRow.style.display = 'block';
+    }
 }
 
 // Расчет заработка за день с учетом индивидуального процента
@@ -551,7 +564,6 @@ function updateSettingsUI() {
         unofficialSettings.style.display = 'none';
         
         // Заполняем значения для официального режима
-        document.getElementById('tax-toggle').checked = appSettings.official.useTax;
         document.getElementById('sales-percent').value = appSettings.official.salesPercent;
         document.getElementById('shift-rate').value = appSettings.official.shiftRate;
         document.getElementById('advance').value = appSettings.official.advance;
@@ -561,6 +573,8 @@ function updateSettingsUI() {
         unofficialSettings.style.display = 'block';
         
         // Заполняем значения для неофициального режима
+        document.getElementById('unofficial-sales-percent').value = appSettings.unofficial.salesPercent;
+        document.getElementById('unofficial-shift-rate').value = appSettings.unofficial.shiftRate;
         document.getElementById('unofficial-advance').value = appSettings.unofficial.advance;
     }
 }
@@ -571,7 +585,6 @@ function saveSettings() {
     
     if (mode === 'official') {
         appSettings.official = {
-            useTax: document.getElementById('tax-toggle').checked,
             salesPercent: parseFloat(document.getElementById('sales-percent').value),
             shiftRate: parseInt(document.getElementById('shift-rate').value),
             fixedDeduction: 25000, // Фиксированное значение
@@ -580,6 +593,8 @@ function saveSettings() {
         };
     } else {
         appSettings.unofficial = {
+            salesPercent: parseFloat(document.getElementById('unofficial-sales-percent').value),
+            shiftRate: parseInt(document.getElementById('unofficial-shift-rate').value),
             advance: parseInt(document.getElementById('unofficial-advance').value)
         };
     }
@@ -636,7 +651,6 @@ function importData(event) {
                     appSettings = {
                         mode: 'official',
                         official: {
-                            useTax: data.appSettings.useTax,
                             salesPercent: data.appSettings.salesPercent,
                             shiftRate: data.appSettings.shiftRate,
                             fixedDeduction: data.appSettings.fixedDeduction,
@@ -644,6 +658,8 @@ function importData(event) {
                             fixedSalaryPart: data.appSettings.fixedSalaryPart
                         },
                         unofficial: {
+                            salesPercent: 7,
+                            shiftRate: 1000,
                             advance: 0
                         }
                     };
