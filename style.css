@@ -72,10 +72,6 @@ body.modal-open {
     color: #2c3e50;
 }
 
-.month-selector h2 {
-    font-size: 0.65rem;
-}
-
 .tools-container {
     display: flex;
     gap: 10px;
@@ -182,10 +178,10 @@ button:active {
 }
 
 .day-sales {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #5a6c7d;
     word-break: break-word;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .day-comment {
@@ -467,7 +463,7 @@ input:focus, textarea:focus {
     }
     
     .day-sales {
-        font-size: 0.85rem;
+        font-size: 0.75rem;
     }
     
     .modal-content {
@@ -492,10 +488,6 @@ input:focus, textarea:focus {
     .palette-tool {
         width: 36px;
         height: 36px;
-    }
-    
-    .month-selector h2 {
-        font-size: 0.6rem;
     }
 }
 
@@ -535,10 +527,6 @@ input:focus, textarea:focus {
         height: 32px;
         font-size: 1rem;
     }
-    
-    .month-selector h2 {
-        font-size: 0.55rem;
-    }
 }
 
 /* Портретный режим */
@@ -571,10 +559,6 @@ input:focus, textarea:focus {
     
     .day-sales {
         font-size: 0.7rem;
-    }
-    
-    .month-selector h2 {
-        font-size: 0.5rem;
     }
 }
 
