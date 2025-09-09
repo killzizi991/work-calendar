@@ -232,6 +232,13 @@ function openModal(day) {
         }
     });
     
+    // Заполнение настроек дня
+    document.getElementById('day-sales-percent').value = dayData.customSalesPercent || '';
+    document.getElementById('day-shift-rate').value = dayData.customShiftRate || '';
+    
+    // Сброс видимости настроек дня
+    document.getElementById('day-settings').style.display = 'none';
+    
     document.getElementById('modal').style.display = 'block';
     document.body.classList.add('modal-open');
 }
@@ -241,12 +248,18 @@ function saveDayData() {
     const sales = parseInt(document.getElementById('sales-input').value) || 0;
     const comment = document.getElementById('comment-input').value;
     const selectedColor = document.querySelector('.color-option.selected')?.dataset.color;
+    const customSalesPercent = document.getElementById('day-sales-percent').value ? 
+        parseFloat(document.getElementById('day-sales-percent').value) : null;
+    const customShiftRate = document.getElementById('day-shift-rate').value ? 
+        parseInt(document.getElementById('day-shift-rate').value) : null;
     
     const dateKey = `${currentYear}-${currentMonth+1}-${selectedDay}`;
     calendarData[dateKey] = {
         sales: sales,
         comment: comment,
-        color: selectedColor
+        color: selectedColor,
+        customSalesPercent: customSalesPercent,
+        customShiftRate: customShiftRate
     };
     
     saveToStorage('calendarData', calendarData);
@@ -277,11 +290,15 @@ function calculateSummary() {
         if (dayData.sales > 0) {
             workDays++;
             totalSales += dayData.sales;
-            totalEarnedWithoutTax += calculateEarnings(dayData.sales);
+            
+            // Используем индивидуальные настройки дня или общие
+            const dayPercent = dayData.customSalesPercent || appSettings.salesPercent;
+            const dayShiftRate = dayData.customShiftRate || appSettings.shiftRate;
+            
+            totalEarnedWithoutTax += calculateEarnings(dayData.sales, dayPercent) + dayShiftRate;
         }
     }
     
-    totalEarnedWithoutTax += workDays * appSettings.shiftRate;
     const tax = appSettings.useTax ? (appSettings.fixedDeduction * 0.13) : 0;
     const totalEarned = totalEarnedWithoutTax - tax;
     const salary = totalEarned - appSettings.advance;
@@ -296,9 +313,9 @@ function calculateSummary() {
         `${new Date(currentYear, currentMonth).toLocaleString('ru', { month: 'long' })} ${currentYear}`;
 }
 
-// Расчет заработка за день
-function calculateEarnings(sales) {
-    return sales * (appSettings.salesPercent / 100);
+// Расчет заработка за день с учетом индивидуального процента
+function calculateEarnings(sales, percent) {
+    return sales * (percent / 100);
 }
 
 // Настройка обработчиков событий
@@ -402,6 +419,17 @@ function setupEventListeners() {
             document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
             option.classList.add('selected');
         });
+    });
+    
+    // Настройки дня
+    document.getElementById('day-settings-btn').addEventListener('click', function() {
+        const settingsPanel = document.getElementById('day-settings');
+        settingsPanel.style.display = settingsPanel.style.display === 'none' ? 'block' : 'none';
+    });
+    
+    document.getElementById('reset-day-settings').addEventListener('click', function() {
+        document.getElementById('day-sales-percent').value = '';
+        document.getElementById('day-shift-rate').value = '';
     });
     
     // Обработка клавиш
