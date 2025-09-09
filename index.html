@@ -129,35 +129,47 @@
             <h3>Настройки расчетов</h3>
             
             <div class="setting-group">
-                <label>
-                    <input type="checkbox" id="tax-toggle" checked>
-                    Учитывать налог (13%)
-                </label>
+                <label>Режим работы:</label>
+                <select id="mode-selector">
+                    <option value="official">Официально</option>
+                    <option value="unofficial">Не официально</option>
+                </select>
             </div>
             
-            <div class="setting-group">
-                <label>Процент с продаж (%):</label>
-                <input type="number" id="sales-percent" value="7" min="0" max="100" step="0.1">
-            </div>
-            
-            <div class="setting-group">
-                <label>Ставка за смену (руб):</label>
-                <input type="number" id="shift-rate" value="1000" min="0" step="100">
-            </div>
-            
-            <div class="setting-group">
-                <label>Фиксированный вычет (руб):</label>
-                <input type="number" id="fixed-deduction" value="25000" min="0" step="1000">
-            </div>
-            
-            <div class="setting-group">
-                <label>Аванс (руб):</label>
-                <input type="number" id="advance" value="10875" min="0" step="1000">
-            </div>
+            <div id="official-settings">
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="tax-toggle" checked>
+                        Учитывать налог (13%)
+                    </label>
+                </div>
+                
+                <div class="setting-group">
+                    <label>Процент с продаж (%):</label>
+                    <input type="number" id="sales-percent" value="7" min="0" max="100" step="0.1">
+                </div>
+                
+                <div class="setting-group">
+                    <label>Ставка за смену (руб):</label>
+                    <input type="number" id="shift-rate" value="1000" min="0" step="100">
+                </div>
+                
+                <div class="setting-group">
+                    <label>Аванс (руб):</label>
+                    <input type="number" id="advance" value="10875" min="0" step="1000">
+                </div>
 
-            <div class="setting-group">
-                <label>Фиксированная часть зарплаты (руб):</label>
-                <input type="number" id="fixed-salary-part" value="10875" min="0" step="1000">
+                <div class="setting-group">
+                    <label>Фиксированная часть зарплаты (руб):</label>
+                    <input type="number" id="fixed-salary-part" value="10875" min="0" step="1000">
+                </div>
+            </div>
+            
+            <div id="unofficial-settings" style="display: none;">
+                <div class="setting-group">
+                    <label>Аванс (руб):</label>
+                    <input type="number" id="unofficial-advance" value="0" min="0" step="1000">
+                </div>
             </div>
 
             <div class="setting-group" style="display: flex; gap: 10px; margin-top: 20px;">
