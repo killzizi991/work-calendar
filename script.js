@@ -1,3 +1,4 @@
+// script.js
 // Основные переменные
 let currentDate = new Date();
 let currentYear = currentDate.getFullYear();
@@ -460,6 +461,9 @@ function setupEventListeners() {
     
     document.getElementById('import-file').addEventListener('change', importData);
     
+    // Обновление версии
+    document.getElementById('update-btn').addEventListener('click', updateAppVersion);
+    
     // Выбор цвета в модальном окне
     document.querySelectorAll('.color-option').forEach(option => {
         option.addEventListener('click', () => {
@@ -490,70 +494,72 @@ function setupEventListeners() {
 
 // Обработка нажатий клавиш
 function handleKeyPress(e) {
-    if (e.key === 'Escape') {
-        closeModal();
+    if (document.getElementById('modal').style.display === 'block') {
+        if (e.key === 'Escape') {
+            closeModal();
+        } else if (e.key === 'Enter') {
+            saveDayData();
+        }
     }
 }
 
 // Инициализация выбора периода
 function initPeriodSelector() {
-    const currentYear = new Date().getFullYear();
-    const yearOptions = document.getElementById('year-options');
+    const monthSelect = document.getElementById('month-select');
+    const yearSelect = document.getElementById('year-select');
     
-    // Годы от 2020 до текущего + 5 лет вперед
-    for (let year = 2020; year <= currentYear + 5; year++) {
-        const option = document.createElement('div');
-        option.className = 'period-option';
+    // Заполнение месяцев
+    const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+                   "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+    
+    months.forEach((month, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = month;
+        if (index === currentMonth) option.selected = true;
+        monthSelect.appendChild(option);
+    });
+    
+    // Заполнение годов (текущий год ± 5 лет)
+    const currentYear = new Date().getFullYear();
+    for (let year = currentYear - 5; year <= currentYear + 5; year++) {
+        const option = document.createElement('option');
+        option.value = year;
         option.textContent = year;
-        option.dataset.year = year;
-        option.addEventListener('click', () => selectYear(year));
-        yearOptions.appendChild(option);
+        if (year === currentYear) option.selected = true;
+        yearSelect.appendChild(option);
     }
     
-    // Месяцы
-    const monthOptions = document.getElementById('month-options');
-    const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
-      "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
-    
-    monthNames.forEach((month, index) => {
-        const option = document.createElement('div');
-        option.className = 'period-option';
-        option.textContent = month;
-        option.dataset.month = index;
-        option.addEventListener('click', () => selectMonth(index));
-        monthOptions.appendChild(option);
+    // Применение выбора
+    document.getElementById('apply-period').addEventListener('click', () => {
+        currentMonth = parseInt(monthSelect.value);
+        currentYear = parseInt(yearSelect.value);
+        generateCalendar();
+        closeModal();
     });
-    
-    // Кнопка назад
-    document.getElementById('period-back').addEventListener('click', () => {
-        document.getElementById('month-step').style.display = 'none';
-        document.getElementById('year-step').style.display = 'block';
-        document.getElementById('period-back').style.display = 'none';
-    });
-}
-
-// Выбор года
-function selectYear(year) {
-    currentYear = year;
-    document.getElementById('year-step').style.display = 'none';
-    document.getElementById('month-step').style.display = 'block';
-    document.getElementById('period-back').style.display = 'block';
-}
-
-// Выбор месяца
-function selectMonth(month) {
-    currentMonth = month;
-    closeModal();
-    generateCalendar();
 }
 
 // Загрузка настроек в форму
 function loadSettingsToForm() {
-    document.getElementById('mode-selector').value = appSettings.mode;
+    const mode = appSettings.mode;
+    document.getElementById('mode-selector').value = mode;
+    
+    if (mode === 'official') {
+        document.getElementById('official-sales-percent').value = appSettings.official.salesPercent;
+        document.getElementById('official-shift-rate').value = appSettings.official.shiftRate;
+        document.getElementById('official-fixed-deduction').value = appSettings.official.fixedDeduction;
+        document.getElementById('official-advance').value = appSettings.official.advance;
+        document.getElementById('official-fixed-salary-part').value = appSettings.official.fixedSalaryPart;
+    } else {
+        document.getElementById('unofficial-sales-percent').value = appSettings.unofficial.salesPercent;
+        document.getElementById('unofficial-shift-rate').value = appSettings.unofficial.shiftRate;
+        document.getElementById('unofficial-advance').value = appSettings.unofficial.advance;
+    }
+    
     updateSettingsUI();
 }
 
-// Обновление интерфейса настроек в зависимости от выбранного режима
+// Обновление интерфейса настроек
 function updateSettingsUI() {
     const mode = document.getElementById('mode-selector').value;
     const officialSettings = document.getElementById('official-settings');
@@ -562,20 +568,9 @@ function updateSettingsUI() {
     if (mode === 'official') {
         officialSettings.style.display = 'block';
         unofficialSettings.style.display = 'none';
-        
-        // Заполняем значения для официального режима
-        document.getElementById('sales-percent').value = appSettings.official.salesPercent;
-        document.getElementById('shift-rate').value = appSettings.official.shiftRate;
-        document.getElementById('advance').value = appSettings.official.advance;
-        document.getElementById('fixed-salary-part').value = appSettings.official.fixedSalaryPart;
     } else {
         officialSettings.style.display = 'none';
         unofficialSettings.style.display = 'block';
-        
-        // Заполняем значения для неофициального режима
-        document.getElementById('unofficial-sales-percent').value = appSettings.unofficial.salesPercent;
-        document.getElementById('unofficial-shift-rate').value = appSettings.unofficial.shiftRate;
-        document.getElementById('unofficial-advance').value = appSettings.unofficial.advance;
     }
 }
 
@@ -584,27 +579,33 @@ function saveSettings() {
     const mode = document.getElementById('mode-selector').value;
     
     if (mode === 'official') {
-        appSettings.official = {
-            salesPercent: parseFloat(document.getElementById('sales-percent').value),
-            shiftRate: parseInt(document.getElementById('shift-rate').value),
-            fixedDeduction: 25000, // Фиксированное значение
-            advance: parseInt(document.getElementById('advance').value),
-            fixedSalaryPart: parseInt(document.getElementById('fixed-salary-part').value)
+        appSettings = {
+            mode: mode,
+            official: {
+                salesPercent: parseFloat(document.getElementById('official-sales-percent').value),
+                shiftRate: parseInt(document.getElementById('official-shift-rate').value),
+                fixedDeduction: parseInt(document.getElementById('official-fixed-deduction').value),
+                advance: parseInt(document.getElementById('official-advance').value),
+                fixedSalaryPart: parseInt(document.getElementById('official-fixed-salary-part').value)
+            },
+            unofficial: appSettings.unofficial
         };
     } else {
-        appSettings.unofficial = {
-            salesPercent: parseFloat(document.getElementById('unofficial-sales-percent').value),
-            shiftRate: parseInt(document.getElementById('unofficial-shift-rate').value),
-            advance: parseInt(document.getElementById('unofficial-advance').value)
+        appSettings = {
+            mode: mode,
+            official: appSettings.official,
+            unofficial: {
+                salesPercent: parseFloat(document.getElementById('unofficial-sales-percent').value),
+                shiftRate: parseInt(document.getElementById('unofficial-shift-rate').value),
+                advance: parseInt(document.getElementById('unofficial-advance').value)
+            }
         };
     }
     
-    appSettings.mode = mode;
-    
     saveToStorage('appSettings', appSettings);
-    closeModal();
-    calculateSummary();
     showNotification('Настройки сохранены');
+    closeModal();
+    generateCalendar();
 }
 
 // Экспорт данных
@@ -613,12 +614,11 @@ function exportData() {
         calendarData: calendarData,
         appSettings: appSettings,
         exportDate: new Date().toISOString(),
-        version: '1.1'
+        version: '1.0'
     };
     
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    
     const a = document.createElement('a');
     a.href = url;
     a.download = `calendar-backup-${new Date().toISOString().split('T')[0]}.json`;
@@ -640,120 +640,79 @@ function importData(event) {
         try {
             const data = JSON.parse(e.target.result);
             
-            if (data.calendarData) {
+            if (data.calendarData && data.appSettings) {
                 calendarData = data.calendarData;
-                saveToStorage('calendarData', calendarData);
-            }
-            
-            if (data.appSettings) {
-                // Миграция старых данных
-                if (data.appSettings.hasOwnProperty('useTax') && !data.appSettings.hasOwnProperty('mode')) {
-                    appSettings = {
-                        mode: 'official',
-                        official: {
-                            salesPercent: data.appSettings.salesPercent,
-                            shiftRate: data.appSettings.shiftRate,
-                            fixedDeduction: data.appSettings.fixedDeduction,
-                            advance: data.appSettings.advance,
-                            fixedSalaryPart: data.appSettings.fixedSalaryPart
-                        },
-                        unofficial: {
-                            salesPercent: 7,
-                            shiftRate: 1000,
-                            advance: 0
-                        }
-                    };
-                } else {
-                    appSettings = data.appSettings;
-                }
+                appSettings = data.appSettings;
                 
+                saveToStorage('calendarData', calendarData);
                 saveToStorage('appSettings', appSettings);
-                loadSettingsToForm();
+                
+                generateCalendar();
+                showNotification('Данные успешно импортированы');
+            } else {
+                showNotification('Ошибка: Неверный формат файла');
             }
-            
-            generateCalendar();
-            showNotification('Данные импортированы');
         } catch (error) {
             console.error('Ошибка импорта:', error);
-            showNotification('Ошибка импорта данных');
+            showNotification('Ошибка при импорте данных');
         }
     };
     reader.readAsText(file);
-    event.target.value = ''; // Сброс input
+    event.target.value = ''; // Сброс значения для возможности повторного выбора того же файла
+}
+
+// Обновление версии приложения
+function updateAppVersion() {
+    showNotification('Обновление... Данные сохранены.');
+    
+    // Сохраняем текущие данные перед обновлением
+    const success = saveToStorage('calendarData', calendarData) && saveToStorage('appSettings', appSettings);
+    
+    if (success) {
+        // Очищаем кэш Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+        
+        // Принудительная перезагрузка страницы с очисткой кэша
+        setTimeout(() => {
+            window.location.reload(true);
+        }, 1000);
+    } else {
+        showNotification('Ошибка при сохранении данных перед обновлением');
+    }
 }
 
 // Показ уведомлений
 function showNotification(message) {
-    const notification = document.createElement('div');
-    notification.className = 'notification';
+    const notification = document.getElementById('notification');
     notification.textContent = message;
-    document.body.appendChild(notification);
+    notification.style.display = 'block';
     
-    // Анимация появления
     setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateX(-50%) translateY(0)';
-    }, 100);
-    
-    // Автоматическое скрытие
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateX(-50%) translateY(20px)';
-        setTimeout(() => notification.remove(), 300);
+        notification.style.display = 'none';
     }, 3000);
 }
 
 // Приветственное сообщение
 function showWelcomeMessage() {
-    setTimeout(() => {
-        showNotification('Добро пожаловать! Для начала работы нажмите на любой день');
-    }, 1000);
-}
-
-// Оптимизация для мобильных устройств
-function optimizeForMobile() {
-    // Предотвращение масштабирования при фокусе
-    document.addEventListener('focusin', function() {
-        if (window.innerWidth < 768) {
-            document.body.style.zoom = '100%';
-        }
-    });
+    const welcomeMessage = `
+        Добро пожаловать в Calendar Calculator! 📊
+        
+        Основные возможности:
+        • 📅 Отслеживание продаж по дням
+        • 💰 Автоматический расчет заработка
+        • 🎨 Цветовое кодирование дней
+        • 💬 Добавление комментариев
+        • ⚙️ Гибкие настройки расчета
+        • 📤 Экспорт/импорт данных
+        
+        Начните с ввода данных продаж за сегодняшний день!
+    `;
     
-    // Восстановление после потери фокуса
-    document.addEventListener('focusout', function() {
-        setTimeout(() => {
-            document.body.style.zoom = '';
-        }, 100);
-    });
-}
-
-// Вызов оптимизации
-optimizeForMobile();
-
-// Обработка ошибок
-window.addEventListener('error', function(e) {
-    console.error('Произошла ошибка:', e.error);
-    showNotification('Произошла ошибка приложения');
-});
-
-// Обработка необработанных промисов
-window.addEventListener('unhandledrejection', function(e) {
-    console.error('Необработанный промис:', e.reason);
-    e.preventDefault();
-});
-
-// Проверка поддержки localStorage
-function checkLocalStorageSupport() {
-    try {
-        const test = 'test';
-        localStorage.setItem(test, test);
-        localStorage.removeItem(test);
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-
-if (!checkLocalStorageSupport()) {
-    showNotification('Ваш браузер не поддерживает сохранение данных');
+    alert(welcomeMessage);
 }
