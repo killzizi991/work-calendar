@@ -151,9 +151,13 @@ function generateCalendar() {
         if (dayData.color) {
             if (dayData.color === '#ffffff') {
                 dayElement.style.backgroundColor = '';
+                dayElement.classList.remove('has-color');
             } else {
                 dayElement.style.backgroundColor = dayData.color;
+                dayElement.classList.add('has-color');
             }
+        } else {
+            dayElement.classList.remove('has-color');
         }
         
         // Функциональная обводка
@@ -402,7 +406,7 @@ function setupEventListeners() {
     });
     
     // Палитра
-    document.getElementById('palette-btn').addEventListener('click', () => {
+    document.getElementById('palette-btn').addEventListener('click', () {
         const palettePanel = document.getElementById('palette-panel');
         const isOpen = palettePanel.style.display === 'flex';
         
@@ -895,7 +899,7 @@ function showWelcomeMessage() {
 
 // Оптимизация для мобильных устройств
 function optimizeForMobile() {
-    // Предотвращение масштабирования при фокусе
+    // Предотвращение масштабирования при фокусировке
     document.addEventListener('focusin', function() {
         if (window.innerWidth < 768) {
             document.body.style.zoom = '100%';
