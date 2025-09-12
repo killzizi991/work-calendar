@@ -29,6 +29,7 @@
                 <h2 id="current-month-year">Июль 2025</h2>
             </button>
             <button id="next-month">&gt;</button>
+            <button id="help-btn" style="margin-left: 10px;">?</button>
             <button id="settings-btn" style="margin-left: 10px;">⚙️</button>
         </div>
         
@@ -226,9 +227,19 @@
         </div>
     </div>
 
+    <!-- Модальное окно помощи -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Часто задаваемые вопросы</h3>
+            <div id="help-content" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
     <!-- Скрытый input для импорта -->
     <input type="file" id="import-file" accept=".json" style="display: none;">
 
+    <script src="help.js"></script>
     <script src="script.js"></script>
     <script>
         // Принудительное обновление кэша при новой версии
