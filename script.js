@@ -150,15 +150,6 @@ function generateCalendar() {
         // Цвет фона
         if (dayData.color) {
             dayElement.style.backgroundColor = dayData.color;
-            // Добавляем класс для залитых ячеек в темной теме
-            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                dayElement.classList.add('colored-cell');
-                // Для белого цвета в темной теме используем стандартный цвет фона
-                if (dayData.color === '#ffffff') {
-                    dayElement.style.backgroundColor = '';
-                    dayElement.classList.remove('colored-cell');
-                }
-            }
         }
         
         // Функциональная обводка
@@ -264,11 +255,6 @@ function openModal(day) {
         }
     });
     
-    // Если цвет не выбран, выбираем белый по умолчанию
-    if (!document.querySelector('.color-option.selected')) {
-        document.querySelector('.color-option[data-color="#ffffff"]').classList.add('selected');
-    }
-    
     // Заполнение настроек дня
     document.getElementById('day-sales-percent').value = dayData.customSalesPercent || '';
     document.getElementById('day-shift-rate').value = dayData.customShiftRate || '';
@@ -284,19 +270,13 @@ function openModal(day) {
 function saveDayData() {
     const sales = parseInt(document.getElementById('sales-input').value) || 0;
     const comment = document.getElementById('comment-input').value;
-    let selectedColor = document.querySelector('.color-option.selected')?.dataset.color;
+    const selectedColor = document.querySelector('.color-option.selected')?.dataset.color;
     const customSalesPercent = document.getElementById('day-sales-percent').value ? 
         parseFloat(document.getElementById('day-sales-percent').value) : null;
     const customShiftRate = document.getElementById('day-shift-rate').value ? 
         parseInt(document.getElementById('day-shift-rate').value) : null;
     
     const dateKey = `${currentYear}-${currentMonth+1}-${selectedDay}`;
-    
-    // Сохраняем предыдущий цвет, если новый не выбран
-    if (!selectedColor && calendarData[dateKey] && calendarData[dateKey].color) {
-        selectedColor = calendarData[dateKey].color;
-    }
-    
     calendarData[dateKey] = {
         sales: sales,
         comment: comment,
