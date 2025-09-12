@@ -167,9 +167,9 @@ function generateCalendar() {
             commentIcon.className = 'day-comment';
             commentIcon.textContent = '💬';
             commentIcon.style.position = 'absolute';
-            commentIcon.style.top = '5px';
-            commentIcon.style.right = '5px';
-            commentIcon.style.fontSize = '0.8em';
+            commentIcon.style.top = '8px';
+            commentIcon.style.right = '8px';
+            commentIcon.style.fontSize = '0.7em';
             dayElement.appendChild(commentIcon);
         }
         
