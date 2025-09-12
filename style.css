@@ -466,12 +466,6 @@ input:focus, textarea:focus {
         font-size: 0.95rem;
     }
     
-    .day-comment {
-        top: 3px;
-        right: 3px;
-        font-size: 0.65em;
-    }
-    
     .modal-content {
         margin: 8% auto;
         width: 95%;
@@ -494,6 +488,16 @@ input:focus, textarea:focus {
     .palette-tool {
         width: 36px;
         height: 36px;
+    }
+
+    /* Новые стили для иконки комментария на мобильных устройствах */
+    .day-comment {
+        position: absolute;
+        top: 50%;
+        right: 5px;
+        transform: translateY(-50%);
+        font-size: 0.6em;
+        z-index: 2;
     }
 }
 
@@ -520,12 +524,6 @@ input:focus, textarea:focus {
         font-size: 0.9rem;
     }
     
-    .day-comment {
-        top: 2px;
-        right: 2px;
-        font-size: 0.6em;
-    }
-    
     .period-options {
         grid-template-columns: 1fr;
     }
@@ -542,6 +540,12 @@ input:focus, textarea:focus {
         width: 32px;
         height: 32px;
         font-size: 1rem;
+    }
+
+    /* Дополнительные стили для очень маленьких экранов */
+    .day-comment {
+        font-size: 0.55em;
+        right: 3px;
     }
 }
 
@@ -576,11 +580,11 @@ input:focus, textarea:focus {
     .day-sales {
         font-size: 0.8rem;
     }
-    
+
+    /* Стили для ландшафтного режима на мобильных */
     .day-comment {
-        top: 1px;
-        right: 1px;
-        font-size: 0.55em;
+        font-size: 0.5em;
+        right: 2px;
     }
 }
 
