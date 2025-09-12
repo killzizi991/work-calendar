@@ -616,6 +616,7 @@ function updateSettingsUI() {
 // Сохранение настроек
 function saveSettings() {
     const mode = document.getElementById('mode-selector').value;
+    const oldFunctionalBorderValue = appSettings[appSettings.mode].functionalBorderValue;
     
     if (mode === 'official') {
         appSettings.official = {
@@ -637,10 +638,34 @@ function saveSettings() {
     
     appSettings.mode = mode;
     
+    // Обновляем установленные функциональные обводки, если значение изменилось
+    const newFunctionalBorderValue = appSettings[appSettings.mode].functionalBorderValue;
+    if (oldFunctionalBorderValue !== newFunctionalBorderValue) {
+        updateFunctionalBorders(newFunctionalBorderValue);
+    }
+    
     saveToStorage('appSettings', appSettings);
     closeModal();
     calculateSummary();
     showNotification('Настройки сохранены');
+}
+
+// Обновление значений функциональных обводок
+function updateFunctionalBorders(newValue) {
+    let updated = false;
+    
+    for (const dateKey in calendarData) {
+        if (calendarData[dateKey].functionalBorder) {
+            calendarData[dateKey].sales = newValue;
+            updated = true;
+        }
+    }
+    
+    if (updated) {
+        saveToStorage('calendarData', calendarData);
+        generateCalendar();
+        showNotification('Значения обводок обновлены');
+    }
 }
 
 // Экспорт данных
