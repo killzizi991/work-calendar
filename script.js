@@ -302,6 +302,7 @@ function closeModal() {
     document.getElementById('settings-modal').style.display = 'none';
     document.getElementById('export-modal').style.display = 'none';
     document.getElementById('import-modal').style.display = 'none';
+    document.getElementById('help-modal').style.display = 'none';
     document.body.classList.remove('modal-open');
 }
 
@@ -495,6 +496,9 @@ function setupEventListeners() {
     // Кнопка обновления версии
     document.getElementById('update-btn').addEventListener('click', forceUpdate);
     
+    // Кнопка помощи
+    document.getElementById('help-btn').addEventListener('click', showHelpModal);
+    
     // Обработка клавиш
     document.addEventListener('keydown', handleKeyPress);
     
@@ -505,6 +509,58 @@ function setupEventListeners() {
         document.getElementById('import-file').click();
     });
     document.getElementById('import-text-btn').addEventListener('click', importFromText);
+}
+
+// Показать модальное окно помощи
+function showHelpModal() {
+    const helpContent = document.getElementById('help-content');
+    helpContent.innerHTML = '';
+    
+    HELP_DATA.forEach((item, index) => {
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'help-item';
+        questionDiv.style.marginBottom = '10px';
+        questionDiv.style.borderBottom = '1px solid #e2e8f0';
+        questionDiv.style.paddingBottom = '10px';
+        
+        const questionHeader = document.createElement('div');
+        questionHeader.className = 'help-question';
+        questionHeader.textContent = item.question;
+        questionHeader.style.fontWeight = '600';
+        questionHeader.style.cursor = 'pointer';
+        questionHeader.style.padding = '8px';
+        questionHeader.style.backgroundColor = '#f8fafc';
+        questionHeader.style.borderRadius = '5px';
+        questionHeader.addEventListener('click', () => {
+            const answer = questionDiv.querySelector('.help-answer');
+            const isVisible = answer.style.display === 'block';
+            
+            // Скрываем все ответы
+            document.querySelectorAll('.help-answer').forEach(ans => {
+                ans.style.display = 'none';
+            });
+            
+            // Показываем/скрываем текущий ответ
+            answer.style.display = isVisible ? 'none' : 'block';
+        });
+        
+        const answerDiv = document.createElement('div');
+        answerDiv.className = 'help-answer';
+        answerDiv.innerHTML = item.answer;
+        answerDiv.style.display = 'none';
+        answerDiv.style.padding = '12px';
+        answerDiv.style.backgroundColor = '#ffffff';
+        answerDiv.style.borderRadius = '5px';
+        answerDiv.style.marginTop = '8px';
+        answerDiv.style.border = '1px solid #e2e8f0';
+        
+        questionDiv.appendChild(questionHeader);
+        questionDiv.appendChild(answerDiv);
+        helpContent.appendChild(questionDiv);
+    });
+    
+    document.getElementById('help-modal').style.display = 'block';
+    document.body.classList.add('modal-open');
 }
 
 // Показать модальное окно экспорта
