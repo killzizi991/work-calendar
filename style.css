@@ -617,7 +617,6 @@ input:focus, textarea:focus {
     .day {
         background: #2d3035;
         border-color: #3b3e45;
-        color: #e9ecef;
     }
     
     .day-header {
@@ -685,15 +684,28 @@ input:focus, textarea:focus {
         border-color: #5a6c7d;
         background: #3b3e45;
     }
-    
-    /* Стили для залитых ячеек в темной теме */
-    .day.colored-cell {
+
+    /* Исправление для залитых ячеек в темной теме */
+    .day[style*="background-color"] {
         color: #2c3e50 !important;
     }
-    
-    .day.colored-cell .day-number,
-    .day.colored-cell .day-sales {
+
+    .day[style*="background-color"] .day-number,
+    .day[style*="background-color"] .day-sales {
         color: #2c3e50 !important;
+    }
+
+    /* Особый случай для белого цвета в темной теме */
+    .day[style*="background-color: #ffffff"],
+    .day[style*="background-color: rgb(255, 255, 255)"] {
+        background-color: #2d3035 !important;
+    }
+
+    .day[style*="background-color: #ffffff"] .day-number,
+    .day[style*="background-color: #ffffff"] .day-sales,
+    .day[style*="background-color: rgb(255, 255, 255)"] .day-number,
+    .day[style*="background-color: rgb(255, 255, 255)"] .day-sales {
+        color: #e9ecef !important;
     }
 }
 
