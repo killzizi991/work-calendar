@@ -617,6 +617,7 @@ input:focus, textarea:focus {
     .day {
         background: #2d3035;
         border-color: #3b3e45;
+        color: #e9ecef;
     }
     
     .day-header {
@@ -683,6 +684,16 @@ input:focus, textarea:focus {
     .palette-tool {
         border-color: #5a6c7d;
         background: #3b3e45;
+    }
+    
+    /* Стили для залитых ячеек в темной теме */
+    .day.colored-cell {
+        color: #2c3e50 !important;
+    }
+    
+    .day.colored-cell .day-number,
+    .day.colored-cell .day-sales {
+        color: #2c3e50 !important;
     }
 }
 
