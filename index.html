@@ -198,6 +198,34 @@
         </div>
     </div>
 
+    <!-- Новые модальные окна для экспорта/импорта -->
+    <div id="export-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Экспорт данных</h3>
+            <p id="ios-export-text" style="margin-bottom: 15px; display: none;">
+                Нажмите "Копировать" чтобы сохранить данные в буфер обмена. 
+                Сохраните текст в надежном месте (например, в заметках).
+            </p>
+            <div style="display: flex; gap: 10px;">
+                <button id="copy-data-btn" style="flex: 1;">Копировать</button>
+                <button id="save-file-btn" style="flex: 1;">Сохранить файл</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="import-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Импорт данных</h3>
+            <textarea id="import-text-input" placeholder="Вставьте сохраненные данные и нажмите 'Сохранить'" style="height: 120px; margin: 10px 0;"></textarea>
+            <div style="display: flex; gap: 10px;">
+                <button id="import-file-btn" style="flex: 1;">Выбрать файл</button>
+                <button id="import-text-btn" style="flex: 1;">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Скрытый input для импорта -->
     <input type="file" id="import-file" accept=".json" style="display: none;">
 
