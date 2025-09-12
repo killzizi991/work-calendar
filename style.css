@@ -175,13 +175,15 @@ button:active {
     font-size: 1rem;
     margin-bottom: 4px;
     color: #2c3e50;
+    text-shadow: 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000;
 }
 
 .day-sales {
-    font-size: 0.8rem;
-    color: #5a6c7d;
+    font-size: 1rem;
+    color: #2c3e50;
     word-break: break-word;
     font-weight: 500;
+    text-shadow: 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000;
 }
 
 .day-comment {
@@ -463,7 +465,7 @@ input:focus, textarea:focus {
     }
     
     .day-sales {
-        font-size: 0.75rem;
+        font-size: 0.95rem;
     }
     
     .modal-content {
@@ -507,6 +509,10 @@ input:focus, textarea:focus {
     }
     
     .day-number {
+        font-size: 0.9rem;
+    }
+    
+    .day-sales {
         font-size: 0.9rem;
     }
     
@@ -558,7 +564,7 @@ input:focus, textarea:focus {
     }
     
     .day-sales {
-        font-size: 0.7rem;
+        font-size: 0.8rem;
     }
 }
 
@@ -632,10 +638,12 @@ input:focus, textarea:focus {
     
     .day-number {
         color: #e9ecef;
+        text-shadow: 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000;
     }
     
     .day-sales {
-        color: #b8c2cc;
+        color: #e9ecef;
+        text-shadow: 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000;
     }
     
     .palette-panel {
