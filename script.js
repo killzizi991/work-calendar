@@ -484,8 +484,36 @@ function setupEventListeners() {
         updateSettingsUI();
     });
     
+    // Кнопка обновления версии
+    document.getElementById('update-btn').addEventListener('click', forceUpdate);
+    
     // Обработка клавиш
     document.addEventListener('keydown', handleKeyPress);
+}
+
+// Принудительное обновление версии
+async function forceUpdate() {
+    showNotification('Обновление...');
+    
+    // Удаляем все кэши
+    const cacheKeys = await caches.keys();
+    for (const key of cacheKeys) {
+        await caches.delete(key);
+    }
+    
+    // Удаляем сервис-воркер
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    for (let registration of registrations) {
+        await registration.unregister();
+    }
+    
+    // Удаляем версию из localStorage
+    localStorage.removeItem('sw_version');
+    
+    // Перезагружаем страницу
+    setTimeout(() => {
+        window.location.reload(true);
+    }, 1000);
 }
 
 // Обработка нажатий клавиш
