@@ -632,10 +632,12 @@ input:focus, textarea:focus {
     
     .day-number {
         color: #e9ecef;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
     }
     
     .day-sales {
         color: #b8c2cc;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
     }
     
     .palette-panel {
@@ -683,23 +685,6 @@ input:focus, textarea:focus {
     .palette-tool {
         border-color: #5a6c7d;
         background: #3b3e45;
-    }
-
-    /* Для ячеек с цветной заливкой (кроме белого) используем темный текст */
-    .day[style*="background-color: #bbdefb"] .day-number,
-    .day[style*="background-color: #c8e6c9"] .day-number,
-    .day[style*="background-color: #b2ebf2"] .day-number,
-    .day[style*="background-color: #fff9c4"] .day-number,
-    .day[style*="background-color: #e1bee7"] .day-number,
-    .day[style*="background-color: #f8bbd0"] .day-number,
-    .day[style*="background-color: #bbdefb"] .day-sales,
-    .day[style*="background-color: #c8e6c9"] .day-sales,
-    .day[style*="background-color: #b2ebf2"] .day-sales,
-    .day[style*="background-color: #fff9c4"] .day-sales,
-    .day[style*="background-color: #e1bee7"] .day-sales,
-    .day[style*="background-color: #f8bbd0"] .day-sales {
-        color: #2c3e50 !important;
-        font-weight: 600;
     }
 }
 
