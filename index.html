@@ -42,12 +42,12 @@
     <div id="palette-panel" class="palette-panel">
         <div class="palette-tools">
             <div class="palette-tool fill" data-color="#ffffff" style="background-color: #ffffff; border: 1px solid #e2e8f0;"></div>
-            <div class="palette-tool fill" data-color="#bbdefb" style="background-color: #bbdefb;"></div>
-            <div class="palette-tool fill" data-color="#c8e6c9" style="background-color: #c8e6c9;"></div>
-            <div class="palette-tool fill" data-color="#b2ebf2" style="background-color: #b2ebf2;"></div>
-            <div class="palette-tool fill" data-color="#ffecb3" style="background-color: #ffecb3;"></div>
-            <div class="palette-tool fill" data-color="#e1bee7" style="background-color: #e1bee7;"></div>
-            <div class="palette-tool fill" data-color="#ffcdd2" style="background-color: #ffcdd2;"></div>
+            <div class="palette-tool fill" data-color="#e3f2fd" style="background-color: #e3f2fd;"></div>
+            <div class="palette-tool fill" data-color="#e8f5e8" style="background-color: #e8f5e8;"></div>
+            <div class="palette-tool fill" data-color="#e0f7fa" style="background-color: #e0f7fa;"></div>
+            <div class="palette-tool fill" data-color="#fff8e1" style="background-color: #fff8e1;"></div>
+            <div class="palette-tool fill" data-color="#f3e5f5" style="background-color: #f3e5f5;"></div>
+            <div class="palette-tool fill" data-color="#ffebee" style="background-color: #ffebee;"></div>
             <div id="palette-border" class="palette-tool" title="Функциональная обводка">🔲</div>
         </div>
     </div>
@@ -64,12 +64,12 @@
             <textarea id="comment-input" placeholder="Комментарий"></textarea>
             <div class="color-picker">
                 <div class="color-option" style="background-color: #ffffff; border: 1px solid #e2e8f0;" data-color="#ffffff"></div>
-                <div class="color-option" style="background-color: #bbdefb;" data-color="#bbdefb"></div>
-                <div class="color-option" style="background-color: #c8e6c9;" data-color="#c8e6c9"></div>
-                <div class="color-option" style="background-color: #b2ebf2;" data-color="#b2ebf2"></div>
-                <div class="color-option" style="background-color: #ffecb3;" data-color="#ffecb3"></div>
-                <div class="color-option" style="background-color: #e1bee7;" data-color="#e1bee7"></div>
-                <div class="color-option" style="background-color: #ffcdd2;" data-color="#ffcdd2"></div>
+                <div class="color-option" style="background-color: #e3f2fd;" data-color="#e3f2fd"></div>
+                <div class="color-option" style="background-color: #e8f5e8;" data-color="#e8f5e8"></div>
+                <div class="color-option" style="background-color: #e0f7fa;" data-color="#e0f7fa"></div>
+                <div class="color-option" style="background-color: #fff8e1;" data-color="#fff8e1"></div>
+                <div class="color-option" style="background-color: #f3e5f5;" data-color="#f3e5f5"></div>
+                <div class="color-option" style="background-color: #ffebee;" data-color="#ffebee"></div>
             </div>
             
             <!-- Кнопка для открытия настроек дня -->
@@ -153,5 +153,105 @@
                 </div>
 
                 <div class="setting-group">
-                    <label>Фиксированная часть зарплата (руб):</label>
-                    <input type="number" id="fixed-salary-part" value="10875" min="0" step
+                    <label>Фиксированная часть зарплаты (руб):</label>
+                    <input type="number" id="fixed-salary-part" value="10875" min="0" step="1000">
+                </div>
+
+                <div class="setting-group">
+                    <label>Значение функциональной обводки (руб):</label>
+                    <input type="number" id="functional-border-value" value="30000" min="0" step="1000">
+                </div>
+            </div>
+            
+            <div id="unofficial-settings" style="display: none;">
+                <div class="setting-group">
+                    <label>Процент с продаж (%):</label>
+                    <input type="number" id="unofficial-sales-percent" value="7" min="0" max="100" step="0.1">
+                </div>
+                
+                <div class="setting-group">
+                    <label>Ставка за смену (руб):</label>
+                    <input type="number" id="unofficial-shift-rate" value="1000" min="0" step="100">
+                </div>
+                
+                <div class="setting-group">
+                    <label>Аванс (руб):</label>
+                    <input type="number" id="unofficial-advance" value="0" min="0" step="1000">
+                </div>
+
+                <div class="setting-group">
+                    <label>Значение функциональной обводки (руб):</label>
+                    <input type="number" id="unofficial-functional-border-value" value="30000" min="0" step="1000">
+                </div>
+            </div>
+
+            <div class="setting-group" style="display: flex; gap: 10px; margin-top: 20px;">
+                <button id="export-btn" style="flex: 1;">Экспорт</button>
+                <button id="import-btn" style="flex: 1;">Импорт</button>
+            </div>
+
+            <div class="setting-group" style="margin-top: 20px;">
+                <button id="update-btn" style="width: 100%; background: #dc3545;">Обновить приложение</button>
+            </div>
+            
+            <button id="save-settings">Сохранить настройки</button>
+        </div>
+    </div>
+
+    <!-- Новые модальные окна для экспорта/импорта -->
+    <div id="export-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Экспорт данных</h3>
+            <p id="ios-export-text" style="margin-bottom: 15px; display: none;">
+                Нажмите "Копировать" чтобы сохранить данные в буфер обмена. 
+                Сохраните текст в надежном месте (например, в заметках).
+            </p>
+            <div style="display: flex; gap: 10px;">
+                <button id="copy-data-btn" style="flex: 1;">Копировать</button>
+                <button id="save-file-btn" style="flex: 1;">Сохранить файл</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="import-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Импорт данных</h3>
+            <textarea id="import-text-input" placeholder="Вставьте сохраненные данные и нажмите 'Сохранить'" style="height: 120px; margin: 10px 0;"></textarea>
+            <div style="display: flex; gap: 10px;">
+                <button id="import-file-btn" style="flex: 1;">Выбрать файл</button>
+                <button id="import-text-btn" style="flex: 1;">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Скрытый input для импорта -->
+    <input type="file" id="import-file" accept=".json" style="display: none;">
+
+    <script src="script.js"></script>
+    <script>
+        // Принудительное обновление кэша при новой версии
+        const SW_VERSION = 'v4'; // Должно совпадать с версией в sw.js
+        if (localStorage.getItem('sw_version') !== SW_VERSION) {
+          caches.keys().then(cacheNames => {
+            cacheNames.forEach(cacheName => caches.delete(cacheName));
+          }).then(() => {
+            localStorage.setItem('sw_version', SW_VERSION);
+            console.log('Кеш очищен для версии', SW_VERSION);
+          });
+        }
+
+        window.addEventListener('load', () => {
+            document.getElementById('app-loading').style.display = 'none';
+            
+            // Регистрация Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.error('SW registration error:', err));
+            }
+        });
+    </script>
+</body>
+</html>
