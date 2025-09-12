@@ -61,6 +61,12 @@ body.modal-open {
     margin-bottom: 15px;
 }
 
+.header-buttons-right {
+    display: flex;
+    gap: 8px;
+    margin-left: 10px;
+}
+
 .month-selector {
     flex: 1;
     text-align: center;
@@ -476,6 +482,16 @@ input:focus, textarea:focus {
         padding: 12px;
     }
     
+    .header-buttons-right {
+        gap: 5px;
+    }
+    
+    .header-buttons-right button {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        min-width: 40px;
+    }
+    
     button {
         padding: 10px 16px;
         font-size: 0.85rem;
@@ -546,6 +562,12 @@ input:focus, textarea:focus {
     .day-comment {
         font-size: 0.55em;
         right: 3px;
+    }
+    
+    .header-buttons-right button {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        min-width: 35px;
     }
 }
 
