@@ -466,6 +466,12 @@ input:focus, textarea:focus {
         font-size: 0.95rem;
     }
     
+    .day-comment {
+        top: 3px;
+        right: 3px;
+        font-size: 0.65em;
+    }
+    
     .modal-content {
         margin: 8% auto;
         width: 95%;
@@ -512,6 +518,12 @@ input:focus, textarea:focus {
     
     .day-sales {
         font-size: 0.9rem;
+    }
+    
+    .day-comment {
+        top: 2px;
+        right: 2px;
+        font-size: 0.6em;
     }
     
     .period-options {
@@ -563,6 +575,12 @@ input:focus, textarea:focus {
     
     .day-sales {
         font-size: 0.8rem;
+    }
+    
+    .day-comment {
+        top: 1px;
+        right: 1px;
+        font-size: 0.55em;
     }
 }
 
