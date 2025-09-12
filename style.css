@@ -588,6 +588,10 @@ input:focus, textarea:focus {
         border-color: #3b3e45;
     }
     
+    .month-selector {
+        color: #e9ecef;
+    }
+    
     .modal-content {
         background: #2d3035;
         color: #e9ecef;
@@ -603,6 +607,11 @@ input:focus, textarea:focus {
     .summary-results {
         background: #3b3e45;
         border-color: #4a4d55;
+        color: #e9ecef;
+    }
+    
+    .summary-results span {
+        color: #6c9bff;
     }
     
     .day {
@@ -625,6 +634,10 @@ input:focus, textarea:focus {
         color: #e9ecef;
     }
     
+    .day-sales {
+        color: #b8c2cc;
+    }
+    
     .palette-panel {
         background: #2d3035;
         border-color: #3b3e45;
@@ -639,6 +652,37 @@ input:focus, textarea:focus {
     .period-selector {
         background: #2d3035;
         color: #e9ecef;
+    }
+    
+    .period-step h4 {
+        color: #6c9bff;
+    }
+    
+    .setting-group label {
+        color: #e9ecef;
+    }
+    
+    .setting-group input[type="number"] {
+        background: #3b3e45;
+        border-color: #5a6c7d;
+        color: #e9ecef;
+    }
+    
+    .close {
+        color: #b8c2cc;
+    }
+    
+    .close:hover {
+        color: #e9ecef;
+    }
+    
+    .color-option {
+        border-color: #5a6c7d;
+    }
+    
+    .palette-tool {
+        border-color: #5a6c7d;
+        background: #3b3e45;
     }
 }
 
