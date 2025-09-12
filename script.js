@@ -281,7 +281,10 @@ function saveDayData() {
         parseInt(document.getElementById('day-shift-rate').value) : null;
     
     const dateKey = `${currentYear}-${currentMonth+1}-${selectedDay}`;
+    const existingData = calendarData[dateKey] || {};
+    
     calendarData[dateKey] = {
+        ...existingData, // Сохраняем существующие данные, включая functionalBorder
         sales: sales,
         comment: comment,
         color: selectedColor,
@@ -468,7 +471,7 @@ function setupEventListeners() {
     
     document.getElementById('import-file').addEventListener('change', importData);
     
-    // Выбор цвета в модальном окне
+    // Выбор цвета в модальном окна
     document.querySelectorAll('.color-option').forEach(option => {
         option.addEventListener('click', () => {
             document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
