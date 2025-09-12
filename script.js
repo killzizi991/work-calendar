@@ -18,12 +18,14 @@ let appSettings = loadFromStorage('appSettings') || {
     shiftRate: 1000,
     fixedDeduction: 25000,
     advance: 10875,
-    fixedSalaryPart: 10875
+    fixedSalaryPart: 10875,
+    functionalBorderValue: 30000
   },
   unofficial: {
     salesPercent: 7,
     shiftRate: 1000,
-    advance: 0
+    advance: 0,
+    functionalBorderValue: 30000
   }
 };
 
@@ -36,12 +38,14 @@ if (appSettings.hasOwnProperty('useTax') && !appSettings.hasOwnProperty('mode'))
       shiftRate: appSettings.shiftRate,
       fixedDeduction: appSettings.fixedDeduction,
       advance: appSettings.advance,
-      fixedSalaryPart: appSettings.fixedSalaryPart
+      fixedSalaryPart: appSettings.fixedSalaryPart,
+      functionalBorderValue: 30000
     },
     unofficial: {
       salesPercent: 7,
       shiftRate: 1000,
-      advance: 0
+      advance: 0,
+      functionalBorderValue: 30000
     }
   };
   saveToStorage('appSettings', appSettings);
@@ -212,8 +216,8 @@ function toggleFunctionalBorder(day) {
     } else {
         // Установка обводки
         dayData.functionalBorder = true;
-        dayData.sales = 30000;
-        showNotification('Обводка установлена, продажи: 30000 руб');
+        dayData.sales = appSettings[appSettings.mode].functionalBorderValue;
+        showNotification(`Обводка установлена, продажи: ${appSettings[appSettings.mode].functionalBorderValue} руб`);
     }
     
     calendarData[dateKey] = dayData;
@@ -596,6 +600,7 @@ function updateSettingsUI() {
         document.getElementById('shift-rate').value = appSettings.official.shiftRate;
         document.getElementById('advance').value = appSettings.official.advance;
         document.getElementById('fixed-salary-part').value = appSettings.official.fixedSalaryPart;
+        document.getElementById('functional-border-value').value = appSettings.official.functionalBorderValue;
     } else {
         officialSettings.style.display = 'none';
         unofficialSettings.style.display = 'block';
@@ -604,6 +609,7 @@ function updateSettingsUI() {
         document.getElementById('unofficial-sales-percent').value = appSettings.unofficial.salesPercent;
         document.getElementById('unofficial-shift-rate').value = appSettings.unofficial.shiftRate;
         document.getElementById('unofficial-advance').value = appSettings.unofficial.advance;
+        document.getElementById('unofficial-functional-border-value').value = appSettings.unofficial.functionalBorderValue;
     }
 }
 
@@ -617,13 +623,15 @@ function saveSettings() {
             shiftRate: parseInt(document.getElementById('shift-rate').value),
             fixedDeduction: 25000, // Фиксированное значение
             advance: parseInt(document.getElementById('advance').value),
-            fixedSalaryPart: parseInt(document.getElementById('fixed-salary-part').value)
+            fixedSalaryPart: parseInt(document.getElementById('fixed-salary-part').value),
+            functionalBorderValue: parseInt(document.getElementById('functional-border-value').value)
         };
     } else {
         appSettings.unofficial = {
             salesPercent: parseFloat(document.getElementById('unofficial-sales-percent').value),
             shiftRate: parseInt(document.getElementById('unofficial-shift-rate').value),
-            advance: parseInt(document.getElementById('unofficial-advance').value)
+            advance: parseInt(document.getElementById('unofficial-advance').value),
+            functionalBorderValue: parseInt(document.getElementById('unofficial-functional-border-value').value)
         };
     }
     
@@ -683,16 +691,25 @@ function importData(event) {
                             shiftRate: data.appSettings.shiftRate,
                             fixedDeduction: data.appSettings.fixedDeduction,
                             advance: data.appSettings.advance,
-                            fixedSalaryPart: data.appSettings.fixedSalaryPart
+                            fixedSalaryPart: data.appSettings.fixedSalaryPart,
+                            functionalBorderValue: 30000
                         },
                         unofficial: {
                             salesPercent: 7,
                             shiftRate: 1000,
-                            advance: 0
+                            advance: 0,
+                            functionalBorderValue: 30000
                         }
                     };
                 } else {
                     appSettings = data.appSettings;
+                    // Добавляем значение по умолчанию для функциональной обводки, если его нет
+                    if (!appSettings.official.hasOwnProperty('functionalBorderValue')) {
+                        appSettings.official.functionalBorderValue = 30000;
+                    }
+                    if (!appSettings.unofficial.hasOwnProperty('functionalBorderValue')) {
+                        appSettings.unofficial.functionalBorderValue = 30000;
+                    }
                 }
                 
                 saveToStorage('appSettings', appSettings);
