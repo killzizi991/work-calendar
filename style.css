@@ -248,7 +248,7 @@ button:active {
     box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
 }
 
-/* Модальные окны */
+/* Модальные окна */
 .modal {
     display: none;
     position: fixed;
@@ -684,31 +684,28 @@ input:focus, textarea:focus {
         border-color: #5a6c7d;
         background: #3b3e45;
     }
-    
-    /* Стили для помощи в темной теме */
-    .help-item {
-        border-bottom-color: #4a4d55;
-    }
-    
-    .help-question {
+
+    /* Стили для уведомлений в темной теме */
+    .notification {
         background-color: #3b3e45;
         color: #e9ecef;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    /* Стили для помощи в темной теме */
+    .help-question {
+        background-color: #3b3e45 !important;
+        color: #e9ecef !important;
     }
     
     .help-answer {
-        background-color: #2d3035;
-        color: #e9ecef;
-        border-color: #4a4d55;
+        background-color: #2d3035 !important;
+        color: #e9ecef !important;
+        border-color: #4a4d55 !important;
     }
-    
-    /* Стили для кнопки помощи в темной теме */
-    #help-btn {
-        background: #6c9bff;
-        color: #1a1d21;
-    }
-    
-    #help-btn:hover {
-        background: #5a8aff;
+
+    .help-item {
+        border-bottom-color: #4a4d55 !important;
     }
 }
 
@@ -806,13 +803,17 @@ textarea:focus-visible {
 
 @media (prefers-color-scheme: dark) {
     .help-question {
-        background-color: #3b3e45;
-        color: #e9ecef;
+        background-color: #3b3e45 !important;
+        color: #e9ecef !important;
     }
     
     .help-answer {
-        background-color: #2d3035;
-        color: #e9ecef;
-        border-color: #4a4d55;
+        background-color: #2d3035 !important;
+        color: #e9ecef !important;
+        border-color: #4a4d55 !important;
+    }
+
+    .help-item {
+        border-bottom-color: #4a4d55 !important;
     }
 }
