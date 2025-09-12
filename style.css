@@ -754,3 +754,39 @@ textarea:focus-visible {
     white-space: nowrap;
     font-weight: 500;
 }
+
+/* Стили для помощи */
+.help-item {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 10px;
+}
+
+.help-question {
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px;
+    background-color: #f8fafc;
+    border-radius: 5px;
+}
+
+.help-answer {
+    padding: 12px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    margin-top: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .help-question {
+        background-color: #3b3e45;
+        color: #e9ecef;
+    }
+    
+    .help-answer {
+        background-color: #2d3035;
+        color: #e9ecef;
+        border-color: #4a4d55;
+    }
+}
