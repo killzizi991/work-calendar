@@ -1,0 +1,23 @@
+{
+  "name": "Календарь продаж",
+  "short_name": "Календарь продаж",
+  "description": "Приложение для учета продаж и расчетов заработка",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#4a6cf7",
+  "theme_color": "#4a6cf7",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+
