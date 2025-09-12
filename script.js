@@ -147,9 +147,13 @@ function generateCalendar() {
             ${dayData.sales ? `<div class="day-sales">${formatSalesNumber(dayData.sales)}</div>` : ''}
         `;
         
-        // Цвет фона
+        // Цвет фона - белый цвет удаляет заливку
         if (dayData.color) {
-            dayElement.style.backgroundColor = dayData.color;
+            if (dayData.color === '#ffffff') {
+                dayElement.style.backgroundColor = '';
+            } else {
+                dayElement.style.backgroundColor = dayData.color;
+            }
         }
         
         // Функциональная обводка
