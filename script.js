@@ -296,6 +296,8 @@ function closeModal() {
     document.getElementById('summary-modal').style.display = 'none';
     document.getElementById('period-modal').style.display = 'none';
     document.getElementById('settings-modal').style.display = 'none';
+    document.getElementById('export-modal').style.display = 'none';
+    document.getElementById('import-modal').style.display = 'none';
     document.body.classList.remove('modal-open');
 }
 
@@ -457,10 +459,8 @@ function setupEventListeners() {
     document.getElementById('save-settings').addEventListener('click', saveSettings);
     
     // Экспорт/импорт
-    document.getElementById('export-btn').addEventListener('click', exportData);
-    document.getElementById('import-btn').addEventListener('click', () => {
-        document.getElementById('import-file').click();
-    });
+    document.getElementById('export-btn').addEventListener('click', showExportModal);
+    document.getElementById('import-btn').addEventListener('click', showImportModal);
     
     document.getElementById('import-file').addEventListener('change', importData);
     
@@ -493,6 +493,113 @@ function setupEventListeners() {
     
     // Обработка клавиш
     document.addEventListener('keydown', handleKeyPress);
+    
+    // Новые обработчики для экспорта/импорта
+    document.getElementById('copy-data-btn').addEventListener('click', copyDataToClipboard);
+    document.getElementById('save-file-btn').addEventListener('click', exportData);
+    document.getElementById('import-file-btn').addEventListener('click', () => {
+        document.getElementById('import-file').click();
+    });
+    document.getElementById('import-text-btn').addEventListener('click', importFromText);
+}
+
+// Показать модальное окно экспорта
+function showExportModal() {
+    // Проверяем, iOS ли это
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    document.getElementById('ios-export-text').style.display = isIOS ? 'block' : 'none';
+    document.getElementById('export-modal').style.display = 'block';
+    document.body.classList.add('modal-open');
+}
+
+// Показать модальное окно импорта
+function showImportModal() {
+    document.getElementById('import-text-input').value = '';
+    document.getElementById('import-modal').style.display = 'block';
+    document.body.classList.add('modal-open');
+}
+
+// Копирование данных в буфер обмена
+function copyDataToClipboard() {
+    const data = {
+        calendarData: calendarData,
+        appSettings: appSettings,
+        exportDate: new Date().toISOString(),
+        version: '1.1'
+    };
+    
+    const jsonString = JSON.stringify(data, null, 2);
+    
+    navigator.clipboard.writeText(jsonString)
+        .then(() => {
+            showNotification('Данные скопированы в буфер обмена');
+            closeModal();
+        })
+        .catch(err => {
+            console.error('Ошибка копирования: ', err);
+            showNotification('Не удалось скопировать данные');
+        });
+}
+
+// Импорт данных из текстового поля
+function importFromText() {
+    const jsonString = document.getElementById('import-text-input').value;
+    
+    if (!jsonString) {
+        showNotification('Введите данные для импорта');
+        return;
+    }
+    
+    try {
+        const data = JSON.parse(jsonString);
+        
+        if (data.calendarData) {
+            calendarData = data.calendarData;
+            saveToStorage('calendarData', calendarData);
+        }
+        
+        if (data.appSettings) {
+            // Миграция старых данных
+            if (data.appSettings.hasOwnProperty('useTax') && !data.appSettings.hasOwnProperty('mode')) {
+                appSettings = {
+                    mode: 'official',
+                    official: {
+                        salesPercent: data.appSettings.salesPercent,
+                        shiftRate: data.appSettings.shiftRate,
+                        fixedDeduction: data.appSettings.fixedDeduction,
+                        advance: data.appSettings.advance,
+                        fixedSalaryPart: data.appSettings.fixedSalaryPart,
+                        functionalBorderValue: 30000
+                    },
+                    unofficial: {
+                        salesPercent: 7,
+                        shiftRate: 1000,
+                        advance: 0,
+                        functionalBorderValue: 30000
+                    }
+                };
+            } else {
+                appSettings = data.appSettings;
+                // Добавляем значение по умолчанию для функциональной обводки, если его нет
+                if (!appSettings.official.hasOwnProperty('functionalBorderValue')) {
+                    appSettings.official.functionalBorderValue = 30000;
+                }
+                if (!appSettings.unofficial.hasOwnProperty('functionalBorderValue')) {
+                    appSettings.unofficial.functionalBorderValue = 30000;
+                }
+            }
+            
+            saveToStorage('appSettings', appSettings);
+            loadSettingsToForm();
+        }
+        
+        generateCalendar();
+        showNotification('Данные импортированы');
+        closeModal();
+    } catch (error) {
+        console.error('Ошибка импорта:', error);
+        showNotification('Ошибка импорта данных: неверный формат');
+    }
 }
 
 // Принудительное обновление версии
@@ -689,6 +796,7 @@ function exportData() {
     URL.revokeObjectURL(url);
     
     showNotification('Данные экспортированы');
+    closeModal();
 }
 
 // Импорт данных
@@ -750,6 +858,7 @@ function importData(event) {
     };
     reader.readAsText(file);
     event.target.value = ''; // Сброс input
+    closeModal();
 }
 
 // Показ уведомлений
