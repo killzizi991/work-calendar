@@ -29,6 +29,29 @@ let appSettings = loadFromStorage('appSettings') || {
   }
 };
 
+// Firebase конфигурация
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "YOUR_APP_ID"
+};
+
+// Инициализация Firebase
+let firebaseApp;
+let firebaseAuth;
+let firebaseFirestore;
+
+try {
+  firebaseApp = firebase.initializeApp(firebaseConfig);
+  firebaseAuth = firebase.auth();
+  firebaseFirestore = firebase.firestore();
+} catch (error) {
+  console.log('Firebase инициализация ошибка:', error);
+}
+
 // Миграция старых настроек
 if (appSettings.hasOwnProperty('useTax') && !appSettings.hasOwnProperty('mode')) {
   appSettings = {
@@ -457,9 +480,16 @@ function setupEventListeners() {
     document.getElementById('save-settings').addEventListener('click', saveSettings);
     
     // Экспорт/импорт
-    document.getElementById('export-btn').addEventListener('click', exportData);
+    document.getElementById('export-btn').addEventListener('click', handleExport);
     document.getElementById('import-btn').addEventListener('click', () => {
-        document.getElementById('import-file').click();
+        // Проверяем платформу
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+            // iOS - используем Firebase
+            importFromFirebase();
+        } else {
+            // Android/PC - используем стандартный импорт
+            document.getElementById('import-file').click();
+        }
     });
     
     document.getElementById('import-file').addEventListener('change', importData);
@@ -493,6 +523,100 @@ function setupEventListeners() {
     
     // Обработка клавиш
     document.addEventListener('keydown', handleKeyPress);
+}
+
+// Обработка экспорта данных
+function handleExport() {
+    // Проверяем платформу
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+        // iOS - используем Firebase
+        exportToFirebase();
+    } else {
+        // Android/PC - используем стандартный экспорт
+        exportData();
+    }
+}
+
+// Экспорт в Firebase
+async function exportToFirebase() {
+    if (!firebaseAuth.currentUser) {
+        // Если пользователь не аутентифицирован, запрашиваем email
+        const email = prompt('Пожалуйста, введите ваш email для синхронизации:');
+        if (!email) return;
+        
+        try {
+            // Создаем пользователя с email и случайным паролем
+            const password = Math.random().toString(36).slice(-8);
+            await firebaseAuth.createUserWithEmailAndPassword(email, password);
+            showNotification('Аккаунт создан. Пароль отправлен на email');
+        } catch (error) {
+            if (error.code === 'auth/email-already-in-use') {
+                // Пытаемся войти
+                try {
+                    await firebaseAuth.signInWithEmailAndPassword(email, prompt('Введите пароль:'));
+                } catch (loginError) {
+                    showNotification('Ошибка входа: ' + loginError.message);
+                    return;
+                }
+            } else {
+                showNotification('Ошибка: ' + error.message);
+                return;
+            }
+        }
+    }
+    
+    try {
+        const user = firebaseAuth.currentUser;
+        const userDoc = firebaseFirestore.collection('users').doc(user.uid);
+        
+        const data = {
+            calendarData: calendarData,
+            appSettings: appSettings,
+            exportDate: new Date().toISOString(),
+            version: '1.1'
+        };
+        
+        await userDoc.set(data);
+        showNotification('Данные экспортированы в облако');
+    } catch (error) {
+        showNotification('Ошибка экспорта в облако: ' + error.message);
+    }
+}
+
+// Импорт из Firebase
+async function importFromFirebase() {
+    if (!firebaseAuth.currentUser) {
+        showNotification('Сначала войдите в систему через экспорт');
+        return;
+    }
+    
+    try {
+        const user = firebaseAuth.currentUser;
+        const userDoc = await firebaseFirestore.collection('users').doc(user.uid).get();
+        
+        if (!userDoc.exists) {
+            showNotification('Нет данных для импорта');
+            return;
+        }
+        
+        const data = userDoc.data();
+        
+        if (data.calendarData) {
+            calendarData = data.calendarData;
+            saveToStorage('calendarData', calendarData);
+        }
+        
+        if (data.appSettings) {
+            appSettings = data.appSettings;
+            saveToStorage('appSettings', appSettings);
+            loadSettingsToForm();
+        }
+        
+        generateCalendar();
+        showNotification('Данные импортированы из облака');
+    } catch (error) {
+        showNotification('Ошибка импорта из облака: ' + error.message);
+    }
 }
 
 // Принудительное обновление версии
