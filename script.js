@@ -281,15 +281,21 @@ function saveDayData() {
         parseInt(document.getElementById('day-shift-rate').value) : null;
     
     const dateKey = `${currentYear}-${currentMonth+1}-${selectedDay}`;
-    const existingData = calendarData[dateKey] || {};
-    
+    const previousData = calendarData[dateKey] || {};
+
+    // Проверяем, была ли установлена обводка и изменились ли продажи на значение, не равное стандартному для обводки
+    let functionalBorder = previousData.functionalBorder || false;
+    if (functionalBorder && sales !== appSettings[appSettings.mode].functionalBorderValue) {
+        functionalBorder = false; // снимаем обводку
+    }
+
     calendarData[dateKey] = {
-        ...existingData, // Сохраняем существующие данные, включая functionalBorder
         sales: sales,
         comment: comment,
         color: selectedColor,
         customSalesPercent: customSalesPercent,
-        customShiftRate: customShiftRate
+        customShiftRate: customShiftRate,
+        functionalBorder: functionalBorder // сохраняем обводку, если она была и значение не изменилось, или снимаем
     };
     
     saveToStorage('calendarData', calendarData);
@@ -471,7 +477,7 @@ function setupEventListeners() {
     
     document.getElementById('import-file').addEventListener('change', importData);
     
-    // Выбор цвета в модальном окна
+    // Выбор цвета в модальном окне
     document.querySelectorAll('.color-option').forEach(option => {
         option.addEventListener('click', () => {
             document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
