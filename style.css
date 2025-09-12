@@ -638,6 +638,17 @@ input:focus, textarea:focus {
         color: #b8c2cc;
     }
     
+    .day-comment {
+        color: #b8c2cc;
+    }
+    
+    /* Темный текст для цветных ячеек в темной теме */
+    .day.has-color .day-number,
+    .day.has-color .day-sales,
+    .day.has-color .day-comment {
+        color: #2c3e50 !important;
+    }
+    
     .palette-panel {
         background: #2d3035;
         border-color: #3b3e45;
