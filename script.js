@@ -311,6 +311,7 @@ function closeModal() {
     document.getElementById('settings-modal').style.display = 'none';
     document.getElementById('export-modal').style.display = 'none';
     document.getElementById('import-modal').style.display = 'none';
+    document.getElementById('help-modal').style.display = 'none';
     document.body.classList.remove('modal-open');
 }
 
@@ -468,8 +469,9 @@ function setupEventListeners() {
         document.body.classList.add('modal-open');
         updateSettingsUI();
     });
-    
-    document.getElementById('save-settings').addEventListener('click', saveSettings);
+
+    // Помощь
+    document.getElementById('help-btn').addEventListener('click', showHelpModal);
     
     // Экспорт/импорт
     document.getElementById('export-btn').addEventListener('click', showExportModal);
