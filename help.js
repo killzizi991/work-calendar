@@ -46,7 +46,7 @@ function initHelpModal() {
     helpModal.id = 'help-modal';
     helpModal.className = 'modal';
     helpModal.innerHTML = `
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content" style="max-width: 600px; max-height: 80vh;">
             <span class="close">&times;</span>
             <h3>Помощь по приложению</h3>
             <div id="help-accordion" style="margin-top: 20px;"></div>
@@ -84,6 +84,7 @@ function initHelpModal() {
         answerElement.style.transition = 'max-height 0.3s ease, padding 0.3s ease';
         answerElement.style.backgroundColor = '#ffffff';
         answerElement.style.whiteSpace = 'pre-line';
+        answerElement.style.overflowY = 'auto';
         
         questionElement.addEventListener('click', () => {
             const isOpen = answerElement.style.maxHeight !== '0px';
@@ -92,7 +93,7 @@ function initHelpModal() {
                 answerElement.style.padding = '0 15px';
                 questionElement.querySelector('span').textContent = '+';
             } else {
-                answerElement.style.maxHeight = answerElement.scrollHeight + 'px';
+                answerElement.style.maxHeight = '200px';
                 answerElement.style.padding = '15px';
                 questionElement.querySelector('span').textContent = '-';
             }
@@ -140,6 +141,11 @@ const helpStyles = `
 
 .help-question:hover {
     background-color: #edf2f7 !important;
+}
+
+.help-answer {
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 @media (prefers-color-scheme: dark) {
