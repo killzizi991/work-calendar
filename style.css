@@ -248,7 +248,7 @@ button:active {
     box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
 }
 
-/* Модальные окна */
+/* Модальные окны */
 .modal {
     display: none;
     position: fixed;
@@ -683,6 +683,32 @@ input:focus, textarea:focus {
     .palette-tool {
         border-color: #5a6c7d;
         background: #3b3e45;
+    }
+    
+    /* Стили для помощи в темной теме */
+    .help-item {
+        border-bottom-color: #4a4d55;
+    }
+    
+    .help-question {
+        background-color: #3b3e45;
+        color: #e9ecef;
+    }
+    
+    .help-answer {
+        background-color: #2d3035;
+        color: #e9ecef;
+        border-color: #4a4d55;
+    }
+    
+    /* Стили для кнопки помощи в темной теме */
+    #help-btn {
+        background: #6c9bff;
+        color: #1a1d21;
+    }
+    
+    #help-btn:hover {
+        background: #5a8aff;
     }
 }
 
