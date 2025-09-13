@@ -6,6 +6,8 @@ let selectedDay = null;
 let massColoringMode = null;
 let isKeyboardOpen = false; // Флаг для отслеживания состояния клавиатуры
 let lastWindowHeight = window.innerHeight; // Запоминаем начальную высоту окна
+let originalHasFunctionalBorder = false;
+let originalSalesValue = 0;
 
 // Хранение данных
 let calendarData = loadFromStorage('calendarData') || {};
@@ -76,6 +78,19 @@ function saveToStorage(key, data) {
 
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', () => {
+    // Миграция данных: добавление functionalBorderValue если отсутствует
+    let needSave = false;
+    for (const dateKey in calendarData) {
+        const dayData = calendarData[dateKey];
+        if (dayData.functionalBorder && dayData.functionalBorderValue === undefined) {
+            dayData.functionalBorderValue = dayData.sales;
+            needSave = true;
+        }
+    }
+    if (needSave) {
+        saveToStorage('calendarData', calendarData);
+    }
+
     generateCalendar();
     setupEventListeners();
     initPeriodSelector();
@@ -215,12 +230,14 @@ function toggleFunctionalBorder(day) {
     if (dayData.functionalBorder) {
         // Снятие обводки
         dayData.functionalBorder = false;
+        dayData.functionalBorderValue = undefined;
         dayData.sales = 0;
         showNotification('Обводка снята');
     } else {
         // Установка обводки
         dayData.functionalBorder = true;
         dayData.sales = appSettings[appSettings.mode].functionalBorderValue;
+        dayData.functionalBorderValue = appSettings[appSettings.mode].functionalBorderValue;
         showNotification(`Обводка установлена, продажи: ${appSettings[appSettings.mode].functionalBorderValue} руб`);
     }
     
@@ -246,6 +263,10 @@ function openModal(day) {
     selectedDay = day;
     const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
     const dayData = calendarData[dateKey] || {};
+    
+    // Сохраняем исходное состояние обводки и значения продаж
+    originalHasFunctionalBorder = dayData.functionalBorder || false;
+    originalSalesValue = dayData.functionalBorderValue || (originalHasFunctionalBorder ? dayData.sales : 0);
     
     document.getElementById('modal-day').textContent = day;
     document.getElementById('sales-input').value = dayData.sales || '';
@@ -281,12 +302,18 @@ function saveDayData() {
         parseInt(document.getElementById('day-shift-rate').value) : null;
     
     const dateKey = `${currentYear}-${currentMonth+1}-${selectedDay}`;
+    
+    // Определяем, нужно ли сохранять функциональную обводку
+    const shouldKeepFunctionalBorder = originalHasFunctionalBorder && sales === originalSalesValue;
+    
     calendarData[dateKey] = {
         sales: sales,
         comment: comment,
         color: selectedColor,
         customSalesPercent: customSalesPercent,
-        customShiftRate: customShiftRate
+        customShiftRate: customShiftRate,
+        functionalBorder: shouldKeepFunctionalBorder,
+        functionalBorderValue: shouldKeepFunctionalBorder ? originalSalesValue : undefined
     };
     
     saveToStorage('calendarData', calendarData);
@@ -824,6 +851,7 @@ function updateFunctionalBorders(newValue) {
     for (const dateKey in calendarData) {
         if (calendarData[dateKey].functionalBorder) {
             calendarData[dateKey].sales = newValue;
+            calendarData[dateKey].functionalBorderValue = newValue;
             updated = true;
         }
     }
