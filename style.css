@@ -58,7 +58,8 @@ body.modal-open {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    gap: 10px;
 }
 
 .month-selector {
@@ -70,6 +71,10 @@ body.modal-open {
     font-size: 0.9rem;
     font-weight: 600;
     color: #2c3e50;
+}
+
+#current-month-year {
+    font-size: 1.2rem;
 }
 
 .tools-container {
@@ -532,6 +537,16 @@ input:focus, textarea:focus {
         width: 32px;
         height: 32px;
         font-size: 1rem;
+    }
+    
+    #current-month-year {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 400px) {
+    #current-month-year {
+        font-size: 0.9rem;
     }
 }
 
