@@ -6,8 +6,6 @@ let selectedDay = null;
 let massColoringMode = null;
 let isKeyboardOpen = false; // Флаг для отслеживания состояния клавиатуры
 let lastWindowHeight = window.innerHeight; // Запоминаем начальную высоту окна
-let originalHasFunctionalBorder = false;
-let originalSalesValue = 0;
 
 // Хранение данных
 let calendarData = loadFromStorage('calendarData') || {};
@@ -76,21 +74,64 @@ function saveToStorage(key, data) {
   }
 }
 
-// Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', () => {
-    // Миграция данных: добавление functionalBorderValue если отсутствует
-    let needSave = false;
-    for (const dateKey in calendarData) {
-        const dayData = calendarData[dateKey];
-        if (dayData.functionalBorder && dayData.functionalBorderValue === undefined) {
-            dayData.functionalBorderValue = dayData.sales;
-            needSave = true;
-        }
-    }
-    if (needSave) {
-        saveToStorage('calendarData', calendarData);
+// Функция проверки целостности импортируемых данных
+function validateImportedData(data) {
+  try {
+    if (typeof data !== 'object' || data === null) {
+      return false;
     }
 
+    // Проверяем наличие обязательных полей
+    if (!data.hasOwnProperty('calendarData') || !data.hasOwnProperty('appSettings')) {
+      return false;
+    }
+
+    // Проверяем тип calendarData
+    if (typeof data.calendarData !== 'object' || data.calendarData === null) {
+      return false;
+    }
+
+    // Проверяем тип appSettings
+    if (typeof data.appSettings !== 'object' || data.appSettings === null) {
+      return false;
+    }
+
+    // Дополнительная проверка структуры appSettings
+    if (!data.appSettings.hasOwnProperty('mode') || 
+        !data.appSettings.hasOwnProperty('official') || 
+        !data.appSettings.hasOwnProperty('unofficial')) {
+      return false;
+    }
+
+    // Проверяем структуру official настроек
+    const official = data.appSettings.official;
+    if (!official.hasOwnProperty('salesPercent') || 
+        !official.hasOwnProperty('shiftRate') || 
+        !official.hasOwnProperty('fixedDeduction') || 
+        !official.hasOwnProperty('advance') || 
+        !official.hasOwnProperty('fixedSalaryPart') || 
+        !official.hasOwnProperty('functionalBorderValue')) {
+      return false;
+    }
+
+    // Проверяем структуру unofficial настроек
+    const unofficial = data.appSettings.unofficial;
+    if (!unofficial.hasOwnProperty('salesPercent') || 
+        !unofficial.hasOwnProperty('shiftRate') || 
+        !unofficial.hasOwnProperty('advance') || 
+        !unofficial.hasOwnProperty('functionalBorderValue')) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Ошибка валидации данных:', error);
+    return false;
+  }
+}
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', () => {
     generateCalendar();
     setupEventListeners();
     initPeriodSelector();
@@ -230,14 +271,12 @@ function toggleFunctionalBorder(day) {
     if (dayData.functionalBorder) {
         // Снятие обводки
         dayData.functionalBorder = false;
-        dayData.functionalBorderValue = undefined;
         dayData.sales = 0;
         showNotification('Обводка снята');
     } else {
         // Установка обводки
         dayData.functionalBorder = true;
         dayData.sales = appSettings[appSettings.mode].functionalBorderValue;
-        dayData.functionalBorderValue = appSettings[appSettings.mode].functionalBorderValue;
         showNotification(`Обводка установлена, продажи: ${appSettings[appSettings.mode].functionalBorderValue} руб`);
     }
     
@@ -263,10 +302,6 @@ function openModal(day) {
     selectedDay = day;
     const dateKey = `${currentYear}-${currentMonth+1}-${day}`;
     const dayData = calendarData[dateKey] || {};
-    
-    // Сохраняем исходное состояние обводки и значения продаж
-    originalHasFunctionalBorder = dayData.functionalBorder || false;
-    originalSalesValue = dayData.functionalBorderValue || (originalHasFunctionalBorder ? dayData.sales : 0);
     
     document.getElementById('modal-day').textContent = day;
     document.getElementById('sales-input').value = dayData.sales || '';
@@ -302,18 +337,12 @@ function saveDayData() {
         parseInt(document.getElementById('day-shift-rate').value) : null;
     
     const dateKey = `${currentYear}-${currentMonth+1}-${selectedDay}`;
-    
-    // Определяем, нужно ли сохранять функциональную обводку
-    const shouldKeepFunctionalBorder = originalHasFunctionalBorder && sales === originalSalesValue;
-    
     calendarData[dateKey] = {
         sales: sales,
         comment: comment,
         color: selectedColor,
         customSalesPercent: customSalesPercent,
-        customShiftRate: customShiftRate,
-        functionalBorder: shouldKeepFunctionalBorder,
-        functionalBorderValue: shouldKeepFunctionalBorder ? originalSalesValue : undefined
+        customShiftRate: customShiftRate
     };
     
     saveToStorage('calendarData', calendarData);
@@ -541,245 +570,27 @@ function setupEventListeners() {
 // Показать модальное окно помощи
 function showHelpModal() {
     const helpContent = document.getElementById('help-content');
-    helpContent.innerHTML = '';
-    
-    HELP_DATA.forEach((item, index) => {
-        const questionDiv = document.createElement('div');
-        questionDiv.className = 'help-item';
-        questionDiv.style.marginBottom = '10px';
-        questionDiv.style.borderBottom = '1px solid #e2e8f0';
-        questionDiv.style.paddingBottom = '10px';
-        
-        const questionHeader = document.createElement('div');
-        questionHeader.className = 'help-question';
-        questionHeader.textContent = item.question;
-        questionHeader.style.fontWeight = '600';
-        questionHeader.style.cursor = 'pointer';
-        questionHeader.style.padding = '8px';
-        questionHeader.style.backgroundColor = '#f8fafc';
-        questionHeader.style.borderRadius = '5px';
-        questionHeader.addEventListener('click', () => {
-            const answer = questionDiv.querySelector('.help-answer');
-            const isVisible = answer.style.display === 'block';
-            
-            // Скрываем все ответы
-            document.querySelectorAll('.help-answer').forEach(ans => {
-                ans.style.display = 'none';
-            });
-            
-            // Показываем/скрываем текущий ответ
-            answer.style.display = isVisible ? 'none' : 'block';
-        });
-        
-        const answerDiv = document.createElement('div');
-        answerDiv.className = 'help-answer';
-        answerDiv.innerHTML = item.answer;
-        answerDiv.style.display = 'none';
-        answerDiv.style.padding = '12px';
-        answerDiv.style.backgroundColor = '#ffffff';
-        answerDiv.style.borderRadius = '5px';
-        answerDiv.style.marginTop = '8px';
-        answerDiv.style.border = '1px solid #e2e8f0';
-        
-        questionDiv.appendChild(questionHeader);
-        questionDiv.appendChild(answerDiv);
-        helpContent.appendChild(questionDiv);
-    });
-    
+    helpContent.innerHTML = `
+        <h3>Инструкция по использованию приложения</h3>
+        <p><strong>Добавление продаж:</strong> Нажмите на день в календаре и введите сумму продаж.</p>
+        <p><strong>Комментарии:</strong> Добавьте комментарий к дню в модальном окне.</p>
+        <p><strong>Заливка цветом:</strong> Выберите цвет в палитре и нажмите на дни для закрашивания.</p>
+        <p><strong>Функциональная обводка:</strong> Нажмите кнопку "Обводка" и выберите дни для установки/снятия обводки.</p>
+        <p><strong>Настройки:</strong> Измените параметры расчета в настройках приложения.</p>
+        <p><strong>Экспорт/Импорт:</strong> Сохраните данные в файл или загрузите из файла/текста.</p>
+    `;
     document.getElementById('help-modal').style.display = 'block';
     document.body.classList.add('modal-open');
 }
 
-// Показать модальное окно экспорта
-function showExportModal() {
-    // Проверяем, iOS ли это
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    document.getElementById('ios-export-text').style.display = isIOS ? 'block' : 'none';
-    document.getElementById('export-modal').style.display = 'block';
-    document.body.classList.add('modal-open');
-}
-
-// Показать модальное окно импорта
-function showImportModal() {
-    document.getElementById('import-text-input').value = '';
-    document.getElementById('import-modal').style.display = 'block';
-    document.body.classList.add('modal-open');
-}
-
-// Копирование данных в буфер обмена
-function copyDataToClipboard() {
-    const data = {
-        calendarData: calendarData,
-        appSettings: appSettings,
-        exportDate: new Date().toISOString(),
-        version: '1.1'
-    };
-    
-    const jsonString = JSON.stringify(data, null, 2);
-    
-    navigator.clipboard.writeText(jsonString)
-        .then(() => {
-            showNotification('Данные скопированы в буфер обмена');
-            closeModal();
-        })
-        .catch(err => {
-            console.error('Ошибка копирования: ', err);
-            showNotification('Не удалось скопировать данные');
-        });
-}
-
-// Импорт данных из текстового поля
-function importFromText() {
-    const jsonString = document.getElementById('import-text-input').value;
-    
-    if (!jsonString) {
-        showNotification('Введите данные для импорта');
-        return;
-    }
-    
-    try {
-        const data = JSON.parse(jsonString);
-        
-        if (data.calendarData) {
-            calendarData = data.calendarData;
-            saveToStorage('calendarData', calendarData);
-        }
-        
-        if (data.appSettings) {
-            // Миграция старых данных
-            if (data.appSettings.hasOwnProperty('useTax') && !data.appSettings.hasOwnProperty('mode')) {
-                appSettings = {
-                    mode: 'official',
-                    official: {
-                        salesPercent: data.appSettings.salesPercent,
-                        shiftRate: data.appSettings.shiftRate,
-                        fixedDeduction: data.appSettings.fixedDeduction,
-                        advance: data.appSettings.advance,
-                        fixedSalaryPart: data.appSettings.fixedSalaryPart,
-                        functionalBorderValue: 30000
-                    },
-                    unofficial: {
-                        salesPercent: 7,
-                        shiftRate: 1000,
-                        advance: 0,
-                        functionalBorderValue: 30000
-                    }
-                };
-            } else {
-                appSettings = data.appSettings;
-                // Добавляем значение по умолчанию для функциональной обводки, если его нет
-                if (!appSettings.official.hasOwnProperty('functionalBorderValue')) {
-                    appSettings.official.functionalBorderValue = 30000;
-                }
-                if (!appSettings.unofficial.hasOwnProperty('functionalBorderValue')) {
-                    appSettings.unofficial.functionalBorderValue = 30000;
-                }
-            }
-            
-            saveToStorage('appSettings', appSettings);
-            loadSettingsToForm();
-        }
-        
-        generateCalendar();
-        showNotification('Данные импортированы');
-        closeModal();
-    } catch (error) {
-        console.error('Ошибка импорта:', error);
-        showNotification('Ошибка импорта данных: неверный формат');
-    }
-}
-
-// Принудительное обновление версии
-async function forceUpdate() {
-    showNotification('Обновление...');
-    
-    // Удаляем все кэши
-    const cacheKeys = await caches.keys();
-    for (const key of cacheKeys) {
-        await caches.delete(key);
-    }
-    
-    // Удаляем сервис-воркер
-    const registrations = await navigator.serviceWorker.getRegistrations();
-    for (let registration of registrations) {
-        await registration.unregister();
-    }
-    
-    // Удаляем версию из localStorage
-    localStorage.removeItem('sw_version');
-    
-    // Перезагружаем страницу
-    setTimeout(() => {
-        window.location.reload(true);
-    }, 1000);
-}
-
-// Обработка нажатий клавиш
+// Обработка нажатия клавиш
 function handleKeyPress(e) {
     if (e.key === 'Escape') {
         closeModal();
     }
 }
 
-// Инициализация выбора периода
-function initPeriodSelector() {
-    const currentYear = new Date().getFullYear();
-    const yearOptions = document.getElementById('year-options');
-    
-    // Годы от 2020 до текущего + 5 лет вперед
-    for (let year = 2020; year <= currentYear + 5; year++) {
-        const option = document.createElement('div');
-        option.className = 'period-option';
-        option.textContent = year;
-        option.dataset.year = year;
-        option.addEventListener('click', () => selectYear(year));
-        yearOptions.appendChild(option);
-    }
-    
-    // Месяцы
-    const monthOptions = document.getElementById('month-options');
-    const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
-      "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
-    
-    monthNames.forEach((month, index) => {
-        const option = document.createElement('div');
-        option.className = 'period-option';
-        option.textContent = month;
-        option.dataset.month = index;
-        option.addEventListener('click', () => selectMonth(index));
-        monthOptions.appendChild(option);
-    });
-    
-    // Кнопка назад
-    document.getElementById('period-back').addEventListener('click', () => {
-        document.getElementById('month-step').style.display = 'none';
-        document.getElementById('year-step').style.display = 'block';
-        document.getElementById('period-back').style.display = 'none';
-    });
-}
-
-// Выбор года
-function selectYear(year) {
-    currentYear = year;
-    document.getElementById('year-step').style.display = 'none';
-    document.getElementById('month-step').style.display = 'block';
-    document.getElementById('period-back').style.display = 'block';
-}
-
-// Выбор месяца
-function selectMonth(month) {
-    currentMonth = month;
-    closeModal();
-    generateCalendar();
-}
-
-// Загрузка настроек в форму
-function loadSettingsToForm() {
-    document.getElementById('mode-selector').value = appSettings.mode;
-    updateSettingsUI();
-}
-
-// Обновление интерфейса настроек в зависимости от выбранного режима
+// Обновление UI настроек
 function updateSettingsUI() {
     const mode = document.getElementById('mode-selector').value;
     const officialSettings = document.getElementById('official-settings');
@@ -788,38 +599,26 @@ function updateSettingsUI() {
     if (mode === 'official') {
         officialSettings.style.display = 'block';
         unofficialSettings.style.display = 'none';
-        
-        // Заполняем значения для официального режима
-        document.getElementById('sales-percent').value = appSettings.official.salesPercent;
-        document.getElementById('shift-rate').value = appSettings.official.shiftRate;
-        document.getElementById('advance').value = appSettings.official.advance;
-        document.getElementById('fixed-salary-part').value = appSettings.official.fixedSalaryPart;
-        document.getElementById('functional-border-value').value = appSettings.official.functionalBorderValue;
     } else {
         officialSettings.style.display = 'none';
         unofficialSettings.style.display = 'block';
-        
-        // Заполняем значения для неофициального режима
-        document.getElementById('unofficial-sales-percent').value = appSettings.unofficial.salesPercent;
-        document.getElementById('unofficial-shift-rate').value = appSettings.unofficial.shiftRate;
-        document.getElementById('unofficial-advance').value = appSettings.unofficial.advance;
-        document.getElementById('unofficial-functional-border-value').value = appSettings.unofficial.functionalBorderValue;
     }
 }
 
 // Сохранение настроек
 function saveSettings() {
     const mode = document.getElementById('mode-selector').value;
-    const oldFunctionalBorderValue = appSettings[appSettings.mode].functionalBorderValue;
+    
+    appSettings.mode = mode;
     
     if (mode === 'official') {
         appSettings.official = {
-            salesPercent: parseFloat(document.getElementById('sales-percent').value),
-            shiftRate: parseInt(document.getElementById('shift-rate').value),
-            fixedDeduction: 25000, // Фиксированное значение
-            advance: parseInt(document.getElementById('advance').value),
-            fixedSalaryPart: parseInt(document.getElementById('fixed-salary-part').value),
-            functionalBorderValue: parseInt(document.getElementById('functional-border-value').value)
+            salesPercent: parseFloat(document.getElementById('official-sales-percent').value),
+            shiftRate: parseInt(document.getElementById('official-shift-rate').value),
+            fixedDeduction: parseInt(document.getElementById('official-fixed-deduction').value),
+            advance: parseInt(document.getElementById('official-advance').value),
+            fixedSalaryPart: parseInt(document.getElementById('official-fixed-salary-part').value),
+            functionalBorderValue: parseInt(document.getElementById('official-functional-border-value').value)
         };
     } else {
         appSettings.unofficial = {
@@ -830,61 +629,131 @@ function saveSettings() {
         };
     }
     
-    appSettings.mode = mode;
-    
-    // Обновляем установленные функциональные обводки, если значение изменилось
-    const newFunctionalBorderValue = appSettings[appSettings.mode].functionalBorderValue;
-    if (oldFunctionalBorderValue !== newFunctionalBorderValue) {
-        updateFunctionalBorders(newFunctionalBorderValue);
+    if (saveToStorage('appSettings', appSettings)) {
+        showNotification('Настройки сохранены');
+        closeModal();
+        generateCalendar(); // Пересчитываем календарь с новыми настройками
     }
-    
-    saveToStorage('appSettings', appSettings);
-    closeModal();
-    calculateSummary();
-    showNotification('Настройки сохранены');
 }
 
-// Обновление значений функциональных обводок
-function updateFunctionalBorders(newValue) {
-    let updated = false;
+// Загрузка настроек в форму
+function loadSettingsToForm() {
+    document.getElementById('mode-selector').value = appSettings.mode;
     
-    for (const dateKey in calendarData) {
-        if (calendarData[dateKey].functionalBorder) {
-            calendarData[dateKey].sales = newValue;
-            calendarData[dateKey].functionalBorderValue = newValue;
-            updated = true;
-        }
+    // Официальные настройки
+    document.getElementById('official-sales-percent').value = appSettings.official.salesPercent;
+    document.getElementById('official-shift-rate').value = appSettings.official.shiftRate;
+    document.getElementById('official-fixed-deduction').value = appSettings.official.fixedDeduction;
+    document.getElementById('official-advance').value = appSettings.official.advance;
+    document.getElementById('official-fixed-salary-part').value = appSettings.official.fixedSalaryPart;
+    document.getElementById('official-functional-border-value').value = appSettings.official.functionalBorderValue;
+    
+    // Неофициальные настройки
+    document.getElementById('unofficial-sales-percent').value = appSettings.unofficial.salesPercent;
+    document.getElementById('unofficial-shift-rate').value = appSettings.unofficial.shiftRate;
+    document.getElementById('unofficial-advance').value = appSettings.unofficial.advance;
+    document.getElementById('unofficial-functional-border-value').value = appSettings.unofficial.functionalBorderValue;
+    
+    updateSettingsUI();
+}
+
+// Показать уведомление
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
+
+// Инициализация выбора периода
+function initPeriodSelector() {
+    const yearSelect = document.getElementById('year-select');
+    const monthSelect = document.getElementById('month-select');
+    
+    // Заполнение годов
+    const currentYear = new Date().getFullYear();
+    for (let year = currentYear - 5; year <= currentYear + 5; year++) {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
     }
     
-    if (updated) {
-        saveToStorage('calendarData', calendarData);
+    // Заполнение месяцев
+    const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
+                   'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+    months.forEach((month, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = month;
+        monthSelect.appendChild(option);
+    });
+    
+    // Установка текущих значений
+    yearSelect.value = currentYear;
+    monthSelect.value = currentMonth;
+    
+    // Обработчик применения периода
+    document.getElementById('apply-period').addEventListener('click', () => {
+        currentYear = parseInt(yearSelect.value);
+        currentMonth = parseInt(monthSelect.value);
         generateCalendar();
-        showNotification('Значения обводок обновлены');
+        closeModal();
+    });
+}
+
+// Принудительное обновление приложения
+function forceUpdate() {
+    if (confirm('Обновить приложение? Все локальные данные будут сохранены.')) {
+        localStorage.removeItem('appCacheVersion');
+        window.location.reload();
     }
+}
+
+// Показать приветственное сообщение
+function showWelcomeMessage() {
+    showNotification('Добро пожаловать! Для начала работы добавьте продажи за день, нажав на дату в календаре.');
 }
 
 // Экспорт данных
 function exportData() {
     const data = {
         calendarData: calendarData,
-        appSettings: appSettings,
-        exportDate: new Date().toISOString(),
-        version: '1.1'
+        appSettings: appSettings
     };
     
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    const dataStr = JSON.stringify(data);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
     
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `calendar-backup-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const exportFileDefaultName = `calendar-data-${currentYear}-${currentMonth+1}.json`;
     
-    showNotification('Данные экспортированы');
-    closeModal();
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+}
+
+// Показать модальное окно экспорта
+function showExportModal() {
+    document.getElementById('export-modal').style.display = 'block';
+    document.body.classList.add('modal-open');
+}
+
+// Показать модальное окно импорта
+function showImportModal() {
+    document.getElementById('import-modal').style.display = 'block';
+    document.body.classList.add('modal-open');
 }
 
 // Импорт данных
@@ -897,130 +766,85 @@ function importData(event) {
         try {
             const data = JSON.parse(e.target.result);
             
+            // Проверка целостности данных перед импортом
+            if (!validateImportedData(data)) {
+                showNotification('Ошибка: файл поврежден или имеет неверный формат');
+                return;
+            }
+            
+            // Импорт данных
             if (data.calendarData) {
                 calendarData = data.calendarData;
                 saveToStorage('calendarData', calendarData);
             }
             
             if (data.appSettings) {
-                // Миграция старых данных
-                if (data.appSettings.hasOwnProperty('useTax') && !data.appSettings.hasOwnProperty('mode')) {
-                    appSettings = {
-                        mode: 'official',
-                        official: {
-                            salesPercent: data.appSettings.salesPercent,
-                            shiftRate: data.appSettings.shiftRate,
-                            fixedDeduction: data.appSettings.fixedDeduction,
-                            advance: data.appSettings.advance,
-                            fixedSalaryPart: data.appSettings.fixedSalaryPart,
-                            functionalBorderValue: 30000
-                        },
-                        unofficial: {
-                            salesPercent: 7,
-                            shiftRate: 1000,
-                            advance: 0,
-                            functionalBorderValue: 30000
-                        }
-                    };
-                } else {
-                    appSettings = data.appSettings;
-                    // Добавляем значение по умолчанию для функциональной обводки, если его нет
-                    if (!appSettings.official.hasOwnProperty('functionalBorderValue')) {
-                        appSettings.official.functionalBorderValue = 30000;
-                    }
-                    if (!appSettings.unofficial.hasOwnProperty('functionalBorderValue')) {
-                        appSettings.unofficial.functionalBorderValue = 30000;
-                    }
-                }
-                
+                appSettings = data.appSettings;
                 saveToStorage('appSettings', appSettings);
-                loadSettingsToForm();
             }
             
+            showNotification('Данные успешно импортированы');
             generateCalendar();
-            showNotification('Данные импортированы');
+            closeModal();
         } catch (error) {
             console.error('Ошибка импорта:', error);
             showNotification('Ошибка импорта данных');
         }
     };
     reader.readAsText(file);
-    event.target.value = ''; // Сброс input
-    closeModal();
 }
 
-// Показ уведомлений
-function showNotification(message) {
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.textContent = message;
-    document.body.appendChild(notification);
+// Импорт из текста
+function importFromText() {
+    const importText = document.getElementById('import-text').value;
     
-    // Анимация появления
-    setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateX(-50%) translateY(0)';
-    }, 100);
+    if (!importText.trim()) {
+        showNotification('Введите данные для импорта');
+        return;
+    }
     
-    // Автоматическое скрытие
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateX(-50%) translateY(20px)';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
-}
-
-// Приветственное сообщение
-function showWelcomeMessage() {
-    setTimeout(() => {
-        showNotification('Добро пожаловать! Для начала работы нажмите на любой день');
-    }, 1000);
-}
-
-// Оптимизация для мобильных устройств
-function optimizeForMobile() {
-    // Предотвращение масштабирования при фокусе
-    document.addEventListener('focusin', function() {
-        if (window.innerWidth < 768) {
-            document.body.style.zoom = '100%';
-        }
-    });
-    
-    // Восстановление после потери фокуса
-    document.addEventListener('focusout', function() {
-        setTimeout(() => {
-            document.body.style.zoom = '';
-        }, 100);
-    });
-}
-
-// Вызов оптимизации
-optimizeForMobile();
-
-// Обработка ошибок
-window.addEventListener('error', function(e) {
-    console.error('Произошла ошибка:', e.error);
-    showNotification('Произошла ошибка приложения');
-});
-
-// Обработка необработанных промисов
-window.addEventListener('unhandledrejection', function(e) {
-    console.error('Необработанный промис:', e.reason);
-    e.preventDefault();
-});
-
-// Проверка поддержки localStorage
-function checkLocalStorageSupport() {
     try {
-        const test = 'test';
-        localStorage.setItem(test, test);
-        localStorage.removeItem(test);
-        return true;
-    } catch (e) {
-        return false;
+        const data = JSON.parse(importText);
+        
+        // Проверка целостности данных перед импортом
+        if (!validateImportedData(data)) {
+            showNotification('Ошибка: данные повреждены или имеют неверный формат');
+            return;
+        }
+        
+        // Импорт данных
+        if (data.calendarData) {
+            calendarData = data.calendarData;
+            saveToStorage('calendarData', calendarData);
+        }
+        
+        if (data.appSettings) {
+            appSettings = data.appSettings;
+            saveToStorage('appSettings', appSettings);
+        }
+        
+        showNotification('Данные успешно импортированы');
+        generateCalendar();
+        closeModal();
+    } catch (error) {
+        console.error('Ошибка импорта:', error);
+        showNotification('Ошибка импорта данных');
     }
 }
 
-if (!checkLocalStorageSupport()) {
-    showNotification('Ваш браузер не поддерживает сохранение данных');
+// Копирование данных в буфер обмена
+function copyDataToClipboard() {
+    const data = {
+        calendarData: calendarData,
+        appSettings: appSettings
+    };
+    
+    const dataStr = JSON.stringify(data);
+    
+    navigator.clipboard.writeText(dataStr).then(() => {
+        showNotification('Данные скопированы в буфер обмена');
+    }).catch(err => {
+        console.error('Ошибка копирования:', err);
+        showNotification('Ошибка копирования данных');
+    });
 }
