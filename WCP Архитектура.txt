@@ -1,0 +1,47 @@
+﻿WCP Архитектура
+
+
+sales-calendar-pwa/
+├── index.html
+├── manifest.json
+├── sw.js
+├── assets/
+│   ├── icons/
+│   │   ├── icon-192.png
+│   │   └── icon-512.png
+│   └── data/
+│       └── help-data.js
+├── styles/
+│   ├── main.css
+│   ├── components/
+│   │   ├── calendar.css
+│   │   ├── modals.css
+│   │   ├── header.css
+│   │   └── notifications.css
+│   └── themes/
+│       └── dark-mode.css
+└── scripts/
+    ├── app.js
+    ├── core/
+    │   ├── storage.js
+    │   ├── calculator.js
+    │   └── utils.js
+    ├── components/
+    │   ├── calendar.js
+    │   ├── modals/
+    │   │   ├── modals-manager.js
+    │   │   ├── day-modal.js
+    │   │   ├── settings-modal.js
+    │   │   ├── summary-modal.js
+    │   │   ├── help-modal.js
+    │   │   ├── export-modal.js
+    │   │   └── import-modal.js
+    │   └── header.js
+    ├── features/
+    │   ├── color-tools.js
+    │   ├── functional-border.js
+    │   ├── export-import.js
+    │   └── pwa-handler.js
+    └── config/
+        ├── settings.js
+        └── constants.js
